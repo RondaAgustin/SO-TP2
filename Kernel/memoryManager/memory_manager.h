@@ -7,7 +7,11 @@
 #define RESERVED 1
 #define FREE 0
 
-void * malloc();
-void free(void *p);
+void mm_init(void * p, size_t s);
+void * mm_malloc(uint32_t size);
+void mm_free(void *p);
+size_t mm_get_total_memory();
+size_t mm_get_used_memory();
+size_t mm_get_free_memory();
 
 #endif
