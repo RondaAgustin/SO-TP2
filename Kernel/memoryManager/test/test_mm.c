@@ -1,19 +1,27 @@
 #include "syscall.h"
 #include "test_util.h"
+#include "../memory_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MAX_BLOCKS 128
 
 typedef struct MM_rq {
   void *address;
   uint32_t size;
 } mm_rq;
 
+uint64_t test_mm(uint64_t argc, char *argv[]);
+
+int main(int argc, char *argv[]) {
+  char buffer[BLOCK_SIZE * BLOCK_COUNT];
+  mm_init(buffer, BLOCK_SIZE * BLOCK_COUNT);
+  test_mm(argc - 1, argv + 1);
+  return 0;
+}
+
 uint64_t test_mm(uint64_t argc, char *argv[]) {
 
-  mm_rq mm_rqs[MAX_BLOCKS];
+  mm_rq mm_rqs[BLOCK_COUNT];
   uint8_t rq;
   uint32_t total;
   uint64_t max_memory;
@@ -24,12 +32,18 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   if ((max_memory = satoi(argv[0])) <= 0)
     return -1;
 
+  printf("Empezamos el testeo\n");
+  int i = 0;
+  
   while (1) {
+
+    printf("Iteracion %d\n", i++);
+
     rq = 0;
     total = 0;
 
     // Request as many blocks as we can
-    while (rq < MAX_BLOCKS && total < max_memory) {
+    while (rq < BLOCK_COUNT && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
       mm_rqs[rq].address = malloc(mm_rqs[rq].size);
 

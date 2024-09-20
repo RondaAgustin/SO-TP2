@@ -1,16 +1,14 @@
 #include "memory_manager.h"
-#include <stdlib.h>
-#include <math.h>
 
 typedef struct MemoryZone {
     void * start;
-    size_t size;
+    uint32_t size;
 } MemoryZone;
 
 typedef struct MemoryManager {
     void * start;
-    size_t size;
-    size_t usedMemory;
+    uint32_t size;
+    uint32_t usedMemory;
 
     MemoryZone reservedMemoryZone[BLOCK_COUNT];
 
@@ -19,7 +17,7 @@ typedef struct MemoryManager {
 
 MemoryManager memoryManager;
 
-void mm_init(void * p, size_t s) {
+void mm_init(void * p, uint32_t s) {
     memoryManager.start = p;
     memoryManager.size = s; 
     memoryManager.usedMemory = 0;
@@ -36,7 +34,7 @@ void mm_init(void * p, size_t s) {
 void * mm_malloc(uint32_t size) {
     int c = ceil(size / BLOCK_SIZE);
     
-    size_t i, j, flag = 0;
+    uint32_t i, j, flag = 0;
 
     for (i = 0; i < BLOCK_COUNT; i++) {
         for (j = 0; j < c; j++) {
@@ -85,14 +83,14 @@ void mm_free(void * p) {
     }
 }
 
-size_t mm_get_total_memory() {
+uint32_t mm_get_total_memory() {
     return memoryManager.size;
 }
 
-size_t mm_get_used_memory() {
+uint32_t mm_get_used_memory() {
     return memoryManager.usedMemory;
 }
 
-size_t mm_get_free_memory() {
+uint32_t mm_get_free_memory() {
     return mm_get_total_memory() - mm_get_used_memory();
 }
