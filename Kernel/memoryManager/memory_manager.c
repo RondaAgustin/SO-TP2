@@ -32,12 +32,15 @@ void mm_init(void * p, uint32_t s) {
 }
 
 void * mm_malloc(uint32_t size) {
-    int c = ceil(size / BLOCK_SIZE);
+    uint32_t c = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
     
     uint32_t i, j, flag = 0;
 
     for (i = 0; i < BLOCK_COUNT; i++) {
         for (j = 0; j < c; j++) {
+            if (i + j >= BLOCK_COUNT) {
+                return NULL;
+            }
             if (memoryManager.bitmap[i+j] == RESERVED) {
                 break;
             }

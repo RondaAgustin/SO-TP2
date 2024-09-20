@@ -32,7 +32,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   if ((max_memory = satoi(argv[0])) <= 0)
     return -1;
 
-  printf("Empezamos el testeo\n");
   int i = 0;
   
   while (1) {
@@ -45,10 +44,11 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Request as many blocks as we can
     while (rq < BLOCK_COUNT && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = malloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = mm_malloc(mm_rqs[rq].size);
 
       if (mm_rqs[rq].address) {
-        total += mm_rqs[rq].size;
+        // Cambiamos esta suma para que se adapte a nuestra forma de reservar memoria en bloques
+        total += ((mm_rqs[rq].size + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
         rq++;
       }
     }
@@ -70,6 +70,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        free(mm_rqs[i].address);
+        mm_free(mm_rqs[i].address);
   }
 }
