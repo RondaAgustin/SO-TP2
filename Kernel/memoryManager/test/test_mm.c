@@ -1,6 +1,8 @@
 #include "syscall.h"
-#include "test_util.h"
-#include "../memory_manager.h"
+#include <memoryManager/test_util.h>
+#include <memoryManager/memory_manager.h>
+#include <drivers/videoDriver.h>
+#include <lib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,14 +12,14 @@ typedef struct MM_rq {
   uint32_t size;
 } mm_rq;
 
-uint64_t test_mm(uint64_t argc, char *argv[]);
+// uint64_t test_mm(uint64_t argc, char *argv[]);
 
-int main(int argc, char *argv[]) {
-  char buffer[BLOCK_SIZE * BLOCK_COUNT];
-  mm_init(buffer, BLOCK_SIZE * BLOCK_COUNT);
-  test_mm(argc - 1, argv + 1);
-  return 0;
-}
+// int main(int argc, char *argv[]) {
+//   char buffer[BLOCK_SIZE * BLOCK_COUNT];
+//   mm_init(buffer, BLOCK_SIZE * BLOCK_COUNT);
+//   test_mm(argc - 1, argv + 1);
+//   return 0;
+// }
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
 
@@ -36,7 +38,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   
   while (1) {
 
-    printf("Iteracion %d\n", i++);
+    // printf("Iteracion %d\n", i++);
 
     rq = 0;
     total = 0;
@@ -63,7 +65,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          printf("test_mm ERROR\n");
+          // printf("test_mm ERROR\n");
           return -1;
         }
 
@@ -71,5 +73,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         mm_free(mm_rqs[i].address);
+
+    write_to_video_text_buffer("Ciclo completado\n", 1, HEX_WHITE);
   }
 }

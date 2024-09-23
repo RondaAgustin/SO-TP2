@@ -60,3 +60,11 @@ git commit -m "fix: tests modifications"
 git status
 git commit -m "fix: tests modifications"
 exit
+cd root/
+make all
+make clean
+make all
+make clean
+git add .
+git commit -m "feat: integrate mm_test to kernel"
+exit
