@@ -34,7 +34,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   if ((max_memory = satoi(argv[0])) <= 0)
     return -1;
 
-  int i = 0;
+  uint64_t count = 0;
   
   while (1) {
 
@@ -74,6 +74,11 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       if (mm_rqs[i].address)
         mm_free(mm_rqs[i].address);
 
-    write_to_video_text_buffer("Ciclo completado\n", 17, HEX_WHITE);
+    char buff[17];
+    write_to_video_text_buffer("Ciclo completado: ", 18, HEX_WHITE);
+    uint64_to_hex_string(count++, buff, 17);
+    write_to_video_text_buffer(buff, 17, HEX_RED);
+    write_to_video_text_buffer("\n", 1, HEX_WHITE);
+
   }
 }
