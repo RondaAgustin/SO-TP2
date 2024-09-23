@@ -20,5 +20,6 @@ $(MODULE): $(OBJECTS) $(OBJECTS_ASM)
 
 clean:
 	rm -rf *.o
+	rm -rf asm/*.o
 
 .PHONY: all clean print
