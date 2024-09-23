@@ -74,6 +74,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       if (mm_rqs[i].address)
         mm_free(mm_rqs[i].address);
 
-    write_to_video_text_buffer("Ciclo completado\n", 1, HEX_WHITE);
+    write_to_video_text_buffer("Ciclo completado\n", 17, HEX_WHITE);
   }
 }
