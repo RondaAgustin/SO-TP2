@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_BLOCKS 128
+
 typedef struct MM_rq {
   void *address;
   uint32_t size;
@@ -23,7 +25,7 @@ typedef struct MM_rq {
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
 
-  mm_rq mm_rqs[BLOCK_COUNT];
+  mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
   uint32_t total;
   uint64_t max_memory;
@@ -44,7 +46,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     total = 0;
 
     // Request as many blocks as we can
-    while (rq < BLOCK_COUNT && total < max_memory) {
+    while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
       mm_rqs[rq].address = mm_malloc(mm_rqs[rq].size);
 
