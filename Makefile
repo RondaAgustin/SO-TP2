@@ -1,3 +1,5 @@
+.PHONY: bootloader image collections kernel userland all clean toolchain
+
 all: bootloader toolchain kernel userland image
 
 bootloader:
