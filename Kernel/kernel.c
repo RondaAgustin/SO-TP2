@@ -6,6 +6,7 @@
 #include <drivers/pitDriver.h>
 #include <shell_caller.h>
 #include <memoryManager/memory_manager.h>
+#include <scheduler/scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -13,6 +14,8 @@ extern uint8_t data;
 extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
+
+schedulerADT scheduler = NULL;
 
 static const uint64_t PageSize = 0x1000;
 
@@ -65,6 +68,8 @@ int main()
 
 	// if(result == -1) 
 	// 	write_to_video_text_buffer("Error en las pruebas\n", 21, HEX_RED);
+
+	scheduler = create_scheduler();
 	
 
     write_to_video_text_buffer("GRUPO 9\n", 9, 0x006fb5fb);

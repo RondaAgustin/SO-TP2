@@ -5,11 +5,20 @@
 
 static void (*interrupts[])(const registers64_t *) = {timer_handler, keyboard_handler};
 
-void irqDispatcher(uint64_t irq, const registers64_t *registers) {
+uint64_t* irqDispatcher(uint64_t irq, const registers64_t *registers) {
     if (irq >= sizeof(interrupts) / sizeof(interrupts[0]))
         return;
 
-    interrupts[irq](registers);
+    uint64_t * response = registers;
+
+    if (irq == 0){
+        response = timer_handler(registers);
+    }
+    else{
+        interrupts[irq](registers);
+    }
+
+    return response;
 }
 
 uint64_t softIntDispatcher(const registers64_t *registers){

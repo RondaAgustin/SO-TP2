@@ -5,3 +5,5 @@
 .bash_history
 *.qcow2
 *.vmdk
+.DS_Store
+.vscode
