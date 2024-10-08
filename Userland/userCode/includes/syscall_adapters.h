@@ -19,5 +19,11 @@ void sys_beep(uint64_t freq, uint64_t milis);
 void sys_delay(uint64_t milis);
 void sys_clear_screen(uint32_t clearColor);
 void sys_print_registers();
+// Memory Manager
+void* sys_mm_malloc(uint32_t size);
+void sys_mm_free(void* p);
+uint32_t sys_mm_get_total_memory();
+uint32_t sys_mm_get_used_memory();
+uint32_t sys_mm_get_free_memory();
 
 #endif

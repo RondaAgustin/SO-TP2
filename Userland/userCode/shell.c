@@ -4,6 +4,7 @@
 #include <cucaracha.h>
 #include <eliminator.h>
 #include <lib.h>
+#include <test_mm.h>
 
 typedef struct {
     char* module_name;
@@ -22,7 +23,8 @@ ModuleDescriptor modules[] = {
     {"song", "plays a short tune while displaying graphics", song},
     {"calculator", "positive integer calculator", calculator},
     {"eliminator", "eliminator game", eliminator},
-    {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump}
+    {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
+    {"test_mm", "test memory manager", test_memory}
     };
 
 static int current_font_size = 1;
@@ -148,4 +150,9 @@ void jump() {
     scanf("%d", &dir);
     printf("Jumping to address %d\n", dir);
     jump_to_dir(dir);
+}
+
+void test_memory(){
+    char *argv[] = {"10240"};
+  	uint64_t result = test_mm(1, argv);
 }

@@ -1,18 +1,4 @@
-#include "syscall.h"
-#include <memoryManager/test_util.h>
-#include <memoryManager/memory_manager.h>
-#include <drivers/videoDriver.h>
-#include <lib.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX_BLOCKS 128
-
-typedef struct MM_rq {
-  void *address;
-  uint32_t size;
-} mm_rq;
+#include <test_mm.h>
 
 // uint64_t test_mm(uint64_t argc, char *argv[]);
 
@@ -48,7 +34,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-      mm_rqs[rq].address = mm_malloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = sys_mm_malloc(mm_rqs[rq].size);
 
       if (mm_rqs[rq].address) {
         // Cambiamos esta suma para que se adapte a nuestra forma de reservar memoria en bloques
@@ -74,13 +60,11 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
-        mm_free(mm_rqs[i].address);
+        sys_mm_free(mm_rqs[i].address);
 
-    char buff[17];
-    write_to_video_text_buffer("Ciclo completado: ", 18, HEX_WHITE);
-    uint64_to_hex_string(count++, buff, 17);
-    write_to_video_text_buffer(buff, 17, HEX_RED);
-    write_to_video_text_buffer("\n", 1, HEX_WHITE);
-
+    printf("Ciclo %d completado.\n", count);
+    count++;
+    // uint64_to_hex_string(count++, buff, 17);
+    // write_to_video_text_buffer(buff, 17, HEX_RED);
   }
 }

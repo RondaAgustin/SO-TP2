@@ -14,6 +14,7 @@ void song();
 void calculator();
 void eliminator();
 void jump();
+void test_memory();
 
 void run_shell();
 
