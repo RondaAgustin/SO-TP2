@@ -17,6 +17,8 @@ typedef struct {
     char priority;
     State state;
     uint64_t sp;
+    uint64_t base;
+    uint64_t limit;
 } PCB;
 
 #endif

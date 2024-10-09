@@ -53,8 +53,7 @@ void * initializeKernelBinary()
 
 extern uint64_t test_mm(uint64_t argc, char *argv[]);
 
-int main()
-{	
+int main() {
 	initialize_pit(60);
 	load_idt();
     set_font_size(1);
@@ -68,13 +67,12 @@ int main()
 
 	// if(result == -1) 
 	// 	write_to_video_text_buffer("Error en las pruebas\n", 21, HEX_RED);
-
-	my_scheduler = create_scheduler();
-
-    write_to_video_text_buffer("GRUPO 9\n", 9, 0x006fb5fb);
+    write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
-	// start_shell();
+	create_scheduler();
+
+	delay(18);
 
     write_to_video_text_buffer("Back in kernel...\n", 18, HEX_GRAY);
 

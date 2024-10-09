@@ -20,7 +20,7 @@ void initialize_pit(uint32_t frequency){
     outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
-uint64_t* timer_handler(const uint64_t * rsp) {
+uint64_t timer_handler(const uint64_t rsp) {
 	ticks++;
 
     if (ticks - ticks_at_last_update >= UPDATE_SCREEN_RATE) {
@@ -28,7 +28,7 @@ uint64_t* timer_handler(const uint64_t * rsp) {
         ticks_at_last_update = ticks;
     }
 
-    return context_switch(my_scheduler, rsp);
+    return context_switch(rsp);
 }
 
 void delay(uint64_t milis){

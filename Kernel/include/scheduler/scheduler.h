@@ -12,10 +12,10 @@
 #include <scheduler/process_manager.h>
 #include <scheduler/idle.h>
 
-typedef struct SchedulerCDT* SchedulerADT;
+typedef struct Scheduler* SchedulerADT;
 
-SchedulerADT create_scheduler();
-uint64_t* context_switch(SchedulerADT scheduler, uint64_t* rsp);
-void add_ready_process(SchedulerADT scheduler, PCB* process_pcb);
+void create_scheduler();
+uint64_t context_switch(uint64_t rsp);
+void add_ready_process(PCB* process_pcb);
 
 #endif

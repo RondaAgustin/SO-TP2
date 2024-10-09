@@ -3,12 +3,15 @@
 #include <shell_caller.h>
 #include <drivers/videoDriver.h>
 
-typedef struct SchedulerCDT{
+typedef struct Scheduler {
     PCB* current;
-} SchedulerCDT;
+} Scheduler;
 
-SchedulerADT create_scheduler(){
-    SchedulerADT scheduler = mm_malloc(sizeof(SchedulerCDT));
+Scheduler* scheduler = NULL;
+
+void create_scheduler(){
+    scheduler = mm_malloc(sizeof(Scheduler));
+    scheduler->current = NULL;
 
     process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
     for (int i = 0; i < MAX_PROCESSES; i++) {
@@ -16,19 +19,22 @@ SchedulerADT create_scheduler(){
         process_table[i].state = EXITED;
     }   
 
-    char* argv[] = {"idle", NULL};
-    create_process((uint64_t) idle, 1, argv, 1);
+    char* argv[] = {"shell", NULL};
+    create_process((uint64_t) start_shell, 1, argv, 1);
 
     return scheduler;
 }
 
-uint64_t* context_switch(SchedulerADT scheduler, uint64_t* rsp){
-    if (scheduler != NULL){
+uint64_t context_switch(uint64_t rsp){
+    if (scheduler != NULL && scheduler->current != NULL) {
+        if (scheduler->current->base >= rsp && scheduler->current->limit <= rsp){
+            scheduler->current->sp = rsp;
+        }
         return scheduler->current->sp;
     }
     return rsp;
 }
 
-void add_ready_process(SchedulerADT scheduler, PCB* process_pcb){
+void add_ready_process(PCB* process_pcb){
     scheduler->current = process_pcb;
 }

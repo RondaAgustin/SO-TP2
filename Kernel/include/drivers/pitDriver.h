@@ -8,7 +8,7 @@
 #define MAX_FREQUENCY 1193182
 
 void initialize_pit(uint32_t frequency);
-uint64_t* timer_handler(const uint64_t* rsp);
+uint64_t timer_handler(const uint64_t rsp);
 void delay(uint64_t milis);
 void delay_ticks(uint64_t ticks);
 int ticks_elapsed();
