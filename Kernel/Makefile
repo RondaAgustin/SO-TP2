@@ -2,7 +2,7 @@ include Makefile.inc
 
 KERNEL=kernel.bin
 
-SOURCE_DIRS=. drivers interruptHandlers memoryManager memoryManager/test scheduler
+SOURCE_DIRS=. drivers interruptHandlers memoryManager memoryManager/test utils scheduler
 SOURCES=$(wildcard $(addsuffix /*.c, $(SOURCE_DIRS)))
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
