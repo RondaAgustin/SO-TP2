@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <memoryManager/memory_manager.h>
 
 #define MAX_PROCESSES 64
 #define STACK_SIZE 4096
@@ -49,6 +50,6 @@ typedef struct {
 
 extern PCB* process_table;
 
-void create_process(char* process_name, uint64_t entry_point, char* argv[], uint32_t priority);
+void create_process(char* process_name, uint64_t entry_point, int argc, char* argv[], uint32_t priority);
 
 #endif

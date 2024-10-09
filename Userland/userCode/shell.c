@@ -153,6 +153,6 @@ void jump() {
 }
 
 void test_memory(){
-    char *argv[] = {"10240"};
+    char *argv[] = {"20971520"};
   	test_mm(1, argv);
 }

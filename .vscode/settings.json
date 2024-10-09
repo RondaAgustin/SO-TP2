@@ -6,6 +6,9 @@
         "shell.h": "c",
         "memory_manager.h": "c",
         "stdint.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "process_manager.h": "c",
+        "scheduler.h": "c",
+        "test_util.h": "c"
     }
 }
