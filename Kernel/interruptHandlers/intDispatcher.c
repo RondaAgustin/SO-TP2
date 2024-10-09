@@ -14,7 +14,7 @@ uint64_t* irqDispatcher(uint64_t irq, const registers64_t *registers) {
     if (irq == 0){
         response = timer_handler(registers);
     }
-    else{
+    else {
         interrupts[irq](registers);
     }
 

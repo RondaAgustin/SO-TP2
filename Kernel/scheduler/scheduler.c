@@ -1,20 +1,34 @@
-#include <scheduler/process_manager.h>
-#include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 
-typedef struct schedulerCDT{
+#include <shell_caller.h>
+#include <drivers/videoDriver.h>
 
-} schedulerCDT;
+typedef struct SchedulerCDT{
+    PCB* current;
+} SchedulerCDT;
 
-schedulerADT create_scheduler(){
+SchedulerADT create_scheduler(){
+    SchedulerADT scheduler = mm_malloc(sizeof(SchedulerCDT));
+
     process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
     for (int i = 0; i < MAX_PROCESSES; i++) {
         process_table[i].pid = -1;
         process_table[i].state = EXITED;
     }   
-    return mm_malloc(sizeof(schedulerCDT));
+
+    char* argv[] = {"idle", NULL};
+    create_process((uint64_t) idle, 1, argv, 1);
+
+    return scheduler;
 }
 
-uint64_t* context_switch(schedulerADT schedulerADT, uint64_t* rsp){
+uint64_t* context_switch(SchedulerADT scheduler, uint64_t* rsp){
+    if (scheduler != NULL){
+        return scheduler->current->sp;
+    }
     return rsp;
+}
+
+void add_ready_process(SchedulerADT scheduler, PCB* process_pcb){
+    scheduler->current = process_pcb;
 }

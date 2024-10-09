@@ -5,7 +5,7 @@
 #include <lib.h>
 
 typedef struct ListCDT* ListADT;
-typedef struct ListIteratorCDT* ListIteratorADT;
+typedef struct ListCircularIteratorCDT* ListCircularIteratorADT;
 typedef void * DataType;
 
 
@@ -17,9 +17,8 @@ void list_destroy(ListADT list, void (*free_func)(void *));
 uint64_t list_size(ListADT list);
 
 
-ListIteratorADT list_iterator(ListADT list);
-int list_iterator_has_next(ListIteratorADT iterator);
-DataType list_iterator_next(ListIteratorADT iterator);
-void list_iterator_destroy(ListIteratorADT iterator);
+ListCircularIteratorADT list_iterator(ListADT list);
+DataType list_circular_iterator_next(ListCircularIteratorADT iterator);
+void list_iterator_destroy(ListCircularIteratorADT iterator);
 
 #endif

@@ -3,7 +3,7 @@
 #include <scheduler/scheduler.h>
 #include <lib.h>
 
-extern schedulerADT scheduler;
+extern SchedulerADT my_scheduler;
 
 static uint32_t TICKS_PER_SECOND;
 static unsigned long ticks = 0;
@@ -28,7 +28,7 @@ uint64_t* timer_handler(const uint64_t * rsp) {
         ticks_at_last_update = ticks;
     }
 
-    return context_switch(scheduler, rsp);
+    return context_switch(my_scheduler, rsp);
 }
 
 void delay(uint64_t milis){

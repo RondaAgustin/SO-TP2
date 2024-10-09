@@ -15,7 +15,7 @@ extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 
-schedulerADT scheduler = NULL;
+SchedulerADT my_scheduler = NULL;
 
 static const uint64_t PageSize = 0x1000;
 
@@ -69,13 +69,12 @@ int main()
 	// if(result == -1) 
 	// 	write_to_video_text_buffer("Error en las pruebas\n", 21, HEX_RED);
 
-	scheduler = create_scheduler();
-	
+	my_scheduler = create_scheduler();
 
     write_to_video_text_buffer("GRUPO 9\n", 9, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
-    start_shell();
+	// start_shell();
 
     write_to_video_text_buffer("Back in kernel...\n", 18, HEX_GRAY);
 

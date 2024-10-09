@@ -4,25 +4,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <memoryManager/memory_manager.h>
+#include <scheduler/scheduler.h>
+#include <scheduler/shared_process_structures.h>
 
 #define MAX_PROCESSES 64
 #define STACK_SIZE 4096
-
-typedef enum State {
-    READY,
-    RUNNING,
-    BLOCKED,
-    EXITED
-} State;
-
-typedef struct {
-    char pid;
-    char father_pid;
-    char* process_name;
-    char priority;
-    State state;
-    uint64_t sp;
-} PCB;
 
 typedef struct {
     uint64_t rax;

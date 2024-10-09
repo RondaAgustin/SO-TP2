@@ -11,8 +11,9 @@ struct ListCDT {
     size_t size;
 };
 
-struct ListIteratorCDT {
+struct ListCircularIteratorCDT {
     Node *current;
+    Node *head;
 };
 
 
@@ -116,28 +117,24 @@ void list_destroy(ListADT list, void (*free_func)(void *)) {
     mm_free(list);
 }
 
-ListIteratorADT list_iterator(ListADT list){
+ListCircularIteratorADT list_iterator(ListADT list){
     if (list == NULL) return NULL;
     
-    ListIteratorADT iterator = mm_malloc(sizeof(ListIteratorADT));
+    ListCircularIteratorADT iterator = mm_malloc(sizeof(ListCircularIteratorADT));
     if (iterator == NULL) return NULL;
 
     iterator->current = list->head;
+    iterator->head = list->head;
     return iterator;
 }
 
-
-int list_iterator_has_next(ListIteratorADT iterator){
-    return iterator->current != NULL;
-}
-
-DataType list_iterator_next(ListIteratorADT iterator){
-    if (!list_iterator_has_next(iterator)) return NULL;
+DataType list_circular_iterator_next(ListCircularIteratorADT iterator){
+    if (iterator->current == NULL) iterator->current = iterator->head;
     DataType data = iterator->current->data;
     iterator->current = iterator->current->next;
     return data;
 }
 
-void list_iterator_destroy(ListIteratorADT iterator){
+void list_iterator_destroy(ListCircularIteratorADT iterator){
     mm_free(iterator);
 }

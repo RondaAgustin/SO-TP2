@@ -1,5 +1,8 @@
 #include <scheduler/process_manager.h>
 
+PCB* process_table;
+extern SchedulerADT my_scheduler;
+
 char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
     
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
@@ -66,5 +69,6 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
     // Actualizamos el stack pointer del proceso
     process_table[i].sp = (uint64_t) stack_ptr;
 
+    add_ready_process(my_scheduler, &process_table[i]);
     return 0;
 }
