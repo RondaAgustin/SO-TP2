@@ -154,5 +154,5 @@ void jump() {
 
 void test_memory(){
     char *argv[] = {"10240"};
-  	uint64_t result = test_mm(1, argv);
+  	test_mm(1, argv);
 }
