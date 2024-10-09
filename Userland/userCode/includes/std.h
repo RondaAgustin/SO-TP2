@@ -25,4 +25,7 @@ void scanf(const char* fmt, void* ptr);
 
 int isAlpha(char c);
 
+void * memset(void * destination, int32_t c, uint64_t length);
+void * memcpy(void * destination, const void * source, uint64_t length);
+
 #endif
