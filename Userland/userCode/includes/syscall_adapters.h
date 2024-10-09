@@ -25,5 +25,7 @@ void sys_mm_free(void* p);
 uint32_t sys_mm_get_total_memory();
 uint32_t sys_mm_get_used_memory();
 uint32_t sys_mm_get_free_memory();
+// Process Manager
+char sys_create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
 
 #endif

@@ -1,9 +1,9 @@
 #include <scheduler/process_manager.h>
 
-void create_process(uint64_t entry_point, int argc, char* argv[], uint32_t priority) {
+char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
     
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
-        return;
+        return -1;
     }
     
     // Busco un lugar libre en la tabla de procesos
@@ -17,7 +17,7 @@ void create_process(uint64_t entry_point, int argc, char* argv[], uint32_t prior
     }
 
     if (!found) {
-        return;
+        return -1;
     }
 
     // TODO: logica para saber el father_pid
@@ -65,4 +65,6 @@ void create_process(uint64_t entry_point, int argc, char* argv[], uint32_t prior
 
     // Actualizamos el stack pointer del proceso
     process_table[i].sp = (uint64_t) stack_ptr;
+
+    return 0;
 }

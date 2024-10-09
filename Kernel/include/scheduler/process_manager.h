@@ -50,6 +50,6 @@ typedef struct {
 
 extern PCB* process_table;
 
-void create_process(char* process_name, uint64_t entry_point, int argc, char* argv[], uint32_t priority);
+char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
 
 #endif

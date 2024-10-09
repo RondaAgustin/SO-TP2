@@ -9,6 +9,7 @@
 #include <interruptHandlers/interrupts.h>
 #include <lib.h>
 #include <memoryManager/memory_manager.h>
+#include <scheduler/process_manager.h>
 
 uint64_t sys_read(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
     char c = 0;
@@ -122,6 +123,9 @@ uint64_t sys_mm_get_free_memory(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64
     return mm_get_free_memory();
 }
 
+uint64_t sys_create_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return create_process(rdi, rsi, (char**) rdx, r10);
+}
 
 uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
     sys_read, sys_write, sys_put_text, 
@@ -130,7 +134,8 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_get_character_pressed, sys_clear_text_buffer, sys_get_cpu_vendor, 
     sys_beep, sys_delay, sys_print_registers, 
     sys_clear_screen, sys_mm_malloc, sys_mm_free, 
-    sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory
+    sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory,
+    sys_create_process
 };
 
 uint64_t syscall_handler(const registers64_t *registers){
