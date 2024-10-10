@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <types.h>
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <scheduler/shared_process_structures.h>
@@ -37,5 +38,9 @@ typedef struct {
 extern PCB* process_table;
 
 char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
+void unblock_process(pid_t pid);
+void block_process(pid_t pid);
+PCB* find_pcb_by_pid(pid_t pid);
+pid_t get_pid();
 
 #endif

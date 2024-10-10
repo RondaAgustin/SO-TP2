@@ -1,24 +1,18 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef __CIRCULAR_LIST_H__
+#define __CIRCULAR_LIST_H__
 
+#include <stddef.h>
+#include <stdint.h>
 
-#include <lib.h>
+typedef void* DataType;
+typedef struct ListCircularCDT *ListCircularADT;
 
-typedef struct ListCDT* ListADT;
-typedef struct ListCircularIteratorCDT* ListCircularIteratorADT;
-typedef void * DataType;
-
-
-ListADT list_create();
-void list_add(ListADT list, DataType data);
-void list_remove(ListADT list, DataType data, int (*cmp)(const DataType, const DataType));
-void list_remove_all(ListADT list, DataType data, int (*cmp)(const DataType, const DataType));
-void list_destroy(ListADT list, void (*free_func)(void *));
-uint64_t list_size(ListADT list);
-
-
-ListCircularIteratorADT list_iterator(ListADT list);
-DataType list_circular_iterator_next(ListCircularIteratorADT iterator);
-void list_iterator_destroy(ListCircularIteratorADT iterator);
+ListCircularADT list_create();
+void list_add(ListCircularADT list, DataType data);
+void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
+void list_remove_all(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
+uint64_t list_size(ListCircularADT list);
+void list_destroy(ListCircularADT list, void (*free_func)(void *));
+DataType list_next(ListCircularADT list);
 
 #endif

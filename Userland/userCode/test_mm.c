@@ -10,7 +10,6 @@
 // }
 
 uint64_t test_mm(uint64_t argc, char *argv[]) {
-
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
   uint32_t total;
@@ -25,9 +24,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
   uint64_t count = 0;
   
   while (1) {
-
-    // printf("Iteracion %d\n", i++);
-
     rq = 0;
     total = 0;
 
@@ -53,7 +49,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          // printf("test_mm ERROR\n");
+          puts("test_mm ERROR\n");
           return -1;
         }
 
@@ -62,7 +58,6 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       if (mm_rqs[i].address)
         sys_mm_free(mm_rqs[i].address);
 
-    printf("Ciclo %d completado.\n", count);
     count++;
     // uint64_to_hex_string(count++, buff, 17);
     // write_to_video_text_buffer(buff, 17, HEX_RED);

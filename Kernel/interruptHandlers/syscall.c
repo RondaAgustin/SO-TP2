@@ -10,6 +10,7 @@
 #include <lib.h>
 #include <memoryManager/memory_manager.h>
 #include <scheduler/process_manager.h>
+#include <types.h>
 
 uint64_t sys_read(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
     char c = 0;
@@ -127,6 +128,18 @@ uint64_t sys_create_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r
     return create_process(rdi, rsi, (char**) rdx, r10);
 }
 
+uint64_t sys_get_pid(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return get_pid();
+}
+
+void sys_block_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    block_process(rdi);
+}
+
+void sys_unblock_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    unblock_process(rdi);
+}
+
 uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
     sys_read, sys_write, sys_put_text, 
     sys_set_font_size, sys_draw_square, sys_get_screen_width, 
@@ -135,7 +148,8 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_beep, sys_delay, sys_print_registers, 
     sys_clear_screen, sys_mm_malloc, sys_mm_free, 
     sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory,
-    sys_create_process
+    sys_create_process, sys_get_pid, sys_block_process,
+    sys_unblock_process
 };
 
 uint64_t syscall_handler(const registers64_t *registers){

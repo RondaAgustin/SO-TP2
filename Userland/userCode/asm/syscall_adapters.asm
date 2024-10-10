@@ -22,6 +22,9 @@ global sys_mm_get_total_memory
 global sys_mm_get_used_memory
 global sys_mm_get_free_memory
 global sys_create_process
+global sys_get_pid
+global sys_block_process
+global sys_unblock_process
 
 %macro syscall 1
     push rbp
@@ -101,3 +104,12 @@ sys_mm_get_free_memory:
 
 sys_create_process:
     syscall 21
+
+sys_get_pid:
+    syscall 22
+
+sys_block_process:
+    syscall 23
+
+sys_unblock_process:
+    syscall 24

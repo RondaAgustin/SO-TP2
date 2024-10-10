@@ -6,23 +6,18 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-struct ListCDT {
+struct ListCircularCDT {
     Node *head;
+    Node *current;
     size_t size;
 };
 
-struct ListCircularIteratorCDT {
-    Node *current;
-    Node *head;
-};
-
-
-
-ListADT list_create(void) {
-    ListADT list = mm_malloc(sizeof(ListADT));
+ListCircularADT list_create() {
+    ListCircularADT list = mm_malloc(sizeof(struct ListCircularCDT));
     if (list == NULL) return NULL;
     
     list->head = NULL;
+    list->current = NULL;
     list->size = 0;
 
     return list;
@@ -37,104 +32,134 @@ static Node *create_node(DataType data) {
     return node;
 }
 
-void list_add(ListADT list, DataType data) {
+void list_add(ListCircularADT list, DataType data) {
     Node *new_node = create_node(data);
-    if (new_node == NULL) return; 
+    if (new_node == NULL) return;
 
-    
     if (list->head == NULL) {
         list->head = new_node;
+        list->current = new_node;
+        new_node->next = new_node; // Circular reference
     } else {
         Node *current = list->head;
-        while (current->next != NULL) 
+        while (current->next != list->head) 
             current = current->next;
-        
+
         current->next = new_node;
+        new_node->next = list->head; // Circular reference
     }
     list->size++;
 }
 
 // Elimina el primer elemento que coincida con data
-void list_remove(ListADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+    if (list->head == NULL) return; // Lista vacía
+
     Node *current = list->head;
     Node *previous = NULL;
 
-    while (current != NULL) {
+    do {
         if (cmp(current->data, data) == 0) {
-            if (previous == NULL) {
-                list->head = current->next;
+            if (current == list->current)
+                list->current = current->next;
+            
+            
+            if (previous == NULL) { // El nodo a eliminar es el primero
+                // Si es el único nodo
+                if (current->next == list->head) {
+                    mm_free(current);
+                    list->head = NULL;
+                } else {
+                    Node *tail = list->head;
+                    while (tail->next != list->head) 
+                        tail = tail->next;
+
+                    tail->next = current->next; // Ajusta la referencia del último nodo
+                    list->head = current->next; // Actualiza la cabeza
+                    mm_free(current);
+                }
             } else {
                 previous->next = current->next;
+                mm_free(current);
             }
-            mm_free(current);
             list->size--;
             return;
         }
         previous = current;
         current = current->next;
-    }
+    } while (current != list->head);
 }
 
-//Elimina todos los elementos que coincidan con data
-void list_remove_all(ListADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+// Elimina todos los elementos que coincidan con data
+void list_remove_all(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+    if (list->head == NULL) return; // Lista vacía
+
     Node *current = list->head;
     Node *previous = NULL;
 
-    while (current != NULL) {
+    do {
         if (cmp(current->data, data) == 0) {
+            if (current == list->current)
+                list->current = current->next;
             Node *delete_node = current;
-            if (previous == NULL) {
-                list->head = current->next; 
+            if (previous == NULL) { // El nodo a eliminar es el primero
+                // Si es el único nodo
+                if (current->next == list->head) {
+                    list->head = NULL;
+                } else {
+                    Node *tail = list->head;
+                    while (tail->next != list->head) 
+                        tail = tail->next;
+
+                    tail->next = current->next; // Ajusta la referencia del último nodo
+                    list->head = current->next; // Actualiza la cabeza
+                }
             } else {
-                previous->next = current->next; 
+                previous->next = current->next;
             }
-            current = current->next;  
+            current = current->next; // Continúa con el siguiente nodo
             mm_free(delete_node);
-            list->size--; 
+            list->size--;
         } else {
-            previous = current; 
+            previous = current;
             current = current->next;
         }
-    }
+    } while (current != list->head);
 }
 
-uint64_t list_size(ListADT list) {
+uint64_t list_size(ListCircularADT list) {
     return list->size;
 }
 
 // Libera la memoria de la lista
-void list_destroy(ListADT list, void (*free_func)(void *)) {
+void list_destroy(ListCircularADT list, void (*free_func)(void *)) {
+    if (list->head == NULL) {
+        mm_free(list);
+        return;
+    }
+
     Node *current = list->head;
-    while (current != NULL) {
-        Node *next = current->next;
-        
+    Node *next;
+
+    do {
+        next = current->next;
+
         if (free_func != NULL) 
             free_func(current->data);
         
         mm_free(current);
         current = next;
-    }
+    } while (current != list->head);
+
     mm_free(list);
 }
 
-ListCircularIteratorADT list_iterator(ListADT list){
-    if (list == NULL) return NULL;
-    
-    ListCircularIteratorADT iterator = mm_malloc(sizeof(ListCircularIteratorADT));
-    if (iterator == NULL) return NULL;
+DataType list_next(ListCircularADT list){
+    if (list->current == NULL) return;
 
-    iterator->current = list->head;
-    iterator->head = list->head;
-    return iterator;
-}
+    DataType data = list->current->data;
 
-DataType list_circular_iterator_next(ListCircularIteratorADT iterator){
-    if (iterator->current == NULL) iterator->current = iterator->head;
-    DataType data = iterator->current->data;
-    iterator->current = iterator->current->next;
+    list->current = list->current->next;
+
     return data;
-}
-
-void list_iterator_destroy(ListCircularIteratorADT iterator){
-    mm_free(iterator);
 }

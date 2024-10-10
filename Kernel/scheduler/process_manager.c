@@ -1,10 +1,8 @@
 #include <scheduler/process_manager.h>
 
 PCB* process_table;
-extern SchedulerADT my_scheduler;
 
 char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
-    
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
         return -1;
     }
@@ -73,4 +71,30 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
 
     add_ready_process(&process_table[i]);
     return 0;
+}
+
+void block_process(pid_t pid){
+    PCB* process_to_block = find_pcb_by_pid(pid);
+    if (process_to_block->state != EXITED){
+        process_to_block->state = BLOCKED;
+    }
+    
+    remove_ready_process(process_to_block);
+}
+
+void unblock_process(pid_t pid){
+    PCB* blocked_process = find_pcb_by_pid(pid);
+    if (blocked_process->state == BLOCKED){
+        blocked_process->state = READY;
+    }
+    add_ready_process(blocked_process);
+}
+
+PCB* find_pcb_by_pid(pid_t pid){
+    return &process_table[pid];
+}
+
+pid_t get_pid(){
+    PCB* running_process = get_running_process();
+    return running_process->pid;
 }

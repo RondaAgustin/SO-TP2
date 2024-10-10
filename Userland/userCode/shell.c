@@ -5,6 +5,8 @@
 #include <eliminator.h>
 #include <lib.h>
 #include <test_mm.h>
+#include <types.h>
+
 
 typedef struct {
     char* module_name;
@@ -24,7 +26,12 @@ ModuleDescriptor modules[] = {
     {"calculator", "positive integer calculator", calculator},
     {"eliminator", "eliminator game", eliminator},
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
-    {"test_mm", "test memory manager", test_memory}
+    {"test_mm", "test memory manager", test_memory},
+    {"shell_pid", "get shell pid", get_pid},
+    {"block_second", "block second process", block_second_process},
+    {"unblock_second", "unblock second process", unblock_second_process},
+    {"process1", "process that prints Process 1", create_process_1},
+    {"process2", "process that prints Process 2", create_process_2},
     };
 
 static int current_font_size = 1;
@@ -153,6 +160,28 @@ void jump() {
 }
 
 void test_memory(){
-    char *argv[] = {"20971520"};
-  	test_mm(1, argv);
+    char *argv[] = {"20971520", NULL};
+    sys_create_process(test_mm, 1, argv, 1);
+}
+
+void block_second_process(){
+    sys_block_process(2);
+}
+
+void unblock_second_process(){
+    sys_unblock_process(2);
+}
+
+void create_process_1(){
+    char* argv_process[] = {"Process 1\n", NULL};
+    sys_create_process((uint64_t) process, 1, argv_process, 1);
+}
+
+void create_process_2(){
+    char* argv_process[] = {"Process 2\n", NULL};
+    sys_create_process((uint64_t) process, 1, argv_process, 1);
+}
+
+void get_pid(){
+    printf("Shell pid = %d\n", sys_get_pid());
 }
