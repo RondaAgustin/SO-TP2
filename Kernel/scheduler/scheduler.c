@@ -41,10 +41,10 @@ uint64_t context_switch(uint64_t rsp){
         scheduler->current = list_next(scheduler->scheduling_process);
         scheduler->current->state = RUNNING;
 
-        // TODO DEJAR DE IMPRIMIR EL NOMBRE DE LOS PROCESOS EXTRAS ACA
-        if (scheduler->current->pid == 2 || scheduler->current->pid == 3){
-            write_to_video_text_buffer(scheduler->current->process_name, 10, HEX_RED);
-        }
+        // // TODO DEJAR DE IMPRIMIR EL NOMBRE DE LOS PROCESOS EXTRAS ACA
+        // if (scheduler->current->pid == 2 || scheduler->current->pid == 3){
+        //     write_to_video_text_buffer(scheduler->current->process_name, 10, HEX_RED);
+        // }
         
         return scheduler->current->sp;
     }
