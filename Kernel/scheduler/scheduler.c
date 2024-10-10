@@ -30,8 +30,6 @@ void create_scheduler(){
 
     char* argv_idle[] = {"idle", NULL};
     create_process((uint64_t) idle, 1, argv_idle, 1);
-
-    return scheduler;
 }
 
 uint64_t context_switch(uint64_t rsp){
