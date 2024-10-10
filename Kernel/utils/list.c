@@ -38,7 +38,6 @@ void list_add(ListCircularADT list, DataType data) {
 
     if (list->head == NULL) {
         list->head = new_node;
-        list->current = new_node;
         new_node->next = new_node; // Circular reference
     } else {
         Node *current = list->head;
@@ -48,6 +47,7 @@ void list_add(ListCircularADT list, DataType data) {
         current->next = new_node;
         new_node->next = list->head; // Circular reference
     }
+    list->current = list->head;
     list->size++;
 }
 
@@ -83,11 +83,13 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
                 mm_free(current);
             }
             list->size--;
+            list->current = list->head;
             return;
         }
         previous = current;
         current = current->next;
     } while (current != list->head);
+
 }
 
 // Elimina todos los elementos que coincidan con data

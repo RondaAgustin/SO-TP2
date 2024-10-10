@@ -1,5 +1,8 @@
 #include <scheduler/scheduler.h>
 
+#include <interruptHandlers/interrupts.h>
+#include <drivers/videoDriver.h>
+
 #include <lib.h>
 
 typedef struct Scheduler {
@@ -15,6 +18,7 @@ int cmp(DataType d1, DataType d2){
 
 
 void create_scheduler(){
+    _cli();
     scheduler = mm_malloc(sizeof(Scheduler));
     scheduler->current = NULL;
     scheduler->scheduling_process = list_create();
@@ -30,9 +34,13 @@ void create_scheduler(){
 
     char* argv_idle[] = {"idle", NULL};
     create_process((uint64_t) idle, 1, argv_idle, 1);
+    
+    _sti();
+    return scheduler;
 }
 
 uint64_t context_switch(uint64_t rsp){
+    _cli();
     if (scheduler != NULL) {
         if (scheduler->current != NULL && scheduler->current->base >= rsp && scheduler->current->limit <= rsp){
             scheduler->current->sp = rsp;
@@ -40,14 +48,15 @@ uint64_t context_switch(uint64_t rsp){
         }
         scheduler->current = list_next(scheduler->scheduling_process);
         scheduler->current->state = RUNNING;
-
-        // // TODO DEJAR DE IMPRIMIR EL NOMBRE DE LOS PROCESOS EXTRAS ACA
-        // if (scheduler->current->pid == 2 || scheduler->current->pid == 3){
+        // TODO DEJAR DE IMPRIMIR EL NOMBRE DE LOS PROCESOS EXTRAS ACA
+        // if (scheduler->current->pid >= 2){
+        //     update_screen_text_buffer();
         //     write_to_video_text_buffer(scheduler->current->process_name, 10, HEX_RED);
         // }
-        
+        _sti();
         return scheduler->current->sp;
     }
+    _sti();
     return rsp;
 }
 
@@ -57,7 +66,9 @@ void add_ready_process(PCB* process_pcb){
 }
 
 void remove_ready_process(PCB *process_pcb){
-    list_remove_all(scheduler->scheduling_process, process_pcb, cmp);
+    for (int i = 0; i < process_pcb->priority; i++)
+        list_remove(scheduler->scheduling_process, process_pcb, cmp);
+    // list_remove_all(scheduler->scheduling_process, process_pcb, cmp);
 }
 
 PCB* get_running_process(){

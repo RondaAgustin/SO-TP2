@@ -1,8 +1,12 @@
 #include <scheduler/process_manager.h>
+#include <interruptHandlers/interrupts.h>
+
 
 PCB* process_table;
 
 char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
+    _cli();
+
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
         return -1;
     }
@@ -70,6 +74,7 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
     process_table[i].sp = (uint64_t) stack_ptr;
 
     add_ready_process(&process_table[i]);
+    _sti();
     return 0;
 }
 
@@ -77,17 +82,16 @@ void block_process(pid_t pid){
     PCB* process_to_block = find_pcb_by_pid(pid);
     if (process_to_block->state != EXITED){
         process_to_block->state = BLOCKED;
+        remove_ready_process(process_to_block);
     }
-    
-    remove_ready_process(process_to_block);
 }
 
 void unblock_process(pid_t pid){
     PCB* blocked_process = find_pcb_by_pid(pid);
     if (blocked_process->state == BLOCKED){
         blocked_process->state = READY;
+        add_ready_process(blocked_process);
     }
-    add_ready_process(blocked_process);
 }
 
 PCB* find_pcb_by_pid(pid_t pid){
