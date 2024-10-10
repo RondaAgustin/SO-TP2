@@ -11,7 +11,7 @@ typedef enum State {
 } State;
 
 typedef struct {
-    char pid;
+    uint32_t pid;
     char father_pid;
     char* process_name;
     char priority;
