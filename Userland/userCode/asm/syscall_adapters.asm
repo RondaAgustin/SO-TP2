@@ -26,7 +26,7 @@ global sys_get_pid
 global sys_block_process
 global sys_unblock_process
 global sys_kill_process
-global sys_process
+global sys_modify_priority
 
 %macro syscall 1
     push rbp
@@ -119,5 +119,5 @@ sys_unblock_process:
 sys_kill_process:
     syscall 25
 
-sys_process:
+sys_modify_priority:
     syscall 26

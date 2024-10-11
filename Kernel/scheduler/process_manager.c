@@ -124,6 +124,24 @@ uint8_t kill_process(pid_t pid){
     return 0;
 }
 
+uint8_t modify_process_priority(pid_t pid, uint32_t priority){
+    PCB* process = find_pcb_by_pid(pid);
+
+    if (process == NULL) return -1;
+
+    State state = process->state;
+
+    if (state == EXITED) return -1;
+
+    remove_ready_process(process);
+
+    process->priority = priority;
+
+    add_ready_process(process);
+
+    return 0;
+}
+
 PCB* find_pcb_by_pid(pid_t pid){
     return &process_table[pid];
 }
