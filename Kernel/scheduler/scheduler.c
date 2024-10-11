@@ -32,11 +32,13 @@ void create_scheduler(){
     create_process((uint64_t) idle, 1, argv_idle, 1);
 }
 
-uint64_t context_switch(uint64_t rsp){
+uint64_t context_switch(uint64_t rsp) {
     if (scheduler != NULL) {
         if (scheduler->current != NULL && scheduler->current->base >= rsp && scheduler->current->limit <= rsp){
             scheduler->current->sp = rsp;
-            scheduler->current->state = READY;
+            if(scheduler->current->state == RUNNING) {
+                scheduler->current->state = READY;
+            }
         }
         scheduler->current = list_next(scheduler->scheduling_process);
         scheduler->current->state = RUNNING;
