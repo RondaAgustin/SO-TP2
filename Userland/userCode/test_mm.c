@@ -22,11 +22,13 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
     return -1;
 
   uint64_t count = 0;
+
   
   while (1) {
     rq = 0;
     total = 0;
 
+    max_memory = sys_mm_get_free_memory();
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < max_memory) {
       mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
@@ -39,7 +41,7 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
       }
     }
 
-    // Set
+  //   // Set
     uint32_t i;
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
@@ -53,13 +55,16 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
           return -1;
         }
 
-    // Free
+  //   // Free
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         sys_mm_free(mm_rqs[i].address);
 
     count++;
-    // uint64_to_hex_string(count++, buff, 17);
-    // write_to_video_text_buffer(buff, 17, HEX_RED);
+    char buffer[20];
+    itoa(count, buffer, 20);
+    puts("Ciclo ");
+    puts(buffer);
+    puts("\n");
   }
 }

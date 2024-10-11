@@ -24,4 +24,10 @@ clean:
 	cd Toolchain; make clean
 	cd Userland; make clean
 
+container:
+	docker run -v "${PWD}:/root" --privileged -ti agodio/itba-so-multi-platform:3.0
+
+container_gdb:
+	docker run --add-host=host.docker.internal:host-gateway -v "${PWD}:/root" --privileged -ti agodio/itba-so-multi-platform:3.0
+
 .PHONY: bootloader image collections kernel userland all clean

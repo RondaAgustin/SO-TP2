@@ -59,14 +59,8 @@ int main() {
     set_font_size(1);
     clear_video_text_buffer();
 
-	// write_to_video_text_buffer("Realizando pruebas de memoria\n", 30, HEX_GRAY);
-
   	mm_init((void *)0x1000000, BLOCK_COUNT * BLOCK_SIZE);
-	// char *argv[] = {"10240"};
-  	// uint64_t result = test_mm(1, argv);
 
-	// if(result == -1) 
-	// 	write_to_video_text_buffer("Error en las pruebas\n", 21, HEX_RED);
     write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 

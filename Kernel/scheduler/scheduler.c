@@ -1,7 +1,6 @@
 #include <scheduler/scheduler.h>
 
 #include <interruptHandlers/interrupts.h>
-#include <drivers/videoDriver.h>
 
 #include <lib.h>
 
@@ -45,14 +44,10 @@ uint64_t context_switch(uint64_t rsp){
         if (scheduler->current != NULL && scheduler->current->base >= rsp && scheduler->current->limit <= rsp){
             scheduler->current->sp = rsp;
             scheduler->current->state = READY;
-        }
+        } 
+           
         scheduler->current = list_next(scheduler->scheduling_process);
         scheduler->current->state = RUNNING;
-        // TODO DEJAR DE IMPRIMIR EL NOMBRE DE LOS PROCESOS EXTRAS ACA
-        // if (scheduler->current->pid >= 2){
-        //     update_screen_text_buffer();
-        //     write_to_video_text_buffer(scheduler->current->process_name, 10, HEX_RED);
-        // }
         _sti();
         return scheduler->current->sp;
     }

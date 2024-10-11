@@ -161,7 +161,8 @@ void jump() {
 
 void test_memory(){
     char *argv[] = {"20971520", NULL};
-    sys_create_process(test_mm, 1, argv, 1);
+    test_mm(1, argv);
+    // sys_create_process(test_mm, 1, argv, 1);
 }
 
 void block_second_process(){

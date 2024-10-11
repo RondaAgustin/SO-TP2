@@ -1,6 +1,7 @@
 #include "./test_util.h"
 #include <syscall_adapters.h>
 #include <std.h>
+#include <lib.h>
 
 #define MAX_BLOCKS 128
 #define BLOCK_SIZE 1024
