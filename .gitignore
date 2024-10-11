@@ -2,6 +2,7 @@
 *.elf
 *.sys
 *.bin
+*.elf
 *.img
 *.qcow2
 *.vmdk

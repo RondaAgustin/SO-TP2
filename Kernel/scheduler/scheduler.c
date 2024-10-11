@@ -40,7 +40,7 @@ uint64_t context_switch(uint64_t rsp){
     if (scheduler != NULL) {
         if (scheduler->current != NULL && scheduler->current->base >= rsp && scheduler->current->limit <= rsp){
             scheduler->current->sp = rsp;
-            if (scheduler->current->state != RUNNING){
+            if (scheduler->current->state == RUNNING){
                 scheduler->current->state = READY;
             }
         } 

@@ -162,9 +162,12 @@ void jump() {
 }
 
 void test_memory(){
-    char *argv[] = {"20971520", NULL};
-    test_mm(1, argv);
-    // sys_create_process(test_mm, 1, argv, 1);
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+
+    argv[0] = "20971520";
+    argv[1] = NULL;
+
+    sys_create_process(test_mm, 1, argv, 5);
 }
 
 void block_process(){
@@ -173,7 +176,13 @@ void block_process(){
     printf("Pid to block: ");
     scanf("%d", &pid);
 
-    sys_block_process(pid);
+    char result = sys_block_process(pid);
+
+    if (result == 0){
+        puts("Process blocked correctly\n");
+        return;
+    }
+    puts("Error to block process\n");
 }
 
 void unblock_process(){
@@ -182,17 +191,28 @@ void unblock_process(){
     printf("Pid to unblock: ");
     scanf("%d", &pid);
 
-    sys_unblock_process(pid);
+    char result = sys_unblock_process(pid);
+
+    if (result == 0){
+        puts("Process unblocked correctly\n");
+        return;
+    }
+    puts("Error to unblock process\n");
+    
 }
 
 void create_process_1(){
-    char* argv_process[] = {"Process 1\n", NULL};
-    sys_process(0, 1, argv_process, 1);
+    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
+    argv_process[0] = "Process 1\n";
+    argv_process[1] = NULL;
+    sys_create_process((uint64_t) process, 1, argv_process, 1);
 }
 
 void create_process_2(){
-    char* argv_process[] = {"Process 2\n", NULL};
-    sys_process(1, 1, argv_process, 1);
+    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
+    argv_process[0] = "Process 2\n";
+    argv_process[1] = NULL;
+    sys_create_process((uint64_t) process, 1, argv_process, 2);
 }
 
 void kill_process(){
