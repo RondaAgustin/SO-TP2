@@ -1,7 +1,5 @@
-#include <scheduler/idle.h>
-#include <scheduler/process_manager.h>
-#include <scheduler/process.h>
-#include <drivers/videoDriver.h>
+#include <process/idle.h>
+
 
 
 uint64_t idle(int argc, char* argv[]){

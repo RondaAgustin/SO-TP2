@@ -1,7 +1,5 @@
 #include <scheduler/scheduler.h>
-
 #include <interruptHandlers/interrupts.h>
-
 #include <lib.h>
 
 typedef struct Scheduler {
@@ -14,7 +12,6 @@ Scheduler* scheduler = NULL;
 int cmp(DataType d1, DataType d2){
     return d1 == d2 ? 0 : 1;
 }
-
 
 void create_scheduler(){
     _cli();

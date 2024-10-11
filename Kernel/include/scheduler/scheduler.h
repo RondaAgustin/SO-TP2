@@ -6,14 +6,15 @@
 
 #include <memoryManager/memory_manager.h>
 
-#include <shell_caller.h>
 #include <utils/list.h>
 #include <types.h>
 
 #include <scheduler/shared_process_structures.h>
 #include <scheduler/process_manager.h>
-#include <scheduler/idle.h>
-#include <scheduler/process.h>
+
+
+#include <process/idle.h>
+#include <shell_caller.h>
 
 typedef struct Scheduler* SchedulerADT;
 
