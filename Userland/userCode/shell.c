@@ -27,6 +27,7 @@ ModuleDescriptor modules[] = {
     {"eliminator", "eliminator game", eliminator},
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
     {"test_mm", "test memory manager", test_memory},
+    {"test_processes", "test processes", test_processes},
     {"shell_pid", "get shell pid", get_pid},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
@@ -242,4 +243,12 @@ void while_1(){
 
 void get_pid(){
     printf("Shell pid = %d\n", sys_get_pid());
+}
+
+void test_scheduler_processes(){
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+    argv[0] = "59";
+    argv[1] = NULL;
+
+    sys_create_process((uint64_t) test_processes, 1, argv, 100);
 }

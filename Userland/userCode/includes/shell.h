@@ -3,7 +3,10 @@
 
 #define MAX_SHELL_INPUT 1024
 
+#include <stdint.h>
+
 #include <process.h>
+#include <test_processes.h>
 
 void help();
 void cls();
@@ -16,6 +19,8 @@ void song();
 void calculator();
 void eliminator();
 void jump();
+
+void test_scheduler_processes();
 void test_memory();
 
 void block_process();

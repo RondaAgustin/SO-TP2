@@ -75,7 +75,7 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
 
     add_ready_process(&process_table[i]);
     _sti();
-    return 0;
+    return process_table[i].pid;
 }
 
 uint8_t block_process(pid_t pid){
