@@ -5,4 +5,5 @@
 #include <std.h>
 
 uint64_t process(int argc, char *argv[]);
+
 #endif

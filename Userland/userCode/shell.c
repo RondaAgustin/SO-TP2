@@ -27,7 +27,7 @@ ModuleDescriptor modules[] = {
     {"eliminator", "eliminator game", eliminator},
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
     {"test_mm", "test memory manager", test_memory},
-    {"test_processes", "test processes", test_processes},
+    {"test_processes", "test processes", test_scheduler_processes},
     {"shell_pid", "get shell pid", get_pid},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
