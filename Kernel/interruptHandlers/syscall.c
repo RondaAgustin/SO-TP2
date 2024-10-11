@@ -12,7 +12,7 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_clear_screen, sys_mm_malloc, sys_mm_free, 
     sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory,
     sys_create_process, sys_get_pid, sys_block_process,
-    sys_unblock_process
+    sys_unblock_process, sys_kill_process, sys_process
 };
 
 uint64_t syscall_handler(const registers64_t *registers){
@@ -145,11 +145,25 @@ uint64_t sys_get_pid(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uin
 }
 
 uint64_t sys_block_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    block_process(rdi);
-    return 0;
+    return block_process(rdi);
 }
 
 uint64_t sys_unblock_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    unblock_process(rdi);
+    return unblock_process(rdi);
+}
+
+uint64_t sys_kill_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    return kill_process(rdi);
+}
+
+uint64_t sys_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    uint64_t (*processes[])(int, char**) = { 
+        process_1, process_2
+    };
+
+    if (rdi >= sizeof(processes) / sizeof(processes[0]))
+        return -1;
+
+    create_process((uint64_t) processes[rdi], rsi, rdx, r10);
     return 0;
 }

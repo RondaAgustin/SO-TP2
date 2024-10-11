@@ -38,9 +38,12 @@ typedef struct {
 extern PCB* process_table;
 
 char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
-void unblock_process(pid_t pid);
-void block_process(pid_t pid);
-PCB* find_pcb_by_pid(pid_t pid);
+
+uint8_t unblock_process(pid_t pid);
+uint8_t block_process(pid_t pid);
+uint8_t kill_process(pid_t pid);
 pid_t get_pid();
+
+PCB* find_pcb_by_pid(pid_t pid);
 
 #endif

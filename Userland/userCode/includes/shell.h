@@ -17,11 +17,16 @@ void calculator();
 void eliminator();
 void jump();
 void test_memory();
-void block_second_process();
-void unblock_second_process();
+
+void block_process();
+void unblock_process();
+void kill_process();
+
 void get_pid();
 void create_process_1();
 void create_process_2();
+
+void while_1();
 
 
 void run_shell();

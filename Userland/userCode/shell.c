@@ -28,10 +28,12 @@ ModuleDescriptor modules[] = {
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
     {"test_mm", "test memory manager", test_memory},
     {"shell_pid", "get shell pid", get_pid},
-    {"block_second", "block second process", block_second_process},
-    {"unblock_second", "unblock second process", unblock_second_process},
+    {"block", "block process with specific pid", block_process},
+    {"unblock", "unblock process with specific pid", unblock_process},
     {"process1", "process that prints Process 1", create_process_1},
     {"process2", "process that prints Process 2", create_process_2},
+    {"kill", "kill process with sepecific pid", kill_process},
+    {"while", "while 1", while_1},
     };
 
 static int current_font_size = 1;
@@ -165,22 +167,57 @@ void test_memory(){
     // sys_create_process(test_mm, 1, argv, 1);
 }
 
-void block_second_process(){
-    sys_block_process(2);
+void block_process(){
+    pid_t pid;
+
+    printf("Pid to block: ");
+    scanf("%d", &pid);
+
+    sys_block_process(pid);
 }
 
-void unblock_second_process(){
-    sys_unblock_process(2);
+void unblock_process(){
+    pid_t pid;
+
+    printf("Pid to unblock: ");
+    scanf("%d", &pid);
+
+    sys_unblock_process(pid);
 }
 
 void create_process_1(){
     char* argv_process[] = {"Process 1\n", NULL};
-    sys_create_process((uint64_t) process, 1, argv_process, 1);
+    sys_process(0, 1, argv_process, 1);
 }
 
 void create_process_2(){
     char* argv_process[] = {"Process 2\n", NULL};
-    sys_create_process((uint64_t) process, 1, argv_process, 1);
+    sys_process(1, 1, argv_process, 1);
+}
+
+void kill_process(){
+    pid_t pid;
+
+    printf("Pid to kill: ");
+    scanf("%d", &pid);
+
+    char result = sys_kill_process(pid);
+
+    if (result == 0){
+        puts("Process killed correctly\n");
+        return;
+    }
+    puts("Error to kill process\n");
+    
+
+}
+
+void while_1(){
+    while (1)
+    {
+        puts("While 1\n");
+    }
+    
 }
 
 void get_pid(){

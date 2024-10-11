@@ -78,20 +78,50 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
     return 0;
 }
 
-void block_process(pid_t pid){
+uint8_t block_process(pid_t pid){
     PCB* process_to_block = find_pcb_by_pid(pid);
-    if (process_to_block->state != EXITED){
-        process_to_block->state = BLOCKED;
-        remove_ready_process(process_to_block);
-    }
+
+    if (process_to_block == NULL) return -1;
+
+    State state = process_to_block->state;
+
+    if (state == EXITED || state == BLOCKED) return -1;
+    
+    
+    process_to_block->state = BLOCKED;
+    remove_ready_process(process_to_block);
+    return 0;
 }
 
-void unblock_process(pid_t pid){
+uint8_t unblock_process(pid_t pid){
     PCB* blocked_process = find_pcb_by_pid(pid);
-    if (blocked_process->state == BLOCKED){
-        blocked_process->state = READY;
-        add_ready_process(blocked_process);
-    }
+
+    if (blocked_process == NULL) return -1;
+
+    State state = blocked_process->state;
+    
+    if (state != BLOCKED) return -1;
+
+    blocked_process->state = READY;
+    add_ready_process(blocked_process);
+    return 0;
+}
+
+uint8_t kill_process(pid_t pid){
+    PCB* process_to_kill = find_pcb_by_pid(pid);
+    
+    if (process_to_kill == NULL) return -1;
+
+    State state = process_to_kill->state;
+    
+    if (state == EXITED) return -1;
+
+    process_to_kill->state = EXITED;
+
+    if (state == READY || state == RUNNING)
+        remove_ready_process(process_to_kill);
+    
+    return 0;
 }
 
 PCB* find_pcb_by_pid(pid_t pid){

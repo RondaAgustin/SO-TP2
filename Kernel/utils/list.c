@@ -38,14 +38,14 @@ void list_add(ListCircularADT list, DataType data) {
 
     if (list->head == NULL) {
         list->head = new_node;
-        new_node->next = new_node; // Circular reference
+        new_node->next = new_node; 
     } else {
         Node *current = list->head;
         while (current->next != list->head) 
             current = current->next;
 
         current->next = new_node;
-        new_node->next = list->head; // Circular reference
+        new_node->next = list->head; 
     }
     list->current = list->head;
     list->size++;
