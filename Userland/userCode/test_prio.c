@@ -15,38 +15,42 @@
 int64_t prio[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 void test_prio() {
-  int64_t pids[TOTAL_PROCESSES];
-  char *argv[] = {"endless_loop_print", 0};
-  uint64_t i;
+    int64_t pids[TOTAL_PROCESSES];
+    char *argv[] = {"endless_loop_print", 0};
+    uint64_t i;
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = sys_create_process((uint64_t) process, 1, argv, 1);
+    printf("CREATING PROCESSES...\n");
 
-  bussy_wait(WAIT);
-  printf("\nCHANGING PRIORITIES...\n");
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        pids[i] = sys_create_process((uint64_t) process, 1, argv, 1);
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    my_nice(pids[i], prio[i]);
+    bussy_wait(WAIT);
+    printf("\nCHANGING PRIORITIES...\n");
 
-  bussy_wait(WAIT);
-  printf("\nBLOCKING...\n");
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        sys_modify_priority(pids[i], prio[i]);
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    my_block(pids[i]);
+    bussy_wait(WAIT);
+    printf("\nBLOCKING...\n");
 
-  printf("CHANGING PRIORITIES WHILE BLOCKED...\n");
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        sys_block_process(pids[i]);
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    my_nice(pids[i], MEDIUM);
+    printf("CHANGING PRIORITIES WHILE BLOCKED...\n");
 
-  printf("UNBLOCKING...\n");
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        sys_modify_priority(pids[i], MEDIUM);
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    my_unblock(pids[i]);
+    printf("UNBLOCKING...\n");
 
-  bussy_wait(WAIT);
-  printf("\nKILLING...\n");
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        sys_unblock_process(pids[i]);
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
-    my_kill(pids[i]);
+    bussy_wait(WAIT);
+    printf("\nKILLING...\n");
+
+    for (i = 0; i < TOTAL_PROCESSES; i++)
+        sys_kill_process(pids[i]);
+
+    printf("FINISHED\n");
 }
