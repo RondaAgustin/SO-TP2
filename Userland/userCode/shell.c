@@ -173,7 +173,9 @@ void unblock_second_process(){
 }
 
 void create_process_1(){
-    char* argv_process[] = {"Process 1\n", NULL};
+    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
+    argv_process[0] = "Process 1\n";
+    argv_process[1] = NULL;
     sys_create_process((uint64_t) process, 1, argv_process, 1);
 }
 
