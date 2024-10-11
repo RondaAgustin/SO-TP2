@@ -14,6 +14,6 @@ userCodeData:
 clean:
 	cd userCode; make clean
 	rm -rf *.bin
-	# rm -rf *.elf
+	rm -rf *.elf
 
 .PHONY: userCode all clean

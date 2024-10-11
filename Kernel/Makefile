@@ -28,7 +28,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf memoryManager/*.o memoryManager/test/*.o asm/*.o drivers/*.o interruptHandlers/*.o scheduler/*.o *.o *.bin
-	# rm -rf memoryManager/*.o memoryManager/test/*.o asm/*.o drivers/*.o interruptHandlers/*.o scheduler/*.o *.o *.bin *.elf
+	rm -rf memoryManager/*.o memoryManager/test/*.o asm/*.o drivers/*.o interruptHandlers/*.o scheduler/*.o *.o *.bin *.elf
 
 .PHONY: all clean
