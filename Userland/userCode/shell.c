@@ -31,9 +31,10 @@ ModuleDescriptor modules[] = {
     {"shell_pid", "get shell pid", get_pid},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
+    {"kill", "kill process with sepecific pid", kill_process},
+    {"priority", "change process priority", modify_priority},
     {"process1", "process that prints Process 1", create_process_1},
     {"process2", "process that prints Process 2", create_process_2},
-    {"kill", "kill process with sepecific pid", kill_process},
     {"while", "while 1", while_1},
     };
 
@@ -251,4 +252,23 @@ void test_scheduler_processes(){
     argv[1] = NULL;
 
     sys_create_process((uint64_t) test_processes, 1, argv, 100);
+}
+
+void modify_priority(){
+    pid_t pid;
+    uint32_t priority;
+
+    printf("Pid to modify: ");
+    scanf("%d", &pid);
+
+    printf("New priority: ");
+    scanf("%d", &priority);
+
+    char result = sys_modify_priority(pid, priority);
+
+    if (result == 0){
+        puts("Priority modified\n");
+        return;
+    }
+    puts("Error to modify priority\n");
 }

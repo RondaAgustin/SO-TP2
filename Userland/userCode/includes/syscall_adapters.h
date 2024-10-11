@@ -32,7 +32,6 @@ pid_t sys_get_pid();
 uint8_t sys_block_process(pid_t pid);
 uint8_t sys_unblock_process(pid_t pid);
 uint8_t sys_kill_process(pid_t pid);
-
-uint64_t sys_process(uint64_t i, uint32_t argc, char* argv[], uint32_t prioriry);
+uint8_t sys_modify_priority(pid_t pid, uint32_t priority);
 
 #endif

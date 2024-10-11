@@ -14,7 +14,7 @@ typedef struct {
     uint32_t pid;
     char father_pid;
     char* process_name;
-    char priority;
+    uint32_t priority;
     State state;
     uint64_t sp;
     uint64_t base;

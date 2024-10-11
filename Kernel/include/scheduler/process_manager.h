@@ -42,6 +42,8 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
 uint8_t unblock_process(pid_t pid);
 uint8_t block_process(pid_t pid);
 uint8_t kill_process(pid_t pid);
+uint8_t modify_process_priority(pid_t pid, uint32_t priority);
+
 pid_t get_pid();
 
 PCB* find_pcb_by_pid(pid_t pid);
