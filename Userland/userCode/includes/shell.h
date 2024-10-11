@@ -7,6 +7,7 @@
 
 #include <process.h>
 #include <test_processes.h>
+#include <test_prio.h>
 
 void help();
 void cls();
@@ -20,6 +21,7 @@ void calculator();
 void eliminator();
 void jump();
 
+void test_priority_processes();
 void test_scheduler_processes();
 void test_memory();
 

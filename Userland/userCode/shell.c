@@ -28,6 +28,7 @@ ModuleDescriptor modules[] = {
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
     {"test_mm", "test memory manager", test_memory},
     {"test_processes", "test processes", test_scheduler_processes},
+    {"test_prio", "test priority", test_priority_processes},
     {"shell_pid", "get shell pid", get_pid},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
@@ -271,4 +272,12 @@ void modify_priority(){
         return;
     }
     puts("Error to modify priority\n");
+}
+
+void test_priority_processes() {
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+    argv[0] = "test_prio";
+    argv[1] = NULL;
+
+    sys_create_process((uint64_t) test_prio, 1, argv, 100);
 }
