@@ -37,7 +37,7 @@ typedef struct {
 
 extern PCB* process_table;
 
-char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
 
 uint8_t unblock_process(pid_t pid);
 uint8_t block_process(pid_t pid);

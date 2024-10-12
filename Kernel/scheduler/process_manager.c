@@ -4,7 +4,7 @@
 
 PCB* process_table;
 
-char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
     _cli();
 
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
@@ -49,10 +49,10 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
     stack->rax = 0;
     stack->rbx = 0;
     stack->rcx = 0;
-    stack->rdx = 0;
+    stack->rdx = argv;
     stack->rbp = process_table[i].sp - sizeof(uint64_t);
-    stack->rdi = argc;
-    stack->rsi = argv;
+    stack->rdi = entry_point;
+    stack->rsi = argc;
     stack->r8 = 0;
     stack->r9 = 0;
     stack->r10 = 0;
@@ -64,7 +64,7 @@ char create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t 
 
     // Configuramos los registros de interrupción y de estado
     stack->rsp = process_table[i].sp;
-    stack->rip = entry_point;
+    stack->rip = wrapper_entry_point;
     stack->cs = 0x08;
     stack->rflags = 0x202;
     stack->ss = 0;
@@ -121,6 +121,8 @@ uint8_t kill_process(pid_t pid){
     if (state == READY || state == RUNNING)
         remove_ready_process(process_to_kill);
     
+    context_switch(-1);
+
     return 0;
 }
 

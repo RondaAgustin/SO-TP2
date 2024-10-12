@@ -26,10 +26,10 @@ void create_scheduler(){
     }   
 
     char* argv_idle[] = {"idle", NULL};
-    create_process((uint64_t) idle, 1, argv_idle, 1);
+    sys_create_process((uint64_t) idle, 1, argv_idle, 1);
 
-    char* argv_shell[] = {"shell", NULL};
-    create_process((uint64_t) start_shell, 1, argv_shell, 20);
+    char* argv_shell[] = {"start_shell", NULL};
+    sys_create_process((uint64_t) start_shell, 1, argv_shell, 20);
     
     _sti();
     return scheduler;
