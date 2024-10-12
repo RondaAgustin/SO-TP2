@@ -50,7 +50,4 @@ void test_prio() {
         sys_kill_process(pids[i]);
 
     puts("FINISHED");
-
-    pid_t pid = sys_get_pid();
-    sys_kill_process(2);
 }
