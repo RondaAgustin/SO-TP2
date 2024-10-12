@@ -121,8 +121,11 @@ uint8_t kill_process(pid_t pid){
     if (state == READY || state == RUNNING)
         remove_ready_process(process_to_kill);
     
-    context_switch(-1);
 
+    if (process_to_kill == get_running_process()){
+        _irq00Handler();
+    }
+    
     return 0;
 }
 

@@ -9,4 +9,5 @@ void _main(Function entry_point, int argc, char* argv[]) {
     entry_point(argc, argv);
     pid_t pid = get_pid();
     kill_process(pid);
+    return;
 }
