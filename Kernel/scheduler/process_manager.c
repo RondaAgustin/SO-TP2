@@ -138,6 +138,11 @@ uint8_t modify_process_priority(pid_t pid, uint32_t priority){
 
     if (state == EXITED) return -1;
 
+    if(state == BLOCKED) {
+        process->priority = priority;
+        return 0;
+    }
+
     remove_ready_process(process);
 
     process->priority = priority;

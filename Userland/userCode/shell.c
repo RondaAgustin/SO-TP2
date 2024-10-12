@@ -61,8 +61,14 @@ void help() {
 
     puts("\t- exit: exit to kernel.\n");
 
-    for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++)
-        printf("\t- %s: %s.\n", modules[i].module_name, modules[i].module_description);
+    for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) {
+        puts("\t- ");
+        puts(modules[i].module_name);
+        puts(": ");
+        puts(modules[i].module_description);
+        putchar('\n');
+        // printf("\t- %s: %s.\n", modules[i].module_name, modules[i].module_description);
+    }
 
     putchar('\n');
 }
@@ -73,12 +79,22 @@ void cls() {
 
 void info() {
     puts("screen info:\n");
-    printf("width: %d pixels\n", sys_get_screen_width());
-    printf("height: %d pixels\n\n", sys_get_screen_height());
+    puts("width: ");
+    char buffer[10];
+    itoa(sys_get_screen_width(), buffer, 10);
+    puts(buffer);
+    puts(" pixels\n");
+    puts("height: ");
+    itoa(sys_get_screen_height(), buffer, 10);
+    puts(buffer);
+    puts(" pixels\n\n");
 
     char cpu_vendor_buff[200];
     sys_get_cpu_vendor(cpu_vendor_buff);
-    printf("cpu vendor: %s\n\n", cpu_vendor_buff);
+    puts("cpu vendor: ");
+    puts(cpu_vendor_buff);
+    putchar('\n');
+    putchar('\n');
 }
 
 void font_size(){
@@ -170,7 +186,7 @@ void test_memory(){
     argv[0] = "20971520";
     argv[1] = NULL;
 
-    sys_create_process(test_mm, 1, argv, 5);
+    sys_create_process(test_mm, 1, argv, 100);
 }
 
 void block_process(){
@@ -252,7 +268,7 @@ void test_scheduler_processes(){
     argv[0] = "59";
     argv[1] = NULL;
 
-    sys_create_process((uint64_t) test_processes, 1, argv, 100);
+    sys_create_process((uint64_t) test_processes, 1, argv, 200);
 }
 
 void modify_priority(){

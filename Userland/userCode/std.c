@@ -55,24 +55,40 @@ void puts_with_color(const char* s, uint32_t hexColor) {
     sys_write(hexColor, s, strlen(s));
 }
 
-char itoa_buff[ITOA_BUFF_MAX_SIZE];
 char* itoa(uint64_t num, char* dest, uint32_t dest_max_len) {
-    itoa_buff[0] = 0;
+    if (dest_max_len == 0) {
+        return dest;
+    }
 
-    uint32_t i;
-    for (i = 0; num != 0; num /= 10)
-        itoa_buff[i++] = num % 10;
+    if (num == 0) {
+        dest[0] = '0';
+        dest[1] = '\0';
+        return dest;
+    }
 
-    if (i == 0) i = 1;
+    char itoa_buff[ITOA_BUFF_MAX_SIZE];
+    uint32_t i = 0;
 
-    uint32_t j;
-    for (j = 0; j < dest_max_len && j < i; j++)
-        dest[j] = itoa_buff[i - j - 1] + '0';
+    while (num != 0 && i < ITOA_BUFF_MAX_SIZE) {
+        itoa_buff[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+
+    if (i >= dest_max_len) {
+        i = dest_max_len - 1;
+    }
+
+    uint32_t j = 0;
+    while (j < i) {
+        dest[j] = itoa_buff[i - j - 1];
+        j++;
+    }
 
     dest[j] = '\0';
 
     return dest;
 }
+
 
 uint32_t get_fmt_num_args(const char* fmt) {
     uint32_t count = 0;
@@ -88,8 +104,7 @@ void printf(const char* fmt, ...) {
     char printf_buff[PRINTF_PRINT_BUFF_MAX_SIZE];
 
     va_list arg_list;
-    uint32_t num_args = get_fmt_num_args(fmt);
-    va_start(arg_list, num_args);
+    va_start(arg_list, fmt);  // Corregido el argumento de va_start
 
     uint32_t k = 0;
     for (uint32_t i = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && fmt[i] != '\0'; i++) {
@@ -97,31 +112,48 @@ void printf(const char* fmt, ...) {
             char* arg_s = va_arg(arg_list, char*);
             for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && arg_s[j] != '\0'; j++)
                 printf_buff[k++] = arg_s[j];
-            i++;
+            i++;  // Saltar el 's'
         }
         else if (fmt[i] == '%' && fmt[i + 1] == 'c') {
-            printf_buff[k++] = va_arg(arg_list, int);
-            i++;
+            printf_buff[k++] = (char)va_arg(arg_list, int);  // Convertir a char correctamente
+            i++;  // Saltar el 'c'
         }
         else if (fmt[i] == '%' && fmt[i + 1] == 'd') {
+            int32_t arg_d = va_arg(arg_list, int32_t);  // Cambiado a int32_t para manejar números con signo
             char temp[ITOA_BUFF_MAX_SIZE];
-            itoa(va_arg(arg_list, uint32_t), temp, ITOA_BUFF_MAX_SIZE);
+            
+            // Manejar enteros negativos
+            if (arg_d < 0) {
+                if (k < PRINTF_PRINT_BUFF_MAX_SIZE) {
+                    printf_buff[k++] = '-';
+                }
+                arg_d = -arg_d;
+            }
+            
+            itoa(arg_d, temp, ITOA_BUFF_MAX_SIZE);
 
             for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && temp[j] != '\0'; j++)
                 printf_buff[k++] = temp[j];
 
-            i++;
+            i++;  // Saltar el 'd'
+        }
+        else if (fmt[i] == '%' && fmt[i + 1] == '%') {
+            if (k < PRINTF_PRINT_BUFF_MAX_SIZE) {
+                printf_buff[k++] = '%';  // Manejar "%%" como un solo '%'
+            }
+            i++;  // Saltar el segundo '%'
         }
         else {
-            printf_buff[k++] = fmt[i];
+            printf_buff[k++] = fmt[i];  // Copiar otros caracteres literalmente
         }
     }
-    printf_buff[k] = '\0';
+    printf_buff[k] = '\0';  // Terminar la cadena
 
     va_end(arg_list);
 
     puts(printf_buff);
 }
+
 
 char getchar() {
     return sys_get_character_pressed();
