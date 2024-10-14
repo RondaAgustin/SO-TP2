@@ -26,8 +26,6 @@ uint64_t test_processes(uint64_t argc, char *argv[]) {
   if ((max_processes = atoi(argv[0])) <= 0)
     return -1;
 
-  max_processes = 61;
-
   p_rq p_rqs[max_processes];
 
   while (1) {

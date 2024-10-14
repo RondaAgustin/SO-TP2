@@ -265,7 +265,7 @@ void get_pid(){
 
 void test_scheduler_processes(){
     char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "59";
+    argv[0] = "61";
     argv[1] = NULL;
 
     sys_create_process((uint64_t) test_processes, 1, argv, 200);
