@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <process_manager.h>
 
+#define MAX_SEMAPHORES 64
+
 typedef struct {
     uint8_t lock;
     uint64_t value;
