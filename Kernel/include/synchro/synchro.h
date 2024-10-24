@@ -14,9 +14,9 @@ typedef struct {
 } Semaphore;
 
 void init_synchro();
-char sys_sem_open(uint64_t initialValue);
-void sys_sem_close(char semId);
-void sys_sem_post(char semId);
-void sys_sem_wait(char semId);
+char sem_open(uint64_t initialValue);
+char sem_close(char semId);
+void sem_post(char semId);
+void sem_wait(char semId);
 
 #endif

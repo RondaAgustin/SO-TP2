@@ -7,6 +7,7 @@
 #include <shell_caller.h>
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
+#include <synchro/synchro.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -63,6 +64,8 @@ int main() {
 
     write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
+
+	init_synchro();
 
 	create_scheduler();
 

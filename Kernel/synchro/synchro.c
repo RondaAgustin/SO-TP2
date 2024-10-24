@@ -3,13 +3,13 @@
 Semaphore* semaphores;
 
 void init_synchro() {
-    semaphores = (Semaphore*) malloc(sizeof(Semaphore) * MAX_SEMAPHORES);
+    semaphores = (Semaphore*) mm_malloc(sizeof(Semaphore) * MAX_SEMAPHORES);
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         semaphores[i].open = 0;
     }
 }
 
-char sys_sem_open(uint64_t initialValue) {
+char sem_open(uint64_t initialValue) {
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         if (!semaphores[i].open) {
             semaphores[i].open = 1;
@@ -22,13 +22,15 @@ char sys_sem_open(uint64_t initialValue) {
     return -1;
 }
 
-void sys_sem_close(char semId) {
+char sem_close(char semId) {
+    if(semaphores[semId].open == 0) return -1;
     semaphores[semId].open = 0;
     semaphores[semId].value = 0;
     semaphores[semId].blockedProcesses = NULL;
     semaphores[semId].lock = 0;
+    return 0;
 }
 
-void sys_sem_post(char semId) {}
+void sem_post(char semId) {}
 
-void sys_sem_wait(char semId) {}
+void sem_wait(char semId) {}
