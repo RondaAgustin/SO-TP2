@@ -121,3 +121,24 @@ sys_kill_process:
 
 sys_modify_priority:
     syscall 26
+
+sys_wait:
+    syscall 27
+
+sys_yield:
+    syscall 28
+
+sys_ps:
+    syscall 29
+
+sys_sem_open:
+    syscall 30
+
+sys_sem_close:
+    syscall 31
+
+sys_sem_wait:
+    syscall 32
+
+sys_sem_post:
+    syscall 33
