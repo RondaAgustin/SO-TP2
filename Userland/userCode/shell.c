@@ -3,6 +3,7 @@
 #include <std.h>
 #include <cucaracha.h>
 #include <eliminator.h>
+#include <play_sem.h>
 #include <lib.h>
 #include <test_mm.h>
 #include <types.h>
@@ -38,6 +39,9 @@ ModuleDescriptor modules[] = {
     {"process2", "process that prints Process 2", create_process_2},
     {"while", "while 1", while_1},
     {"ps", "prints processes list and their details", ps},
+    {"test_synchro", "test sync", test_synchro},
+    {"test_no_synchro", "test no sync", test_no_synchro},
+    {"sem", "play sem", use_play_sem},
     };
 
 static int current_font_size = 1;
@@ -257,9 +261,7 @@ void kill_process(){
 }
 
 void while_1(){
-
-    while (1)
-    {
+    while (1){
         puts("While 1\n");
     }
     
@@ -302,4 +304,31 @@ void test_priority_processes() {
     argv[1] = NULL;
 
     sys_create_process((uint64_t) test_prio, 1, argv, 100);
+}
+
+void use_play_sem(){
+    puts("Playing sem\n");
+
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+    argv[0] = "play_sem";
+    argv[1] = NULL;
+    sys_create_process((uint64_t) play_sem, 1, argv, 10);
+}
+
+void test_synchro(){
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+    argv[0] = "2";
+    argv[1] = "1";
+    argv[2] = NULL;
+
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void test_no_synchro(){
+    char** argv = sys_mm_malloc(sizeof(char*) * 2);
+    argv[0] = "5";
+    argv[1] = "0";
+    argv[2] = NULL;
+
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
 }

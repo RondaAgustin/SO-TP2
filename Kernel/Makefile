@@ -4,7 +4,7 @@ KERNEL=kernel.bin
 
 SOURCE_DIRS=. drivers interruptHandlers memoryManager memoryManager/test utils scheduler process synchro
 SOURCES=$(wildcard $(addsuffix /*.c, $(SOURCE_DIRS)))
-SOURCES_ASM=$(wildcard asm/*.asm)
+SOURCES_ASM=$(wildcard asm/*.asm synchro/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=loader.asm
