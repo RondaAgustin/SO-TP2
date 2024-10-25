@@ -252,13 +252,6 @@ void kill_process(){
 }
 
 void while_1(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "test_prio";
-    argv[1] = NULL;
-
-    pid_t pid = sys_create_process((uint64_t) test_prio, 1, argv, 100);
-
-    sys_wait(pid);
 
     while (1)
     {
