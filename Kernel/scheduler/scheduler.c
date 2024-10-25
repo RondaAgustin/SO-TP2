@@ -32,7 +32,6 @@ void create_scheduler(){
     sys_create_process((uint64_t) start_shell, 1, argv_shell, 20);
     
     _sti();
-    return scheduler;
 }
 
 uint64_t context_switch(uint64_t rsp){
@@ -66,4 +65,8 @@ void remove_ready_process(PCB *process_pcb){
 
 PCB* get_running_process(){
     return scheduler->current;
+}
+
+void yield() {
+    delay_ticks(1);
 }
