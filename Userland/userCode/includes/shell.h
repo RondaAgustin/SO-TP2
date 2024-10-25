@@ -35,7 +35,7 @@ void create_process_2();
 void modify_priority();
 
 void while_1();
-
+void use_play_sem();
 
 void run_shell();
 

@@ -90,6 +90,11 @@ uint8_t block_process(pid_t pid){
     
     process_to_block->state = BLOCKED;
     remove_ready_process(process_to_block);
+    
+    if (process_to_block == get_running_process()){
+        _irq00Handler();
+    }
+    
     return 0;
 }
 

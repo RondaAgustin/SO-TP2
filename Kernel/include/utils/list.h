@@ -13,6 +13,7 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
 void list_remove_all(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
 uint64_t list_size(ListCircularADT list);
 void list_destroy(ListCircularADT list, void (*free_func)(void *));
+DataType list_get_first(ListCircularADT list);
 DataType list_next(ListCircularADT list);
 
 #endif

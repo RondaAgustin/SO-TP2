@@ -27,6 +27,13 @@ global sys_block_process
 global sys_unblock_process
 global sys_kill_process
 global sys_modify_priority
+global sys_wait
+global sys_yield
+global sys_ps
+global sys_sem_open
+global sys_sem_close
+global sys_sem_wait
+global sys_sem_post
 
 %macro syscall 1
     push rbp

@@ -5,11 +5,11 @@ global acquire
 acquire:
     mov al, 0
 .retry:
-    xchg [rdx], al
+    xchg [rdi], al
     test al, al
     jz .retry
     ret
 
 release:
-    mov dword [rdx], 1
+    mov byte [rdi], 1
     ret

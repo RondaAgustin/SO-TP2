@@ -4,13 +4,15 @@
 #include <stdint.h>
 #include <scheduler/process_manager.h>
 #include <memoryManager/memory_manager.h>
+#include <synchro/lock.h>
+#include <utils/list.h>
 
 #define MAX_SEMAPHORES 64
 
 typedef struct {
     uint8_t lock;
     uint64_t value;
-    void * blockedProcesses; // TODO: esto tiene que ser una queue
+    ListCircularADT blockedProcesses;
     char open;
 } Semaphore;
 
