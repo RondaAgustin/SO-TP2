@@ -37,6 +37,7 @@ ModuleDescriptor modules[] = {
     {"process1", "process that prints Process 1", create_process_1},
     {"process2", "process that prints Process 2", create_process_2},
     {"while", "while 1", while_1},
+    {"ps", "prints processes list and their details", ps},
     };
 
 static int current_font_size = 1;
@@ -180,6 +181,10 @@ void jump() {
     jump_to_dir(dir);
 }
 
+void ps() {
+    sys_ps();
+}
+
 void test_memory(){
     char** argv = sys_mm_malloc(sizeof(char*) * 2);
 
@@ -222,7 +227,7 @@ void unblock_process(){
 
 void create_process_1(){
     char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "Process 1\n";
+    argv_process[0] = "Process 1";
     argv_process[1] = NULL;
     sys_create_process((uint64_t) process, 1, argv_process, 1);
 }

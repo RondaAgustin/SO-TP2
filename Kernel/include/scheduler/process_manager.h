@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <types.h>
+#include <lib.h>
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <scheduler/shared_process_structures.h>
@@ -45,6 +46,7 @@ uint8_t kill_process(pid_t pid);
 uint8_t modify_process_priority(pid_t pid, uint32_t priority);
 void unblock_waiting_processes(pid_t pid);
 void wait(pid_t pid);
+void ps();
 
 pid_t get_pid();
 

@@ -194,3 +194,50 @@ void wait(pid_t pid){
 
     block_process(pid_running);
 }
+
+void ps() {
+    char buffer[100];
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (process_table[i].state != EXITED) {
+
+            write_to_video_text_buffer("PID: ", 5, 0xFFFFFFFF);
+            my_itoa(process_table[i].pid, buffer, 10);
+            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
+            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+
+            write_to_video_text_buffer("NAME: ", 6, 0xFFFFFFFF);
+            write_to_video_text_buffer(process_table[i].process_name, my_strlen(process_table[i].process_name), 0xFFFFFFFF);
+            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+
+            write_to_video_text_buffer("STATE: ", 7, 0xFFFFFFFF);
+            switch (process_table[i].state) {
+                case READY:
+                    write_to_video_text_buffer("READY", 5, 0xFFdbfa2d);
+                    break;
+                case RUNNING:
+                    write_to_video_text_buffer("RUNNING", 7, 0xFF00e381);
+                    break;
+                case BLOCKED:
+                    write_to_video_text_buffer("BLOCKED", 7, 0xFFf71b07);
+                    break;
+            }
+            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+
+            write_to_video_text_buffer("PRIORITY: ", 10, 0xFFFFFFFF);
+            my_itoa(process_table[i].priority, buffer, 10);
+            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFF00FF00);
+            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+
+            write_to_video_text_buffer("SP: 0x", 6, 0xFFFFFFFF);
+            uint64_to_hex_string(process_table[i].sp, buffer, 17);
+            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
+            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+
+            write_to_video_text_buffer("BP: 0x", 6, 0xFFFFFFFF);
+            uint64_to_hex_string(process_table[i].base, buffer, 17);
+            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
+
+            write_to_video_text_buffer("\n", 1, 0xFFFFFFFF);
+        }
+    }
+}

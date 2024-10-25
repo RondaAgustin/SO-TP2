@@ -20,6 +20,7 @@ void song();
 void calculator();
 void eliminator();
 void jump();
+void ps();
 
 void test_priority_processes();
 void test_scheduler_processes();
