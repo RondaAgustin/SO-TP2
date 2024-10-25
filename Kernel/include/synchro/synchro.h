@@ -2,7 +2,8 @@
 #define SYNCHRO_H
 
 #include <stdint.h>
-#include <process_manager.h>
+#include <scheduler/process_manager.h>
+#include <memoryManager/memory_manager.h>
 
 #define MAX_SEMAPHORES 64
 
