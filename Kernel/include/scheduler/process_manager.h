@@ -43,6 +43,8 @@ uint8_t unblock_process(pid_t pid);
 uint8_t block_process(pid_t pid);
 uint8_t kill_process(pid_t pid);
 uint8_t modify_process_priority(pid_t pid, uint32_t priority);
+void unblock_waiting_processes(pid_t pid);
+void wait(pid_t pid);
 
 pid_t get_pid();
 

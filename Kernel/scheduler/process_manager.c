@@ -37,6 +37,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
     process_table[i].sp = process_table[i].limit + STACK_SIZE;
     process_table[i].base = process_table[i].sp - sizeof(uint64_t);
+    process_table[i].processes_blocked_by_me = list_create();
     
     // Inicializamos el stack pointer
     uint64_t* stack_ptr = (uint64_t*) process_table[i].sp;
@@ -87,9 +88,13 @@ uint8_t block_process(pid_t pid){
 
     if (state == EXITED || state == BLOCKED) return -1;
     
-    
     process_to_block->state = BLOCKED;
     remove_ready_process(process_to_block);
+
+    if(state == RUNNING) {
+        yield();
+    }
+
     return 0;
 }
 
@@ -107,6 +112,20 @@ uint8_t unblock_process(pid_t pid){
     return 0;
 }
 
+int cmp_pid(pid_t d1, pid_t d2){
+    return d1 == d2 ? 0 : 1;
+}
+
+void unblock_waiting_processes(pid_t pid) {
+    PCB* process = find_pcb_by_pid(pid);
+    ListCircularADT waiting_processes = process->processes_blocked_by_me;
+    while(list_size(waiting_processes) > 0){
+        pid_t pid = list_next(waiting_processes);
+        unblock_process(pid);
+        list_remove(waiting_processes, pid, cmp_pid);
+    }
+}
+
 uint8_t kill_process(pid_t pid){
     PCB* process_to_kill = find_pcb_by_pid(pid);
     
@@ -118,12 +137,13 @@ uint8_t kill_process(pid_t pid){
 
     process_to_kill->state = EXITED;
 
+    unblock_waiting_processes(pid);
+
     if (state == READY || state == RUNNING)
         remove_ready_process(process_to_kill);
-    
 
     if (process_to_kill == get_running_process()){
-        _irq00Handler();
+        yield();
     }
     
     return 0;
@@ -159,4 +179,18 @@ PCB* find_pcb_by_pid(pid_t pid){
 pid_t get_pid(){
     PCB* running_process = get_running_process();
     return running_process->pid;
+}
+
+void wait(pid_t pid){
+    PCB* process_to_wait = find_pcb_by_pid(pid);
+
+    if (process_to_wait == NULL) return;
+
+    if (process_to_wait->state == EXITED) return;
+
+    pid_t pid_running = get_pid();
+
+    list_add(process_to_wait->processes_blocked_by_me, pid_running);
+
+    block_process(pid_running);
 }

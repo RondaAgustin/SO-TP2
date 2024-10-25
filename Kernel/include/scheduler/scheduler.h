@@ -11,6 +11,7 @@
 
 #include <scheduler/shared_process_structures.h>
 #include <scheduler/process_manager.h>
+#include <drivers/pitDriver.h>
 
 
 #include <process/idle.h>
@@ -23,5 +24,6 @@ uint64_t context_switch(uint64_t rsp);
 void add_ready_process(PCB* process_pcb);
 void remove_ready_process(PCB *process_pcb);
 PCB* get_running_process();
+void yield();
 
 #endif
