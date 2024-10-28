@@ -239,7 +239,7 @@ void create_process_1(){
 
 void create_process_2(){
     char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "q";
+    argv_process[0] = "Process 2";
     argv_process[1] = NULL;
     sys_create_process((uint64_t) process, 1, argv_process, 2);
 }
