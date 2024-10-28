@@ -21,4 +21,6 @@ uint32_t my_strlen(char* s);
 
 char* my_itoa(uint64_t num, char* dest, uint32_t dest_max_len);
 
+void my_strcpy(char* dest, const char* src);
+
 #endif

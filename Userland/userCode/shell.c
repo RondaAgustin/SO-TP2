@@ -191,11 +191,7 @@ void ps() {
 }
 
 void test_memory(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-
-    argv[0] = "20971520";
-    argv[1] = NULL;
-
+    char* argv[] = {"20971520", NULL};
     sys_create_process(test_mm, 1, argv, 2);
 }
 
@@ -231,17 +227,13 @@ void unblock_process(){
 }
 
 void create_process_1(){
-    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "Process 1";
-    argv_process[1] = NULL;
-    sys_create_process((uint64_t) process, 1, argv_process, 1);
+    char* argv[] = {"Process 1", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 1);
 }
 
 void create_process_2(){
-    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "Process 2";
-    argv_process[1] = NULL;
-    sys_create_process((uint64_t) process, 1, argv_process, 2);
+    char* argv[] = {"Process 2", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 2);
 }
 
 void kill_process(){
@@ -273,10 +265,7 @@ void get_pid(){
 }
 
 void test_scheduler_processes(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "61";
-    argv[1] = NULL;
-
+    char* argv[] = {"61", NULL};
     sys_create_process((uint64_t) test_processes, 1, argv, 5);
 }
 
@@ -300,37 +289,23 @@ void modify_priority(){
 }
 
 void test_priority_processes() {
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "test_prio";
-    argv[1] = NULL;
-
+    char* argv[] = {"test_prio", NULL};
     sys_create_process((uint64_t) test_prio, 1, argv, 5);
 }
 
 void use_play_sem(){
     puts("Playing sem\n");
-
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "play_sem";
-    argv[1] = NULL;
+    char *argv[] = {"play_sem", NULL};
     sys_create_process((uint64_t) play_sem, 1, argv, 10);
 }
 
 void test_synchro(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "5";
-    argv[1] = "1";
-    argv[2] = NULL;
-
+    char* argv[] = {"5", "1", NULL};
     sys_create_process((uint64_t) test_sync, 2, argv, 1);
 }
 
 void test_no_synchro(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "5";
-    argv[1] = "0";
-    argv[2] = NULL;
-
+    char* argv[] = {"5", "0", NULL};
     sys_create_process((uint64_t) test_sync, 2, argv, 1);
 }
 

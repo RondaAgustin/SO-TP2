@@ -4,8 +4,17 @@
 
 PCB* process_table;
 
-char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority) {
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority) {
     _cli();
+
+    char** argv = mm_malloc(sizeof(char*) * (argc + 1));
+
+    for (int i = 0; i < argc; i++) {
+        argv[i] = mm_malloc(my_strlen(shell_argv[i]) + 1);
+        my_strcpy(argv[i], shell_argv[i]);
+    }
+
+    argv[argc] = NULL;
 
     if (argc <= 0 || argv == NULL || argv[0] == NULL) {
         return -1;
@@ -32,6 +41,8 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     process_table[i].pid = i;
     process_table[i].father_pid = father_pid;
     process_table[i].process_name = argv[0];
+    process_table[i].argv = argv;
+    process_table[i].argc = argc;
     process_table[i].priority = priority;
     process_table[i].state = READY;
     process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
@@ -140,6 +151,13 @@ uint8_t kill_process(pid_t pid){
 
     if (state == READY || state == RUNNING)
         remove_ready_process(process_to_kill);
+
+    mm_free(process_to_kill->limit);
+    list_destroy(process_to_kill->processes_blocked_by_me, NULL);
+    for (int i = 0; i <= process_to_kill->argc ; i++) {
+        mm_free(process_to_kill->argv[i]);
+    }
+    mm_free(process_to_kill->argv);
 
     if (process_to_kill == get_running_process()){
         yield();
