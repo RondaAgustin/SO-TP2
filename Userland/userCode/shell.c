@@ -335,7 +335,7 @@ void test_no_synchro(){
 }
 
 void mem_info(){
-    printf("Total memory: %d bits\n", sys_mm_get_total_memory());
-    printf("Used memory: %d bits\n", sys_mm_get_used_memory());
-    printf("Free memory: %d bits\n", sys_mm_get_free_memory());
+    printf("Total memory: %d bytes\n", sys_mm_get_total_memory());
+    printf("Used memory: %d bytes\n", sys_mm_get_used_memory());
+    printf("Free memory: %d bytes\n", sys_mm_get_free_memory());
 }
