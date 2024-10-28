@@ -1,6 +1,6 @@
 #include "test_sync.h"
 
-#define TOTAL_PAIR_PROCESSES 1
+#define TOTAL_PAIR_PROCESSES 5
 
 int64_t global; // shared memory
 char sem_id;;

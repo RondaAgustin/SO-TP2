@@ -42,6 +42,7 @@ ModuleDescriptor modules[] = {
     {"test_synchro", "test sync", test_synchro},
     {"test_no_synchro", "test no sync", test_no_synchro},
     {"sem", "play sem", use_play_sem},
+    {"mem", "display memory info", mem_info}
     };
 
 static int current_font_size = 1;
@@ -195,7 +196,7 @@ void test_memory(){
     argv[0] = "20971520";
     argv[1] = NULL;
 
-    sys_create_process(test_mm, 1, argv, 100);
+    sys_create_process(test_mm, 1, argv, 2);
 }
 
 void block_process(){
@@ -276,7 +277,7 @@ void test_scheduler_processes(){
     argv[0] = "61";
     argv[1] = NULL;
 
-    sys_create_process((uint64_t) test_processes, 1, argv, 200);
+    sys_create_process((uint64_t) test_processes, 1, argv, 5);
 }
 
 void modify_priority(){
@@ -303,7 +304,7 @@ void test_priority_processes() {
     argv[0] = "test_prio";
     argv[1] = NULL;
 
-    sys_create_process((uint64_t) test_prio, 1, argv, 100);
+    sys_create_process((uint64_t) test_prio, 1, argv, 5);
 }
 
 void use_play_sem(){
@@ -317,7 +318,7 @@ void use_play_sem(){
 
 void test_synchro(){
     char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "2";
+    argv[0] = "5";
     argv[1] = "1";
     argv[2] = NULL;
 
@@ -331,4 +332,10 @@ void test_no_synchro(){
     argv[2] = NULL;
 
     sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void mem_info(){
+    printf("Total memory: %d bits\n", sys_mm_get_total_memory());
+    printf("Used memory: %d bits\n", sys_mm_get_used_memory());
+    printf("Free memory: %d bits\n", sys_mm_get_free_memory());
 }

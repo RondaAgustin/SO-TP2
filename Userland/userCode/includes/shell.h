@@ -22,6 +22,7 @@ void calculator();
 void eliminator();
 void jump();
 void ps();
+void mem_info();
 
 void test_priority_processes();
 void test_scheduler_processes();
