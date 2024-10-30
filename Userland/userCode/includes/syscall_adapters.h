@@ -2,6 +2,7 @@
 #define __syscall_adapters__
 
 #include <stdint.h>
+#include <types.h>
 
 uint64_t sys_read(const char* buff, uint64_t len);
 uint64_t sys_write(uint32_t hexColor, const char* buff, uint64_t len);
@@ -25,5 +26,19 @@ void sys_mm_free(void* p);
 uint32_t sys_mm_get_total_memory();
 uint32_t sys_mm_get_used_memory();
 uint32_t sys_mm_get_free_memory();
+// Process Manager
+char sys_create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
+pid_t sys_get_pid();
+uint8_t sys_block_process(pid_t pid);
+uint8_t sys_unblock_process(pid_t pid);
+uint8_t sys_kill_process(pid_t pid);
+uint8_t sys_modify_priority(pid_t pid, uint32_t priority);
+void sys_wait(pid_t pid);
+void sys_yield();
+void sys_ps();
+char sys_sem_open(uint64_t initialValue);
+void sys_sem_close(char semId);
+void sys_sem_post(char semId);
+void sys_sem_wait(char semId);
 
 #endif

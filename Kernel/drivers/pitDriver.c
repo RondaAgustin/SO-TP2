@@ -1,6 +1,9 @@
 #include <drivers/pitDriver.h>
 #include <drivers/videoDriver.h>
+#include <scheduler/scheduler.h>
 #include <lib.h>
+
+extern SchedulerADT my_scheduler;
 
 static uint32_t TICKS_PER_SECOND;
 static unsigned long ticks = 0;
@@ -17,13 +20,15 @@ void initialize_pit(uint32_t frequency){
     outb(0x40, (uint8_t)((divisor >> 8) & 0xFF));
 }
 
-void timer_handler(const registers64_t * registers) {
+uint64_t timer_handler(const uint64_t rsp) {
 	ticks++;
 
     if (ticks - ticks_at_last_update >= UPDATE_SCREEN_RATE) {
         update_frame_buffer();
         ticks_at_last_update = ticks;
     }
+
+    return context_switch(rsp);
 }
 
 void delay(uint64_t milis){
@@ -31,9 +36,9 @@ void delay(uint64_t milis){
 	while(ticks - start < (TICKS_PER_SECOND * milis) / 1000);
 }
 
-void delay_ticks(uint64_t ticks){
+void delay_ticks(uint64_t ticks_to_wait){
 	uint64_t start = ticks_elapsed();
-	while(ticks - start < ticks);
+	while(ticks - start < ticks_to_wait);
 }
 
 int ticks_elapsed() {

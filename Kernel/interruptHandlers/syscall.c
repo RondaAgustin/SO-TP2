@@ -1,14 +1,30 @@
 #include <stdint.h>
+#include <registers.h>
 #include <interruptHandlers/syscall.h>
-#include <interruptHandlers/interrupts.h>
-#include <drivers/pitDriver.h>
-#include <drivers/videoDriver.h>
-#include <drivers/rtcDriver.h>
-#include <drivers/keyboardDriver.h>
-#include <drivers/soundDriver.h>
-#include <interruptHandlers/interrupts.h>
-#include <lib.h>
-#include <memoryManager/memory_manager.h>
+
+uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
+    sys_read, sys_write, sys_put_text, 
+    sys_set_font_size, sys_draw_square, sys_get_screen_width, 
+    sys_get_screen_height, sys_get_time, sys_get_key_pressed, 
+    sys_get_character_pressed, sys_clear_text_buffer, sys_get_cpu_vendor, 
+    sys_beep, sys_delay, sys_print_registers, 
+    sys_clear_screen, sys_mm_malloc, sys_mm_free, 
+    sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory,
+    sys_create_process, sys_get_pid, sys_block_process,
+    sys_unblock_process, sys_kill_process, sys_priority_process,
+    sys_wait, sys_yield, sys_ps,
+    sys_sem_open, sys_sem_close, sys_sem_wait,
+    sys_sem_post
+};
+
+uint64_t syscall_handler(const registers64_t *registers){
+    if (registers->rax >= sizeof(syscalls) / sizeof(syscalls[0]))
+            return 0;
+
+    return syscalls[registers->rax](registers->rdi, registers->rsi, registers->rdx,
+                                    registers->r10, registers->r8, registers->r9);
+}
+
 
 uint64_t sys_read(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
     char c = 0;
@@ -122,21 +138,59 @@ uint64_t sys_mm_get_free_memory(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64
     return mm_get_free_memory();
 }
 
+uint64_t sys_create_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return execute_process_wrapper(rdi, rsi, (char**) rdx, r10);
+}
 
-uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
-    sys_read, sys_write, sys_put_text, 
-    sys_set_font_size, sys_draw_square, sys_get_screen_width, 
-    sys_get_screen_height, sys_get_time, sys_get_key_pressed, 
-    sys_get_character_pressed, sys_clear_text_buffer, sys_get_cpu_vendor, 
-    sys_beep, sys_delay, sys_print_registers, 
-    sys_clear_screen, sys_mm_malloc, sys_mm_free, 
-    sys_mm_get_total_memory, sys_mm_get_used_memory, sys_mm_get_free_memory
-};
+uint64_t sys_get_pid(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return get_pid();
+}
 
-uint64_t syscall_handler(const registers64_t *registers){
-    if (registers->rax >= sizeof(syscalls) / sizeof(syscalls[0]))
-            return 0;
+uint64_t sys_block_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return block_process(rdi);
+}
 
-    return syscalls[registers->rax](registers->rdi, registers->rsi, registers->rdx,
-                                    registers->r10, registers->r8, registers->r9);
+uint64_t sys_unblock_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return unblock_process(rdi);
+}
+
+uint64_t sys_kill_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    return kill_process(rdi);
+}
+
+uint64_t sys_priority_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    return modify_process_priority(rdi, rsi);
+}
+
+uint64_t sys_wait(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    wait(rdi);
+    return 0;
+}
+
+uint64_t sys_yield(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    yield();
+    return 0;
+}
+
+uint64_t sys_ps(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    ps();
+    return 0;
+}
+
+uint64_t sys_sem_open(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return sem_open(rdi);
+}
+
+uint64_t sys_sem_close(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return sem_close(rdi);
+}
+
+uint64_t sys_sem_wait(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    sem_wait(rdi);
+    return 0;
+}
+
+uint64_t sys_sem_post(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    sem_post(rdi);
+    return 0;
 }

@@ -3,8 +3,11 @@
 #include <std.h>
 #include <cucaracha.h>
 #include <eliminator.h>
+#include <play_sem.h>
 #include <lib.h>
 #include <test_mm.h>
+#include <types.h>
+
 
 typedef struct {
     char* module_name;
@@ -24,7 +27,22 @@ ModuleDescriptor modules[] = {
     {"calculator", "positive integer calculator", calculator},
     {"eliminator", "eliminator game", eliminator},
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
-    {"test_mm", "test memory manager", test_memory}
+    {"test_mm", "test memory manager", test_memory},
+    {"test_processes", "test processes", test_scheduler_processes},
+    {"test_prio", "test priority", test_priority_processes},
+    {"shell_pid", "get shell pid", get_pid},
+    {"block", "block process with specific pid", block_process},
+    {"unblock", "unblock process with specific pid", unblock_process},
+    {"kill", "kill process with sepecific pid", kill_process},
+    {"priority", "change process priority", modify_priority},
+    {"process1", "process that prints Process 1", create_process_1},
+    {"process2", "process that prints Process 2", create_process_2},
+    {"while", "while 1", while_1},
+    {"ps", "prints processes list and their details", ps},
+    {"test_synchro", "test sync", test_synchro},
+    {"test_no_synchro", "test no sync", test_no_synchro},
+    {"sem", "play sem", use_play_sem},
+    {"mem", "display memory info", mem_info}
     };
 
 static int current_font_size = 1;
@@ -49,8 +67,14 @@ void help() {
 
     puts("\t- exit: exit to kernel.\n");
 
-    for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++)
-        printf("\t- %s: %s.\n", modules[i].module_name, modules[i].module_description);
+    for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) {
+        puts("\t- ");
+        puts(modules[i].module_name);
+        puts(": ");
+        puts(modules[i].module_description);
+        putchar('\n');
+        // printf("\t- %s: %s.\n", modules[i].module_name, modules[i].module_description);
+    }
 
     putchar('\n');
 }
@@ -61,12 +85,22 @@ void cls() {
 
 void info() {
     puts("screen info:\n");
-    printf("width: %d pixels\n", sys_get_screen_width());
-    printf("height: %d pixels\n\n", sys_get_screen_height());
+    puts("width: ");
+    char buffer[10];
+    itoa(sys_get_screen_width(), buffer, 10);
+    puts(buffer);
+    puts(" pixels\n");
+    puts("height: ");
+    itoa(sys_get_screen_height(), buffer, 10);
+    puts(buffer);
+    puts(" pixels\n\n");
 
     char cpu_vendor_buff[200];
     sys_get_cpu_vendor(cpu_vendor_buff);
-    printf("cpu vendor: %s\n\n", cpu_vendor_buff);
+    puts("cpu vendor: ");
+    puts(cpu_vendor_buff);
+    putchar('\n');
+    putchar('\n');
 }
 
 void font_size(){
@@ -152,7 +186,131 @@ void jump() {
     jump_to_dir(dir);
 }
 
+void ps() {
+    sys_ps();
+}
+
 void test_memory(){
-    char *argv[] = {"10240"};
-  	uint64_t result = test_mm(1, argv);
+    char* argv[] = {"20971520", NULL};
+    sys_create_process(test_mm, 1, argv, 2);
+}
+
+void block_process(){
+    pid_t pid;
+
+    printf("Pid to block: ");
+    scanf("%d", &pid);
+
+    char result = sys_block_process(pid);
+
+    if (result == 0){
+        puts("Process blocked correctly\n");
+        return;
+    }
+    puts("Error to block process\n");
+}
+
+void unblock_process(){
+    pid_t pid;
+
+    printf("Pid to unblock: ");
+    scanf("%d", &pid);
+
+    char result = sys_unblock_process(pid);
+
+    if (result == 0){
+        puts("Process unblocked correctly\n");
+        return;
+    }
+    puts("Error to unblock process\n");
+    
+}
+
+void create_process_1(){
+    char* argv[] = {"Process 1", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 1);
+}
+
+void create_process_2(){
+    char* argv[] = {"Process 2", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 2);
+}
+
+void kill_process(){
+    pid_t pid;
+
+    printf("Pid to kill: ");
+    scanf("%d", &pid);
+
+    char result = sys_kill_process(pid);
+
+    if (result == 0){
+        puts("Process killed correctly\n");
+        return;
+    }
+    puts("Error to kill process\n");
+    
+
+}
+
+void while_1(){
+    while (1){
+        puts("While 1\n");
+    }
+    
+}
+
+void get_pid(){
+    printf("Shell pid = %d\n", sys_get_pid());
+}
+
+void test_scheduler_processes(){
+    char* argv[] = {"61", NULL};
+    sys_create_process((uint64_t) test_processes, 1, argv, 5);
+}
+
+void modify_priority(){
+    pid_t pid;
+    uint32_t priority;
+
+    printf("Pid to modify: ");
+    scanf("%d", &pid);
+
+    printf("New priority: ");
+    scanf("%d", &priority);
+
+    char result = sys_modify_priority(pid, priority);
+
+    if (result == 0){
+        puts("Priority modified\n");
+        return;
+    }
+    puts("Error to modify priority\n");
+}
+
+void test_priority_processes() {
+    char* argv[] = {"test_prio", NULL};
+    sys_create_process((uint64_t) test_prio, 1, argv, 5);
+}
+
+void use_play_sem(){
+    puts("Playing sem\n");
+    char *argv[] = {"play_sem", NULL};
+    sys_create_process((uint64_t) play_sem, 1, argv, 10);
+}
+
+void test_synchro(){
+    char* argv[] = {"5", "1", NULL};
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void test_no_synchro(){
+    char* argv[] = {"5", "0", NULL};
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void mem_info(){
+    printf("Total memory: %d bytes\n", sys_mm_get_total_memory());
+    printf("Used memory: %d bytes\n", sys_mm_get_used_memory());
+    printf("Free memory: %d bytes\n", sys_mm_get_free_memory());
 }

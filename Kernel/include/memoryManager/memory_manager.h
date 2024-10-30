@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+// 20MB de memoria
 #define BLOCK_SIZE 1024
-#define BLOCK_COUNT 10
+#define BLOCK_COUNT 20480
 
 #define RESERVED 1
 #define FREE 0

@@ -21,6 +21,19 @@ global sys_mm_free
 global sys_mm_get_total_memory
 global sys_mm_get_used_memory
 global sys_mm_get_free_memory
+global sys_create_process
+global sys_get_pid
+global sys_block_process
+global sys_unblock_process
+global sys_kill_process
+global sys_modify_priority
+global sys_wait
+global sys_yield
+global sys_ps
+global sys_sem_open
+global sys_sem_close
+global sys_sem_wait
+global sys_sem_post
 
 %macro syscall 1
     push rbp
@@ -97,3 +110,42 @@ sys_mm_get_used_memory:
     
 sys_mm_get_free_memory:
     syscall 20
+
+sys_create_process:
+    syscall 21
+
+sys_get_pid:
+    syscall 22
+
+sys_block_process:
+    syscall 23
+
+sys_unblock_process:
+    syscall 24
+
+sys_kill_process:
+    syscall 25
+
+sys_modify_priority:
+    syscall 26
+
+sys_wait:
+    syscall 27
+
+sys_yield:
+    syscall 28
+
+sys_ps:
+    syscall 29
+
+sys_sem_open:
+    syscall 30
+
+sys_sem_close:
+    syscall 31
+
+sys_sem_wait:
+    syscall 32
+
+sys_sem_post:
+    syscall 33
