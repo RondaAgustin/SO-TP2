@@ -11,6 +11,7 @@
 
 #include <scheduler/shared_process_structures.h>
 #include <scheduler/process_manager.h>
+#include <scheduler/execute_process_wrapper.h>
 
 
 #include <process/idle.h>

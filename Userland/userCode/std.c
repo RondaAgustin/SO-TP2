@@ -169,17 +169,19 @@ uint32_t atoi(const char* s) {
 }
 
 void scanf(const char* fmt, void* ptr) {
-    char scan_buff[SCANF_BUFF_MAX_SIZE];
+    char scan_buff[SCANF_BUFF_MAX_SIZE] = {0};
 
     uint32_t len = sys_read(scan_buff, SCANF_BUFF_MAX_SIZE);
-    scan_buff[len - 1] = '\0';
+    if (len > 0){
+        scan_buff[len - 1] = '\0';
 
-    if (strcmp(fmt, "%d") == 0)
-        *((uint32_t*)ptr) = atoi(scan_buff);
-    else if (strcmp(fmt, "%s") == 0)
-        strcpy((char*)ptr, scan_buff);
-    else if (strcmp(fmt, "%c") == 0)
-        *((char*)ptr) = scan_buff[0];
+        if (strcmp(fmt, "%d") == 0)
+            *((uint32_t*)ptr) = atoi(scan_buff);
+        else if (strcmp(fmt, "%s") == 0)
+            strcpy((char*)ptr, scan_buff);
+        else if (strcmp(fmt, "%c") == 0)
+            *((char*)ptr) = scan_buff[0];
+    }
 }
 
 int isAlpha(char c){

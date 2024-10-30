@@ -49,7 +49,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     stack->rax = 0;
     stack->rbx = 0;
     stack->rcx = i;
-    stack->rdx = argv;
+    stack->rdx = (uint64_t) argv;
     stack->rbp = process_table[i].sp - sizeof(uint64_t);
     stack->rdi = entry_point;
     stack->rsi = argc;

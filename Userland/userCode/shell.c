@@ -186,7 +186,7 @@ void test_memory(){
     argv[0] = "20971520";
     argv[1] = NULL;
 
-    sys_create_process(test_mm, 1, argv, 100);
+    sys_create_process((uint64_t) test_mm, 1, argv, 100);
 }
 
 void block_process(){

@@ -116,11 +116,11 @@ uint64_t sys_print_registers(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t 
 }
 
 uint64_t sys_mm_malloc(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
-    return mm_malloc(rdi);
+    return (uint64_t) mm_malloc(rdi);
 }
 
 uint64_t sys_mm_free(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
-    mm_free(rdi);
+    mm_free((void *) rdi);
     return 0;
 }
 
