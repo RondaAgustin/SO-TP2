@@ -61,10 +61,5 @@ uint64_t test_mm(uint64_t argc, char *argv[]) {
         sys_mm_free(mm_rqs[i].address);
 
     count++;
-    char buffer[20];
-    itoa(count, buffer, 20);
-    puts("Ciclo ");
-    puts(buffer);
-    puts("\n");
   }
 }

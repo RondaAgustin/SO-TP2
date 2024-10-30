@@ -156,6 +156,12 @@ void list_destroy(ListCircularADT list, void (*free_func)(void *)) {
     mm_free(list);
 }
 
+DataType list_get_first(ListCircularADT list){
+    if (list->head == NULL) return;
+
+    return list->head->data;
+}
+
 DataType list_next(ListCircularADT list){
     if (list->current == NULL) return;
 

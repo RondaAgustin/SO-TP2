@@ -33,5 +33,12 @@ uint8_t sys_block_process(pid_t pid);
 uint8_t sys_unblock_process(pid_t pid);
 uint8_t sys_kill_process(pid_t pid);
 uint8_t sys_modify_priority(pid_t pid, uint32_t priority);
+void sys_wait(pid_t pid);
+void sys_yield();
+void sys_ps();
+char sys_sem_open(uint64_t initialValue);
+void sys_sem_close(char semId);
+void sys_sem_post(char semId);
+void sys_sem_wait(char semId);
 
 #endif

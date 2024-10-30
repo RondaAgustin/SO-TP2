@@ -66,3 +66,7 @@ void remove_ready_process(PCB *process_pcb){
 PCB* get_running_process(){
     return scheduler->current;
 }
+
+void yield() {
+    delay_ticks(1);
+}

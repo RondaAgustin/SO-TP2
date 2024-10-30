@@ -3,6 +3,7 @@
 #include <std.h>
 #include <cucaracha.h>
 #include <eliminator.h>
+#include <play_sem.h>
 #include <lib.h>
 #include <test_mm.h>
 #include <types.h>
@@ -37,6 +38,11 @@ ModuleDescriptor modules[] = {
     {"process1", "process that prints Process 1", create_process_1},
     {"process2", "process that prints Process 2", create_process_2},
     {"while", "while 1", while_1},
+    {"ps", "prints processes list and their details", ps},
+    {"test_synchro", "test sync", test_synchro},
+    {"test_no_synchro", "test no sync", test_no_synchro},
+    {"sem", "play sem", use_play_sem},
+    {"mem", "display memory info", mem_info}
     };
 
 static int current_font_size = 1;
@@ -180,12 +186,12 @@ void jump() {
     jump_to_dir(dir);
 }
 
+void ps() {
+    sys_ps();
+}
+
 void test_memory(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-
-    argv[0] = "20971520";
-    argv[1] = NULL;
-
+    char* argv[] = {"20971520", NULL};
     sys_create_process((uint64_t) test_mm, 1, argv, 100);
 }
 
@@ -221,17 +227,13 @@ void unblock_process(){
 }
 
 void create_process_1(){
-    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "Process 1\n";
-    argv_process[1] = NULL;
-    sys_create_process((uint64_t) process, 1, argv_process, 1);
+    char* argv[] = {"Process 1", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 1);
 }
 
 void create_process_2(){
-    char** argv_process = sys_mm_malloc(sizeof(char*) * 2);
-    argv_process[0] = "q";
-    argv_process[1] = NULL;
-    sys_create_process((uint64_t) process, 1, argv_process, 2);
+    char* argv[] = {"Process 2", NULL};
+    sys_create_process((uint64_t) process, 1, argv, 2);
 }
 
 void kill_process(){
@@ -252,8 +254,7 @@ void kill_process(){
 }
 
 void while_1(){
-    while (1)
-    {
+    while (1){
         puts("While 1\n");
     }
     
@@ -264,11 +265,8 @@ void get_pid(){
 }
 
 void test_scheduler_processes(){
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "61";
-    argv[1] = NULL;
-
-    sys_create_process((uint64_t) test_processes, 1, argv, 200);
+    char* argv[] = {"61", NULL};
+    sys_create_process((uint64_t) test_processes, 1, argv, 5);
 }
 
 void modify_priority(){
@@ -291,9 +289,28 @@ void modify_priority(){
 }
 
 void test_priority_processes() {
-    char** argv = sys_mm_malloc(sizeof(char*) * 2);
-    argv[0] = "test_prio";
-    argv[1] = NULL;
+    char* argv[] = {"test_prio", NULL};
+    sys_create_process((uint64_t) test_prio, 1, argv, 5);
+}
 
-    sys_create_process((uint64_t) test_prio, 1, argv, 100);
+void use_play_sem(){
+    puts("Playing sem\n");
+    char *argv[] = {"play_sem", NULL};
+    sys_create_process((uint64_t) play_sem, 1, argv, 10);
+}
+
+void test_synchro(){
+    char* argv[] = {"5", "1", NULL};
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void test_no_synchro(){
+    char* argv[] = {"5", "0", NULL};
+    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+}
+
+void mem_info(){
+    printf("Total memory: %d bytes\n", sys_mm_get_total_memory());
+    printf("Used memory: %d bytes\n", sys_mm_get_used_memory());
+    printf("Free memory: %d bytes\n", sys_mm_get_free_memory());
 }

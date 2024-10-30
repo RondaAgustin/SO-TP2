@@ -69,3 +69,54 @@ void uint64_to_hex_string(uint64_t num, char *buffer, uint16_t buffer_size) {
         num >>= 4;  // Desplaza el número 4 bits a la derecha
     }
 }
+
+uint32_t my_strlen(char* s) {
+    uint32_t i;
+
+    for (i = 0; s[i] != '\0'; i++) ;
+
+    return i;
+}
+
+char* my_itoa(uint64_t num, char* dest, uint32_t dest_max_len) {
+    if (dest_max_len == 0) {
+        return dest;
+    }
+
+    if (num == 0) {
+        dest[0] = '0';
+        dest[1] = '\0';
+        return dest;
+    }
+
+    char itoa_buff[ITOA_BUFF_MAX_SIZE];
+    uint32_t i = 0;
+
+    while (num != 0 && i < ITOA_BUFF_MAX_SIZE) {
+        itoa_buff[i++] = (num % 10) + '0';
+        num /= 10;
+    }
+
+    if (i >= dest_max_len) {
+        i = dest_max_len - 1;
+    }
+
+    uint32_t j = 0;
+    while (j < i) {
+        dest[j] = itoa_buff[i - j - 1];
+        j++;
+    }
+
+    dest[j] = '\0';
+
+    return dest;
+}
+
+void my_strcpy(char* dest, const char* src) {
+    uint32_t i;
+
+    for (i = 0; src[i] != '\0'; i++)
+        dest[i] = src[i];
+
+    dest[i] = '\0';
+}
