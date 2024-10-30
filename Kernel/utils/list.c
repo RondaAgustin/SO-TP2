@@ -157,13 +157,13 @@ void list_destroy(ListCircularADT list, void (*free_func)(void *)) {
 }
 
 DataType list_get_first(ListCircularADT list){
-    if (list->head == NULL) return;
+    if (list->head == NULL) return NULL;
 
     return list->head->data;
 }
 
 DataType list_next(ListCircularADT list){
-    if (list->current == NULL) return;
+    if (list->current == NULL) return NULL;
 
     DataType data = list->current->data;
 

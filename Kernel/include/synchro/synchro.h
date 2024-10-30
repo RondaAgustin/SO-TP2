@@ -18,8 +18,8 @@ typedef struct {
 
 void init_synchro();
 char sem_open(uint64_t initialValue);
-char sem_close(char semId);
-void sem_post(char semId);
-void sem_wait(char semId);
+char sem_close(uint8_t semId);
+void sem_post(uint8_t semId);
+void sem_wait(uint8_t semId);
 
 #endif

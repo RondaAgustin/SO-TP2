@@ -130,9 +130,9 @@ void unblock_waiting_processes(pid_t pid) {
     PCB* process = find_pcb_by_pid(pid);
     ListCircularADT waiting_processes = process->processes_blocked_by_me;
     while(list_size(waiting_processes) > 0){
-        pid_t pid = list_next(waiting_processes);
+        pid_t pid = (pid_t)(uintptr_t) list_next(waiting_processes);
         unblock_process(pid);
-        list_remove(waiting_processes, pid, cmp_pid);
+        list_remove(waiting_processes, (DataType)(uintptr_t) pid, (void *) cmp_pid);
     }
 }
 
@@ -152,7 +152,7 @@ uint8_t kill_process(pid_t pid){
     if (state == READY || state == RUNNING)
         remove_ready_process(process_to_kill);
 
-    mm_free(process_to_kill->limit);
+    mm_free((void *) process_to_kill->limit);
     list_destroy(process_to_kill->processes_blocked_by_me, NULL);
     for (int i = 0; i <= process_to_kill->argc ; i++) {
         mm_free(process_to_kill->argv[i]);
@@ -207,7 +207,7 @@ void wait(pid_t pid){
 
     pid_t pid_running = get_pid();
 
-    list_add(process_to_wait->processes_blocked_by_me, pid_running);
+    list_add(process_to_wait->processes_blocked_by_me, (DataType)(uintptr_t) pid_running);
 
     block_process(pid_running);
 }
@@ -236,6 +236,9 @@ void ps() {
                     break;
                 case BLOCKED:
                     write_to_video_text_buffer("BLOCKED", 7, 0xFFf71b07);
+                    break;
+                case EXITED:
+                    write_to_video_text_buffer("EXITED", 6, 0xFFf71b07);
                     break;
             }
             write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);

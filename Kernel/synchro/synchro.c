@@ -26,7 +26,7 @@ char sem_open(uint64_t initialValue) {
     return -1;
 }
 
-char sem_close(char semId) {
+char sem_close(uint8_t semId) {
     if(semaphores[semId].open == 0) return -1;
     semaphores[semId].open = 0;
     semaphores[semId].value = 0;
@@ -36,14 +36,14 @@ char sem_close(char semId) {
     return 0;
 }
 
-void sem_post(char semId) {
+void sem_post(uint8_t semId) {
     Semaphore* sem = &semaphores[semId];
     if (sem->open){
         acquire(&sem->lock);
         sem->value++;
         if (list_size(sem->blockedProcesses) > 0) {
-            pid_t pid = (pid_t) list_get_first(sem->blockedProcesses);
-            list_remove(sem->blockedProcesses, (DataType) pid, cmpProsId);
+            pid_t pid = (pid_t)(uintptr_t) list_get_first(sem->blockedProcesses);
+            list_remove(sem->blockedProcesses, (DataType)(uintptr_t) pid, cmpProsId);
             unblock_process(pid);
         }
         release(&sem->lock);
@@ -51,7 +51,7 @@ void sem_post(char semId) {
     
 }
 
-void sem_wait(char semId) {
+void sem_wait(uint8_t semId) {
     Semaphore* sem = &semaphores[semId];
     if (sem->open){
         acquire(&(sem->lock));
@@ -62,7 +62,7 @@ void sem_wait(char semId) {
                 return;
             }
             pid_t pid = get_pid();
-            list_add(sem->blockedProcesses, (DataType) pid);
+            list_add(sem->blockedProcesses, (DataType)(uintptr_t) pid);
             release(&(sem->lock));
             block_process(pid);
         }

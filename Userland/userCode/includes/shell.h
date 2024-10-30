@@ -5,10 +5,19 @@
 
 #include <stdint.h>
 
+#include <syscall_adapters.h>
+
 #include <process.h>
 #include <test_processes.h>
 #include <test_prio.h>
 #include <test_sync.h>
+
+#include <std.h>
+#include <cucaracha.h>
+#include <eliminator.h>
+#include <lib.h>
+#include <test_mm.h>
+#include <types.h>
 
 void help();
 void cls();
@@ -40,7 +49,6 @@ void create_process_2();
 void modify_priority();
 
 void while_1();
-void use_play_sem();
 
 void run_shell();
 

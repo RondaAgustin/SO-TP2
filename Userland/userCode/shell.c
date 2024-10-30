@@ -1,13 +1,4 @@
-#include <syscall_adapters.h>
 #include <shell.h>
-#include <std.h>
-#include <cucaracha.h>
-#include <eliminator.h>
-#include <play_sem.h>
-#include <lib.h>
-#include <test_mm.h>
-#include <types.h>
-
 
 typedef struct {
     char* module_name;
@@ -41,7 +32,6 @@ ModuleDescriptor modules[] = {
     {"ps", "prints processes list and their details", ps},
     {"test_synchro", "test sync", test_synchro},
     {"test_no_synchro", "test no sync", test_no_synchro},
-    {"sem", "play sem", use_play_sem},
     {"mem", "display memory info", mem_info}
     };
 
@@ -291,12 +281,6 @@ void modify_priority(){
 void test_priority_processes() {
     char* argv[] = {"test_prio", NULL};
     sys_create_process((uint64_t) test_prio, 1, argv, 5);
-}
-
-void use_play_sem(){
-    puts("Playing sem\n");
-    char *argv[] = {"play_sem", NULL};
-    sys_create_process((uint64_t) play_sem, 1, argv, 10);
 }
 
 void test_synchro(){
