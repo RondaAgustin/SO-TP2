@@ -10,7 +10,7 @@
 #include <scheduler/shared_process_structures.h>
 
 #define MAX_PROCESSES 64
-#define STACK_SIZE 4096
+#define STACK_SIZE 4096*2
 
 typedef struct {
     uint64_t rax;

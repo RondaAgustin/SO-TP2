@@ -38,7 +38,7 @@ void test_prio() {
     for (i = 0; i < TOTAL_PROCESSES; i++)
         sys_modify_priority(pids[i], MEDIUM);
 
-    // puts("UNBLOCKING...\n");
+    puts("UNBLOCKING...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
         sys_unblock_process(pids[i]);

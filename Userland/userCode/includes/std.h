@@ -7,6 +7,7 @@ uint32_t strlen(const char* s);
 void strcat(char* dest, const char* str1, const char * str2);
 uint32_t strcmp(const char* s1, const char* s2);
 void strcpy(char* dest, const char* src);
+int split(const char* str, char separator, char* dest[], int dest_qty);
 
 void putchar(char c);
 void puts(const char *s);
@@ -21,7 +22,7 @@ void printf(const char* fmt, ...);
 char getchar();
 uint32_t atoi(const char* s);
 #define SCANF_BUFF_MAX_SIZE 1024
-void scanf(const char* fmt, void* ptr);
+uint64_t scanf(const char* fmt, void* ptr);
 
 int isAlpha(char c);
 
