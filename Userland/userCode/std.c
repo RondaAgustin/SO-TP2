@@ -35,6 +35,36 @@ void strcat(char* dest, const char* str1, const char * str2) {
     dest[i + j] = '\0';
 }
 
+int split(const char* source, char separator, char* dest[], int dest_qty) {
+    int i = 0;
+    int j = 0;
+    int k = 0;
+    int new_string = 0;
+
+    while (source[i] != '\0' && j < dest_qty) {
+        if (source[i] == separator) {
+            if (new_string) {
+                dest[j][k] = '\0';
+                j++;
+                k = 0;
+                new_string = 0;
+            }
+        } else {
+            dest[j][k] = source[i];
+            k++;
+            new_string = 1;
+        }
+        i++;
+    }
+
+    if (new_string) {
+        dest[j][k] = '\0';
+        j++;
+    }
+
+    return j;
+}
+
 uint32_t strlen(const char* s) {
     uint32_t i;
 
@@ -168,7 +198,7 @@ uint32_t atoi(const char* s) {
     return out;
 }
 
-void scanf(const char* fmt, void* ptr) {
+uint64_t scanf(const char* fmt, void* ptr) {
     char scan_buff[SCANF_BUFF_MAX_SIZE] = {0};
 
     uint32_t len = sys_read(scan_buff, SCANF_BUFF_MAX_SIZE);
@@ -182,6 +212,7 @@ void scanf(const char* fmt, void* ptr) {
         else if (strcmp(fmt, "%c") == 0)
             *((char*)ptr) = scan_buff[0];
     }
+    return len;
 }
 
 int isAlpha(char c){

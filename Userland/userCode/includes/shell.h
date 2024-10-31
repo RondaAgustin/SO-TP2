@@ -2,6 +2,7 @@
 #define __SHELL__
 
 #define MAX_SHELL_INPUT 1024
+#define MAX_SHELL_ARGS 2
 
 #include <stdint.h>
 

@@ -42,14 +42,36 @@ void run_shell() {
     char shell_input[MAX_SHELL_INPUT];
     shell_input[0] = 0;
 
+    char **shell_args = sys_mm_malloc(MAX_SHELL_ARGS * sizeof(char*));
+    shell_args[0] = sys_mm_malloc(MAX_SHELL_INPUT * sizeof(char));
+    shell_args[1] = sys_mm_malloc(MAX_SHELL_INPUT * sizeof(char));
+
+
+    int shell_args_count = 0;
+
+    uint8_t foreground = 1;
+
     while (strcmp(shell_input, "exit") != 0) {
         sys_set_font_size(current_font_size);
         puts_with_color("shell> ", 0x006fb5fb);
         scanf("%s", shell_input);
+        
+        shell_args_count = split(shell_input, ' ', shell_args, MAX_SHELL_ARGS);
+        
+        if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) foreground = 0;
+        else foreground = 1;
+
         for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) 
-            if (strcmp(shell_input, modules[i].module_name) == 0)
-                modules[i].module();
+            if (strcmp(shell_args[0], modules[i].module_name) == 0){
+                char* argv[] = {modules[i].module_name, NULL};
+                pid_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, 1);
+                if (foreground) sys_wait(pid);
+            }
     }
+
+    sys_mm_free(shell_args[0]);
+    sys_mm_free(shell_args[1]);
+    sys_mm_free(shell_args);
 }
 
 void help() {
@@ -182,7 +204,7 @@ void ps() {
 
 void test_memory(){
     char* argv[] = {"20971520", NULL};
-    sys_create_process((uint64_t) test_mm, 1, argv, 5);
+    test_mm(1, argv);
 }
 
 void block_process(){
@@ -218,12 +240,12 @@ void unblock_process(){
 
 void create_process_1(){
     char* argv[] = {"Process 1", NULL};
-    sys_create_process((uint64_t) process, 1, argv, 1);
+    process(1, argv);
 }
 
 void create_process_2(){
     char* argv[] = {"Process 2", NULL};
-    sys_create_process((uint64_t) process, 1, argv, 2);
+    process(1, argv);
 }
 
 void kill_process(){
@@ -256,7 +278,7 @@ void get_pid(){
 
 void test_scheduler_processes(){
     char* argv[] = {"61", NULL};
-    sys_create_process((uint64_t) test_processes, 1, argv, 5);
+    test_processes(1, argv);
 }
 
 void modify_priority(){
@@ -280,17 +302,17 @@ void modify_priority(){
 
 void test_priority_processes() {
     char* argv[] = {"test_prio", NULL};
-    sys_create_process((uint64_t) test_prio, 1, argv, 5);
+    test_prio(1, argv);
 }
 
 void test_synchro(){
     char* argv[] = {"5", "1", NULL};
-    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+    test_sync(2 ,argv);
 }
 
 void test_no_synchro(){
     char* argv[] = {"5", "0", NULL};
-    sys_create_process((uint64_t) test_sync, 2, argv, 1);
+    test_sync(2, argv);
 }
 
 void mem_info(){
