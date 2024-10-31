@@ -19,6 +19,8 @@ uint8_t inb(uint8_t dir);
 
 uint32_t my_strlen(char* s);
 
+uint64_t log2(uint64_t n);
+
 char* my_itoa(uint64_t num, char* dest, uint32_t dest_max_len);
 
 void my_strcpy(char* dest, const char* src);

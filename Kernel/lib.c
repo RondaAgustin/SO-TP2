@@ -120,3 +120,9 @@ void my_strcpy(char* dest, const char* src) {
 
     dest[i] = '\0';
 }
+
+uint64_t log2(uint64_t n) {
+    uint64_t r = 0;
+    while (n >>= 1) r++;
+    return r;
+}

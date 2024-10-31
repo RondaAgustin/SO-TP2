@@ -60,7 +60,7 @@ int main() {
     set_font_size(1);
     clear_video_text_buffer();
 
-  	mm_init((void *)0x1000000, BLOCK_COUNT * BLOCK_SIZE);
+  	mm_init((void *)0x1000000, MEM_SIZE);
 
     write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
