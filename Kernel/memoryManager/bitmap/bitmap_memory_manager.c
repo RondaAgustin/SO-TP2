@@ -1,4 +1,4 @@
-#include <memoryManager/memory_manager.h>
+#include <memoryManager/bitmap/bitmap_memory_manager.h>
 
 typedef struct MemoryZone {
     void * start;
@@ -17,7 +17,7 @@ typedef struct MemoryManager {
 
 MemoryManager memoryManager;
 
-void mm_init(void * p, uint32_t s) {
+uint8_t mm_init(void * p, uint32_t s) {
     memoryManager.start = p;
     memoryManager.size = s; 
     memoryManager.usedMemory = 0;

@@ -57,7 +57,6 @@ uint64_t test_sync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     return -1;
   }
 
-
   uint64_t i;
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     pids[i] = sys_create_process((uint64_t)my_process_inc, 3, argvDec, 1);

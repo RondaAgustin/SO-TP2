@@ -10,29 +10,34 @@ void init_synchro() {
     semaphores = (Semaphore*) mm_malloc(sizeof(Semaphore) * MAX_SEMAPHORES);
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         semaphores[i].open = 0;
+        semaphores[i].lock = 1;
     }
 }
 
 char sem_open(uint64_t initialValue) {
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
+        acquire(&semaphores[i].lock);
         if (!semaphores[i].open) {
             semaphores[i].open = 1;
             semaphores[i].lock = 1;
             semaphores[i].value = initialValue;
             semaphores[i].blockedProcesses = list_create();
+            release(&semaphores[i].lock);
             return i;
         }
+        release(&semaphores[i].lock);
     }
     return -1;
 }
 
 char sem_close(uint8_t semId) {
+    acquire(&semaphores[semId].lock);
     if(semaphores[semId].open == 0) return -1;
     semaphores[semId].open = 0;
     semaphores[semId].value = 0;
     list_destroy(semaphores[semId].blockedProcesses, NULL);
     semaphores[semId].blockedProcesses = NULL;
-    semaphores[semId].lock = 0;
+    release(&semaphores[semId].lock);
     return 0;
 }
 
@@ -42,8 +47,8 @@ void sem_post(uint8_t semId) {
         acquire(&sem->lock);
         sem->value++;
         if (list_size(sem->blockedProcesses) > 0) {
-            pid_t pid = (pid_t)(uintptr_t) list_get_first(sem->blockedProcesses);
-            list_remove(sem->blockedProcesses, (DataType)(uintptr_t) pid, cmpProsId);
+            pid_t pid = (pid_t)(uint64_t) list_get_first(sem->blockedProcesses);
+            list_remove(sem->blockedProcesses, (DataType)(uint64_t) pid, cmpProsId);
             unblock_process(pid);
         }
         release(&sem->lock);
@@ -62,7 +67,7 @@ void sem_wait(uint8_t semId) {
                 return;
             }
             pid_t pid = get_pid();
-            list_add(sem->blockedProcesses, (DataType)(uintptr_t) pid);
+            list_add(sem->blockedProcesses, (DataType)(uint64_t) pid);
             release(&(sem->lock));
             block_process(pid);
         }

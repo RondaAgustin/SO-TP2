@@ -130,9 +130,9 @@ void unblock_waiting_processes(pid_t pid) {
     PCB* process = find_pcb_by_pid(pid);
     ListCircularADT waiting_processes = process->processes_blocked_by_me;
     while(list_size(waiting_processes) > 0){
-        pid_t pid = (pid_t)(uintptr_t) list_next(waiting_processes);
+        pid_t pid = (pid_t)(uint64_t) list_next(waiting_processes);
         unblock_process(pid);
-        list_remove(waiting_processes, (DataType)(uintptr_t) pid, (void *) cmp_pid);
+        list_remove(waiting_processes, (DataType)(uint64_t) pid, (void *) cmp_pid);
     }
 }
 
@@ -207,7 +207,7 @@ void wait(pid_t pid){
 
     pid_t pid_running = get_pid();
 
-    list_add(process_to_wait->processes_blocked_by_me, (DataType)(uintptr_t) pid_running);
+    list_add(process_to_wait->processes_blocked_by_me, (DataType)(uint64_t) pid_running);
 
     block_process(pid_running);
 }
