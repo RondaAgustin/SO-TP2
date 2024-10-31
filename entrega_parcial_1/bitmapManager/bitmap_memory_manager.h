@@ -1,5 +1,5 @@
-#ifndef __MEMORY_MANAGER__
-#define __MEMORY_MANAGER__
+#ifndef __BITMAP_MEMORY_MANAGER__
+#define __BITMAP_MEMORY_MANAGER__
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -7,6 +7,7 @@
 
 #define BLOCK_SIZE 1024
 #define BLOCK_COUNT 10
+#define MEMORY_SIZE BLOCK_SIZE * BLOCK_COUNT
 
 #define RESERVED 1
 #define FREE 0
