@@ -152,6 +152,8 @@ void draw_string(const char* str, uint32_t len, uint32_t hexColor, uint32_t posX
     uint32_t fontWidth = get_font_width();
 
     for (int i = 0; i < len; i++) draw_char(str[i], hexColor, posX + i * fontWidth, posY);
+
+    update_frame_buffer();
 }
 
 void clear_video_text_buffer() {
@@ -202,8 +204,8 @@ void write_to_video_text_buffer(const char* data, uint32_t data_len, uint32_t he
                 break;
         }
     }
-
     update_screen_text_buffer();
+    update_frame_buffer();
 }
 
 void update_screen_text_buffer() {

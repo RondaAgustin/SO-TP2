@@ -38,7 +38,7 @@ typedef struct {
 
 extern PCB* process_table;
 
-char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority);
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority, uint8_t fg);
 
 uint8_t unblock_process(pid_t pid);
 uint8_t block_process(pid_t pid);
@@ -47,6 +47,7 @@ uint8_t modify_process_priority(pid_t pid, uint32_t priority);
 void unblock_waiting_processes(pid_t pid);
 void wait(pid_t pid);
 void ps();
+void kill_foreground_process();
 
 pid_t get_pid();
 
