@@ -25,10 +25,10 @@ ModuleDescriptor modules[] = {
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
     {"kill", "kill process with sepecific pid", kill_process},
-    {"priority", "change process priority", modify_priority},
+    {"nice", "change process priority", modify_priority},
     {"process1", "process that prints Process 1", create_process_1},
     {"process2", "process that prints Process 2", create_process_2},
-    {"while", "while 1", while_1},
+    {"loop", "imprime su pid en bucle", loop},
     {"ps", "prints processes list and their details", ps},
     {"test_synchro", "test sync", test_synchro},
     {"test_no_synchro", "test no sync", test_no_synchro},
@@ -265,11 +265,10 @@ void kill_process(){
 
 }
 
-void while_1(){
+void loop(){
     while (1){
-        puts("While 1\n");
+        printf("Loop process pid: %d\n", sys_get_pid());
     }
-    
 }
 
 void get_pid(){

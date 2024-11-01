@@ -49,7 +49,7 @@ void create_process_1();
 void create_process_2();
 void modify_priority();
 
-void while_1();
+void loop();
 
 void run_shell();
 
