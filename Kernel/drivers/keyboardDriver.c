@@ -6,6 +6,7 @@ uint8_t key_buffer[MAX_SIZE_KEY_BUFFER];
 static int first_key_index = 0;
 static int buffer_size = 0;
 static int caps_enabled = 0;
+static int ctrl_pressed = 0;
 const int caps_offset = 84;
 static char map_to_ascii[256] = {
     0, '~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t', 
@@ -33,7 +34,17 @@ void keyboard_handler(const registers64_t * registers){
     if(scan_code == ESCAPE_CODE_PRESSED){
         save_registers(registers);
         return;
+    } else if (scan_code == CTRL_CODE_PRESSED) { 
+        ctrl_pressed = 1;
+        return;
+    } else if (scan_code == CTRL_CODE_RELEASED) { 
+        ctrl_pressed = 0;
+        return;
+    } else if (ctrl_pressed && (scan_code == C_CODE_PRESSED)) {
+        kill_foreground_process();
+        return;
     }
+
     if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) return;
     key_buffer[(first_key_index + buffer_size++) % MAX_SIZE_KEY_BUFFER] = scan_code;
 }

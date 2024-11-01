@@ -64,7 +64,7 @@ void run_shell() {
         for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) 
             if (strcmp(shell_args[0], modules[i].module_name) == 0){
                 char* argv[] = {modules[i].module_name, NULL};
-                pid_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, 1);
+                pid_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, 1, foreground);
                 if (foreground) sys_wait(pid);
             }
     }

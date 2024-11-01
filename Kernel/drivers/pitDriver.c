@@ -24,7 +24,7 @@ uint64_t timer_handler(const uint64_t rsp) {
 	ticks++;
 
     if (ticks - ticks_at_last_update >= UPDATE_SCREEN_RATE) {
-        update_frame_buffer();
+        // update_frame_buffer();
         ticks_at_last_update = ticks;
     }
 

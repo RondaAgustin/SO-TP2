@@ -3,8 +3,9 @@
 
 
 PCB* process_table;
+pid_t foreground_process = -1;
 
-char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority) {
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg) {
     _cli();
 
     char** argv = mm_malloc(sizeof(char*) * (argc + 1));
@@ -39,6 +40,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     // TODO: logica para saber el father_pid
 
     process_table[i].pid = i;
+    process_table[i].fg = fg;
     process_table[i].father_pid = father_pid;
     process_table[i].process_name = argv[0];
     process_table[i].argv = argv;
@@ -86,6 +88,10 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     process_table[i].sp = (uint64_t) stack_ptr;
 
     add_ready_process(&process_table[i]);
+
+    if (fg == 1) 
+        foreground_process = i;
+
     _sti();
     return process_table[i].pid;
 }
@@ -159,7 +165,7 @@ uint8_t kill_process(pid_t pid){
     }
     mm_free(process_to_kill->argv);
 
-    if (process_to_kill == get_running_process()){
+    if (process_to_kill == get_running_process()) {
         yield();
     }
     
@@ -258,6 +264,14 @@ void ps() {
             write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
 
             write_to_video_text_buffer("\n", 1, 0xFFFFFFFF);
+        }
+    }
+}
+
+void kill_foreground_process() {
+    if (foreground_process != -1){
+        if (process_table[foreground_process].state != EXITED && process_table[foreground_process].fg == 1) {
+            kill_process(foreground_process);
         }
     }
 }
