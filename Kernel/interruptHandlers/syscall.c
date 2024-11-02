@@ -14,7 +14,8 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_unblock_process, sys_kill_process, sys_priority_process,
     sys_wait, sys_yield, sys_ps,
     sys_sem_open, sys_sem_close, sys_sem_wait,
-    sys_sem_post
+    sys_sem_post, sys_pipe, sys_pipe_open,
+    sys_pipe_close
 };
 
 uint64_t syscall_handler(const registers64_t *registers) {
@@ -222,5 +223,18 @@ uint64_t sys_sem_wait(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, ui
 
 uint64_t sys_sem_post(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
     sem_post(rdi);
+    return 0;
+}
+
+uint64_t sys_pipe(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return create_pipe((char*) rdi);
+}
+
+uint64_t sys_pipe_open(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    return open_pipe((char*) rdi);
+}
+
+uint64_t sys_pipe_close(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    close_pipe((char) rdi);
     return 0;
 }

@@ -40,5 +40,8 @@ char sys_sem_open(uint64_t initialValue);
 void sys_sem_close(char semId);
 void sys_sem_post(char semId);
 void sys_sem_wait(char semId);
+char sys_pipe(char* name);
+char sys_pipe_open(char* name);
+void sys_pipe_close(char pipeId);
 
 #endif

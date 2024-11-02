@@ -149,3 +149,12 @@ sys_sem_wait:
 
 sys_sem_post:
     syscall 33
+
+sys_pipe:
+    syscall 34
+
+sys_pipe_open:
+    syscall 35
+
+sys_pipe_close:
+    syscall 36
