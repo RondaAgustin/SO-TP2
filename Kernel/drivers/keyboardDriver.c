@@ -3,6 +3,7 @@
 #include <lib.h>
 
 uint8_t key_buffer[MAX_SIZE_KEY_BUFFER];
+char sem;
 static int first_key_index = 0;
 static int buffer_size = 0;
 static int caps_enabled = 0;
@@ -22,6 +23,10 @@ static char map_to_ascii[256] = {
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'n', 's', '7', '8', '9',
     '-', '4', '5', '6', '+', '1', '2', '3', '0', '.'
 };
+
+void init_keyboard_driver() {
+    sem = sem_open(1);
+}
 
 void keyboard_handler(const registers64_t * registers){
     uint8_t scan_code = get_scan_code();
@@ -47,6 +52,7 @@ void keyboard_handler(const registers64_t * registers){
 
     if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) return;
     key_buffer[(first_key_index + buffer_size++) % MAX_SIZE_KEY_BUFFER] = scan_code;
+    sem_post(sem);
 }
 
 int keys_pending(){
@@ -63,4 +69,28 @@ uint8_t get_key_pending(){
 
 char get_pressed_character(){
     return map_to_ascii[get_key_pending() + caps_enabled * caps_offset];
+}
+
+int read_from_keyboard(char* buffer, int buffer_size) {
+    int i = 0;
+    char c = 0;
+    while (c != '\n' && i < buffer_size) {
+        if (keys_pending()) {
+            c = get_pressed_character();
+            if (c == '\b') {
+                char * backs = "\b\b\b\b";
+                if (--i < 0) {
+                    i = 0;
+                } else {
+                    write_to_video_text_buffer(backs, buffer[i] == '\t' ? 4 : 1, HEX_WHITE);
+                }
+            } else {
+                buffer[i++] = c;
+                write_to_video_text_buffer(&c, 1, HEX_WHITE);
+            }
+        } else {
+            sem_wait(sem);
+        }
+    }
+    return i;
 }

@@ -18,10 +18,12 @@
 
 #define MAX_SIZE_KEY_BUFFER 100
 
+void init_keyboard_driver();
 void keyboard_handler();
 int keys_pending();
 uint8_t get_key_pending();
 uint8_t get_scan_code();
 char get_pressed_character();
+int read_from_keyboard(char* buffer, int buffer_size);
 
 #endif

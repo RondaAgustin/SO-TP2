@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <types.h>
 
-uint64_t sys_read(const char* buff, uint64_t len);
-uint64_t sys_write(uint32_t hexColor, const char* buff, uint64_t len);
+uint64_t sys_read(char fd, const char* buff, uint64_t len);
+uint64_t sys_write(char fd, const char* buff, uint64_t len, uint32_t hexColor);
 void sys_put_text(const char* str, uint32_t len, uint32_t hexColor, uint32_t posX, uint32_t posY);
 void sys_set_font_size(uint32_t font_size);
 void sys_draw_square(uint32_t hexColor, uint32_t posX, uint32_t posY, uint32_t size);

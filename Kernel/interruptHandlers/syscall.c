@@ -17,39 +17,69 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_sem_post
 };
 
-uint64_t syscall_handler(const registers64_t *registers){
-    if (registers->rax >= sizeof(syscalls) / sizeof(syscalls[0]))
-            return 0;
+uint64_t syscall_handler(const registers64_t *registers) {
+    if (registers->rax >= sizeof(syscalls) / sizeof(syscalls[0])) {
+        return 0;
+    }
 
     return syscalls[registers->rax](registers->rdi, registers->rsi, registers->rdx,
                                     registers->r10, registers->r8, registers->r9);
 }
 
 
+// rdi: filedes | rsi: buffer | rdx: max bytes to read
 uint64_t sys_read(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    char c = 0;
     int i = 0;
-    char* out_buffer = (char*) rdi;
-    while(c != '\n' && i < rsi){
-        if(keys_pending()){
-            c = get_pressed_character();
-            if(c == '\b'){
-                char * backs = "\b\b\b\b";
-                if(--i < 0) i = 0;
-                else write_to_video_text_buffer(backs, out_buffer[i] == '\t'? 4 : 1, HEX_WHITE);
-            }
-            else{
-                out_buffer[i++] = c;
-                write_to_video_text_buffer(&c, 1, HEX_WHITE);
-            }
-        }
+
+    PCB* pcb = get_running_process();
+
+    char fd;
+
+    if (rdi == STDIN) {
+        fd = pcb->readfd;
+    } else {
+        fd = rdi;
     }
+
+    if (fd == STDOUT) {
+        return 0;
+    }
+
+    if (fd == STDIN) {
+        i = read_from_keyboard((char*) rsi, rdx);
+    } else {
+        i = read_from_pipe(fd, (char*) rsi, rdx);
+    }
+
     return i;
 }
 
+// rdi: filedes | rsi: buffer | rdx: bytes to write | r10: color
 uint64_t sys_write(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    write_to_video_text_buffer((char*)rsi, rdx, rdi);
-    return rdx;
+    int i = 0;
+    
+    PCB* pcb = get_running_process();
+
+    char fd;
+
+    if (rdi == STDOUT) {
+        fd = pcb->writefd;
+    } else {
+        fd = rdi;
+    }
+
+    if(fd == STDIN) {
+        return 0;
+    }
+
+    if (fd == STDOUT) {
+        write_to_video_text_buffer((char*) rsi, rdx, r10);
+        i = rdx;
+    } else {
+        i = write_to_pipe(fd, (char*) rsi, rdx);
+    }
+
+    return i;
 }
 
 uint64_t sys_set_font_size(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {

@@ -25,4 +25,6 @@ char* my_itoa(uint64_t num, char* dest, uint32_t dest_max_len);
 
 void my_strcpy(char* dest, const char* src);
 
+uint32_t my_strcmp(const char* s1, const char* s2);
+
 #endif

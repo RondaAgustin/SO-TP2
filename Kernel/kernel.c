@@ -8,6 +8,8 @@
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <synchro/synchro.h>
+#include <ipc/ipc.h>
+#include <drivers/keyboardDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -66,6 +68,10 @@ int main() {
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
 	init_synchro();
+
+	init_fds();
+
+	init_keyboard_driver();
 
 	create_scheduler();
 

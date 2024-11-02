@@ -8,6 +8,7 @@
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <scheduler/shared_process_structures.h>
+#include <ipc/ipc.h>
 
 #define MAX_PROCESSES 64
 #define STACK_SIZE 4096*2
