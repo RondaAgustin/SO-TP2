@@ -70,7 +70,7 @@ void run_shell() {
         for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) 
             if (strcmp(shell_args[0], modules[i].module_name) == 0){
                 char* argv[] = {modules[i].module_name, NULL};
-                pid_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
+                int64_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
                 if (pid != -1)
                     if (foreground) sys_wait(pid);
             }
@@ -283,7 +283,7 @@ void get_pid(){
 }
 
 void test_scheduler_processes(){
-    char* argv[] = {"61", NULL};
+    char* argv[] = {"60", NULL};
     test_processes(1, argv);
 }
 

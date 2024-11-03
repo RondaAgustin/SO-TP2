@@ -29,10 +29,10 @@ uint32_t sys_mm_get_free_memory();
 // Process Manager
 char sys_create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority, uint8_t fg);
 pid_t sys_get_pid();
-uint8_t sys_block_process(pid_t pid);
-uint8_t sys_unblock_process(pid_t pid);
-uint8_t sys_kill_process(pid_t pid);
-uint8_t sys_modify_priority(pid_t pid, uint32_t priority);
+int8_t sys_block_process(pid_t pid);
+int8_t sys_unblock_process(pid_t pid);
+int8_t sys_kill_process(pid_t pid);
+int8_t sys_modify_priority(pid_t pid, uint32_t priority);
 void sys_wait(pid_t pid);
 void sys_yield();
 void sys_ps();

@@ -21,7 +21,7 @@ typedef struct BuddyManager{
     uint32_t used_memory;       
 } BuddyManager;
 
-uint8_t mm_init(void * p, uint32_t s);
+int8_t mm_init(void * p, uint32_t s);
 void * mm_malloc(uint32_t size);
 void mm_free(void *p);
 uint32_t mm_get_total_memory();

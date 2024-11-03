@@ -3,7 +3,7 @@
 BuddyManager buddyManager;
 
 // Inicializar el gestor de memoria buddy
-uint8_t mm_init(void* p, uint32_t s) {
+int8_t mm_init(void* p, uint32_t s) {
     int max_level = log2(s);
     if (max_level >= MAX_LEVELS)
         return -1;

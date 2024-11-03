@@ -15,14 +15,12 @@
 
 #include <drivers/pitDriver.h>
 
-
-
 #include <process/idle.h>
 #include <shell_caller.h>
 
 typedef struct Scheduler* SchedulerADT;
 
-void create_scheduler();
+int8_t init_scheduler();
 uint64_t context_switch(uint64_t rsp);
 void add_ready_process(PCB* process_pcb);
 void remove_ready_process(PCB *process_pcb);

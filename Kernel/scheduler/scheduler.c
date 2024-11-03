@@ -13,25 +13,22 @@ int cmp(DataType d1, DataType d2){
     return d1 == d2 ? 0 : 1;
 }
 
-void create_scheduler(){
+int8_t init_scheduler(){
     _cli();
+
     scheduler = mm_malloc(sizeof(Scheduler));
+    if (scheduler == NULL) return -1;
+    
     scheduler->current = NULL;
     scheduler->scheduling_process = list_create();
 
-    process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        process_table[i].pid = -1;
-        process_table[i].state = EXITED;
-    }   
+    if (scheduler->scheduling_process == NULL) {
+        mm_free(scheduler);
+        return -1;
+    }
 
-    char* argv_idle[] = {"idle", NULL};
-    execute_process_wrapper((uint64_t) idle, 1, argv_idle, 1, 0);
-
-    char* argv_shell[] = {"start_shell", NULL};
-    execute_process_wrapper((uint64_t) start_shell, 1, argv_shell, 20, 0);
-    
     _sti();
+    return 0;
 }
 
 uint64_t context_switch(uint64_t rsp){
