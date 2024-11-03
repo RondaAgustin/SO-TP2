@@ -3,7 +3,9 @@
 
 
 PCB* process_table;
-pid_t foreground_process = -1;
+pid_t foreground_process_pid = -1;
+
+static uint8_t basic_kill_process(pid_t pid);
 
 char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg) {
     _cli();
@@ -90,7 +92,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     add_ready_process(&process_table[i]);
 
     if (fg == 1) 
-        foreground_process = i;
+        foreground_process_pid = i;
 
     _sti();
     return process_table[i].pid;
@@ -142,7 +144,7 @@ void unblock_waiting_processes(pid_t pid) {
     }
 }
 
-uint8_t kill_process(pid_t pid){
+static uint8_t basic_kill_process(pid_t pid){
     PCB* process_to_kill = find_pcb_by_pid(pid);
     
     if (process_to_kill == NULL) return -1;
@@ -160,14 +162,22 @@ uint8_t kill_process(pid_t pid){
 
     mm_free((void *) process_to_kill->limit);
     list_destroy(process_to_kill->processes_blocked_by_me, NULL);
-    for (int i = 0; i <= process_to_kill->argc ; i++) {
+    
+    for (int i = 0; i <= process_to_kill->argc ; i++) 
         mm_free(process_to_kill->argv[i]);
-    }
+    
     mm_free(process_to_kill->argv);
 
-    if (process_to_kill == get_running_process()) {
+    return 0;
+}
+
+uint8_t kill_process(pid_t pid){
+    if (basic_kill_process(pid) == -1) return -1;
+
+    PCB* process_to_kill = find_pcb_by_pid(pid);    
+
+    if (process_to_kill == get_running_process()) 
         yield();
-    }
     
     return 0;
 }
@@ -269,9 +279,9 @@ void ps() {
 }
 
 void kill_foreground_process() {
-    if (foreground_process != -1){
-        if (process_table[foreground_process].state != EXITED && process_table[foreground_process].fg == 1) {
-            kill_process(foreground_process);
+    if (foreground_process_pid != -1){
+        if (process_table[foreground_process_pid].state != EXITED && process_table[foreground_process_pid].fg == 1){
+            basic_kill_process(foreground_process_pid);
         }
     }
 }

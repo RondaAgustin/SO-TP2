@@ -30,4 +30,7 @@ container:
 container_gdb:
 	docker run --add-host=host.docker.internal:host-gateway -v "${PWD}:/root" --privileged -ti agodio/itba-so-multi-platform:3.0
 
+install_gdb:
+	apt-get install gdb-multiarch
+
 .PHONY: bootloader image collections kernel userland all clean
