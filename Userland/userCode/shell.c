@@ -50,6 +50,7 @@ void run_shell() {
     int shell_args_count = 0;
 
     uint8_t foreground = 1;
+    uint32_t priority = 1;
 
     while (strcmp(shell_input, "exit") != 0) {
         sys_set_font_size(current_font_size);
@@ -58,14 +59,20 @@ void run_shell() {
         
         shell_args_count = split(shell_input, ' ', shell_args, MAX_SHELL_ARGS);
         
-        if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) foreground = 0;
-        else foreground = 1;
+        if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) {
+            foreground = 0;
+            priority = 1;
+        } else {
+            foreground = 1;
+            priority = 20;
+        }
 
         for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) 
             if (strcmp(shell_args[0], modules[i].module_name) == 0){
                 char* argv[] = {modules[i].module_name, NULL};
-                pid_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, 1, foreground);
-                if (foreground) sys_wait(pid);
+                int64_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
+                if (pid != -1)
+                    if (foreground) sys_wait(pid);
             }
     }
 
@@ -276,7 +283,7 @@ void get_pid(){
 }
 
 void test_scheduler_processes(){
-    char* argv[] = {"61", NULL};
+    char* argv[] = {"60", NULL};
     test_processes(1, argv);
 }
 

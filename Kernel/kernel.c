@@ -8,6 +8,8 @@
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <synchro/synchro.h>
+#include <process/init.h>
+#include <process/idle.h>
 #include <ipc/ipc.h>
 #include <drivers/keyboardDriver.h>
 
@@ -67,13 +69,23 @@ int main() {
     write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
-	init_synchro();
+	if (init_fds() == -1)
+		write_to_video_text_buffer("Error initializing file descriptors\n", 28, HEX_RED);
 
-	init_fds();
+	if (init_keyboard_driver() == -1)
+		write_to_video_text_buffer("Error initializing keyboard driver\n", 28, HEX_RED);
 
-	init_keyboard_driver();
+	if (init_synchro() == -1)
+		write_to_video_text_buffer("Error initializing synchro\n", 28, HEX_RED);
 
-	create_scheduler();
+	if (init_scheduler() == -1)
+		write_to_video_text_buffer("Error initializing processes\n", 30, HEX_RED);
+	else 
+		init_processes();
+
+	char *init_argv[] = {"init", NULL};
+
+	execute_process_wrapper((uint64_t) init, 1, init_argv, 1, 0);
 
 	delay(18);
 

@@ -6,15 +6,19 @@ int cmpProsId(const DataType a, const DataType b) {
     return a == b ? 0 : 1;            
 }
 
-void init_synchro() {
+int8_t init_synchro() {
     semaphores = (Semaphore*) mm_malloc(sizeof(Semaphore) * MAX_SEMAPHORES);
+    if (semaphores == NULL) return -1;
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         semaphores[i].open = 0;
         semaphores[i].lock = 1;
     }
+    return 0;
 }
 
 char sem_open(uint64_t initialValue) {
+    if (semaphores == NULL) return -1;
+    
     for (int i = 0; i < MAX_SEMAPHORES; i++) {
         acquire(&semaphores[i].lock);
         if (!semaphores[i].open) {
@@ -31,6 +35,8 @@ char sem_open(uint64_t initialValue) {
 }
 
 char sem_close(uint8_t semId) {
+    if (semaphores == NULL) return -1;
+
     acquire(&semaphores[semId].lock);
     if(semaphores[semId].open == 0) return -1;
     semaphores[semId].open = 0;
@@ -42,6 +48,8 @@ char sem_close(uint8_t semId) {
 }
 
 void sem_post(uint8_t semId) {
+    if (semaphores == NULL) return;
+
     Semaphore* sem = &semaphores[semId];
     if (sem->open){
         acquire(&sem->lock);
@@ -57,6 +65,8 @@ void sem_post(uint8_t semId) {
 }
 
 void sem_wait(uint8_t semId) {
+    if (semaphores == NULL) return;
+
     Semaphore* sem = &semaphores[semId];
     if (sem->open){
         acquire(&(sem->lock));

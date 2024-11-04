@@ -29,7 +29,6 @@ uint64_t test_processes(uint64_t argc, char *argv[]) {
   p_rq p_rqs[max_processes];
 
   while (1) {
-    puts("Test Processes\n");
     // Create max_processes processes
     for (rq = 0; rq < max_processes; rq++) {
       p_rqs[rq].pid = sys_create_process((uint64_t) process, 1, argvAux, 1, 0);

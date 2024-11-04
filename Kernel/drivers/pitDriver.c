@@ -9,7 +9,6 @@ static uint32_t TICKS_PER_SECOND;
 static unsigned long ticks = 0;
 
 static uint64_t UPDATE_SCREEN_RATE;
-static unsigned long ticks_at_last_update = 0;
 
 void initialize_pit(uint32_t frequency){
 	TICKS_PER_SECOND = frequency;
@@ -22,11 +21,6 @@ void initialize_pit(uint32_t frequency){
 
 uint64_t timer_handler(const uint64_t rsp) {
 	ticks++;
-
-    if (ticks - ticks_at_last_update >= UPDATE_SCREEN_RATE) {
-        // update_frame_buffer();
-        ticks_at_last_update = ticks;
-    }
 
     return context_switch(rsp);
 }

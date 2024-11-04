@@ -17,7 +17,7 @@ typedef struct MemoryManager {
 
 MemoryManager memoryManager;
 
-uint8_t mm_init(void * p, uint32_t s) {
+int8_t mm_init(void * p, uint32_t s) {
     memoryManager.start = p;
     memoryManager.size = s; 
     memoryManager.usedMemory = 0;
@@ -29,6 +29,8 @@ uint8_t mm_init(void * p, uint32_t s) {
         memoryManager.reservedMemoryZone[i] = memoryZone;
         memoryManager.bitmap[i] = FREE;
     }
+    
+    return 0;
 }
 
 void * mm_malloc(uint32_t size) {
