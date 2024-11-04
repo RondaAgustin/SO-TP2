@@ -72,11 +72,11 @@ int main() {
 	if (init_fds() == -1)
 		write_to_video_text_buffer("Error initializing file descriptors\n", 36, HEX_RED);
 
-	if (init_keyboard_driver() == -1)
-		write_to_video_text_buffer("Error initializing keyboard driver\n", 35, HEX_RED);
-
 	if (init_synchro() == -1)
 		write_to_video_text_buffer("Error initializing synchro\n", 28, HEX_RED);
+
+	if (init_keyboard_driver() == -1)
+		write_to_video_text_buffer("Error initializing keyboard driver\n", 35, HEX_RED);
 
 	if (init_scheduler() == -1)
 		write_to_video_text_buffer("Error initializing processes\n", 30, HEX_RED);
