@@ -23,7 +23,7 @@ typedef struct {
 
 extern FileDescriptor* fds;
 
-void init_fds();
+char init_fds();
 char create_pipe(char * name);
 char open_pipe(char * name);
 void close_pipe(char id);

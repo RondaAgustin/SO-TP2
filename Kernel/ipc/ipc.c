@@ -4,11 +4,11 @@
 
 FileDescriptor* fds;
 
-void init_fds() {
+char init_fds() {
     fds = (FileDescriptor*) mm_malloc(MAX_FDS * sizeof(FileDescriptor));
     
     if (fds == NULL) {
-        return;
+        return -1;
     }
 
     for (int i = 0; i < MAX_FDS; i++) {
@@ -20,6 +20,8 @@ void init_fds() {
         fds[i].buffer_size = 0;
         fds[i].first_key_index = 0;
     }
+
+    return 0;
 }
 
 char create_pipe(char * name) {

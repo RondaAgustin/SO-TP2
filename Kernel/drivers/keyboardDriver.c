@@ -24,8 +24,12 @@ static char map_to_ascii[256] = {
     '-', '4', '5', '6', '+', '1', '2', '3', '0', '.'
 };
 
-void init_keyboard_driver() {
+char init_keyboard_driver() {
     sem = sem_open(1);
+    if(sem == -1) {
+        return -1;
+    }
+    return 0;
 }
 
 void keyboard_handler(const registers64_t * registers){
