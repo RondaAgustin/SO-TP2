@@ -34,6 +34,11 @@ global sys_sem_open
 global sys_sem_close
 global sys_sem_wait
 global sys_sem_post
+global sys_pipe
+global sys_pipe_open
+global sys_pipe_close
+global sys_set_process_readfd
+global sys_set_process_writefd
 
 %macro syscall 1
     push rbp
@@ -158,3 +163,9 @@ sys_pipe_open:
 
 sys_pipe_close:
     syscall 36
+
+sys_set_process_readfd
+    syscall 37
+
+sys_set_process_writefd
+    syscall 38

@@ -15,7 +15,7 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_wait, sys_yield, sys_ps,
     sys_sem_open, sys_sem_close, sys_sem_wait,
     sys_sem_post, sys_pipe, sys_pipe_open,
-    sys_pipe_close
+    sys_pipe_close, sys_set_process_readfd, sys_set_process_writefd
 };
 
 uint64_t syscall_handler(const registers64_t *registers) {
@@ -236,5 +236,15 @@ uint64_t sys_pipe_open(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, u
 
 uint64_t sys_pipe_close(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
     close_pipe((char) rdi);
+    return 0;
+}
+
+uint64_t sys_set_process_readfd(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    set_process_readfd(rdi, rsi);
+    return 0;
+}
+
+uint64_t sys_set_process_writefd(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
+    set_process_writefd(rdi, rsi);
     return 0;
 }

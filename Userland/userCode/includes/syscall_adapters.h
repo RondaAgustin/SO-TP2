@@ -43,5 +43,7 @@ void sys_sem_wait(char semId);
 char sys_pipe(char* name);
 char sys_pipe_open(char* name);
 void sys_pipe_close(char pipeId);
+void sys_set_process_readfd(pid_t pid, char pipeId);
+void sys_set_process_writefd(pid_t pid, char pipeId);
 
 #endif

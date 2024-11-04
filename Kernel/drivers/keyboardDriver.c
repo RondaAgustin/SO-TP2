@@ -52,6 +52,8 @@ void keyboard_handler(const registers64_t * registers){
     } else if (ctrl_pressed && (scan_code == C_CODE_PRESSED)) {
         kill_foreground_process();
         return;
+    } else if (ctrl_pressed && (scan_code == D_CODE_PRESSED)) {
+        scan_code = 0;
     }
 
     if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) return;
@@ -88,6 +90,8 @@ int read_from_keyboard(char* buffer, int buffer_size) {
                 } else {
                     write_to_video_text_buffer(backs, buffer[i] == '\t' ? 4 : 1, HEX_WHITE);
                 }
+            } else if (c == 0) {
+                return 0;
             } else {
                 buffer[i++] = c;
                 write_to_video_text_buffer(&c, 1, HEX_WHITE);
