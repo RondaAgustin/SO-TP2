@@ -14,14 +14,17 @@
 #define CTRL_CODE_PRESSED 0x1D
 #define CTRL_CODE_RELEASED 0x9D
 #define C_CODE_PRESSED 0x2E
+#define D_CODE_PRESSED 0x20
 
 
 #define MAX_SIZE_KEY_BUFFER 100
 
+char init_keyboard_driver();
 void keyboard_handler();
 int keys_pending();
 uint8_t get_key_pending();
 uint8_t get_scan_code();
 char get_pressed_character();
+int read_from_keyboard(char* buffer, int buffer_size);
 
 #endif

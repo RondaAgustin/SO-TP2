@@ -7,7 +7,7 @@
 #include <synchro/lock.h>
 #include <utils/list.h>
 
-#define MAX_SEMAPHORES 64
+#define MAX_SEMAPHORES 256
 
 typedef struct {
     uint8_t lock;

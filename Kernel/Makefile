@@ -2,7 +2,7 @@ include Makefile.inc
 
 KERNEL=kernel.bin
 
-SOURCE_DIRS=. drivers interruptHandlers memoryManager/buddy utils scheduler process synchro
+SOURCE_DIRS=. drivers interruptHandlers memoryManager/buddy utils scheduler process synchro ipc
 SOURCES=$(wildcard $(addsuffix /*.c, $(SOURCE_DIRS)))
 SOURCES_ASM=$(wildcard asm/*.asm synchro/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
@@ -28,6 +28,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf memoryManager/*/*.o memoryManager/*.o asm/*.o drivers/*.o interruptHandlers/*.o scheduler/*.o process/*.o synchro/*.o *.o *.bin *.elf */*.o */*/*.o
+	rm -rf memoryManager/*/*.o memoryManager/*.o asm/*.o drivers/*.o interruptHandlers/*.o scheduler/*.o process/*.o synchro/*.o ipc/*.o *.o *.bin *.elf */*.o */*/*.o
 
 .PHONY: all clean

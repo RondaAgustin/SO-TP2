@@ -2,7 +2,7 @@
 #define __SHELL__
 
 #define MAX_SHELL_INPUT 1024
-#define MAX_SHELL_ARGS 2
+#define MAX_SHELL_ARGS 3
 
 #include <stdint.h>
 
@@ -51,6 +51,14 @@ void modify_priority();
 
 void loop();
 
+void producer();
+void consumer();
+void cat();
+void wc();
+void filter();
+void filter2();
+
+int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground);
 void run_shell();
 
 #endif

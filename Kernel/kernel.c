@@ -10,6 +10,8 @@
 #include <synchro/synchro.h>
 #include <process/init.h>
 #include <process/idle.h>
+#include <ipc/ipc.h>
+#include <drivers/keyboardDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -67,8 +69,14 @@ int main() {
     write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
     write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
+	if (init_fds() == -1)
+		write_to_video_text_buffer("Error initializing file descriptors\n", 36, HEX_RED);
+
 	if (init_synchro() == -1)
 		write_to_video_text_buffer("Error initializing synchro\n", 28, HEX_RED);
+
+	if (init_keyboard_driver() == -1)
+		write_to_video_text_buffer("Error initializing keyboard driver\n", 35, HEX_RED);
 
 	if (init_scheduler() == -1)
 		write_to_video_text_buffer("Error initializing processes\n", 30, HEX_RED);
