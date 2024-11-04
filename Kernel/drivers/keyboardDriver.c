@@ -8,20 +8,20 @@ static int first_key_index = 0;
 static int buffer_size = 0;
 static int caps_enabled = 0;
 static int ctrl_pressed = 0;
-const int caps_offset = 84;
+const int caps_offset = 85;
 static char map_to_ascii[256] = {
     0, '~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b', '\t', 
     'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 'c', 
     'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 's', '\\',
     'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 's', '*', 'a', ' ', 'c',
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'n', 's', '7', '8', '9',
-    '-', '4', '5', '6', '+', '1', '2', '3', '0', '.',
+    '-', '4', '5', '6', '+', '1', '2', '3', '0', '.', '\e',
     0, '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b', '\t', 
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n', 'c', 
     'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 's', '|',
     'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 's', '*', 'a', ' ', 'c',
     '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'n', 's', '7', '8', '9',
-    '-', '4', '5', '6', '+', '1', '2', '3', '0', '.'
+    '-', '4', '5', '6', '+', '1', '2', '3', '0', '.', '\e'
 };
 
 char init_keyboard_driver() {
@@ -53,7 +53,7 @@ void keyboard_handler(const registers64_t * registers){
         kill_foreground_process();
         return;
     } else if (ctrl_pressed && (scan_code == D_CODE_PRESSED)) {
-        scan_code = 0;
+        scan_code = 84; // EOF (lo llamamos '\e')
     }
 
     if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) return;
@@ -90,8 +90,8 @@ int read_from_keyboard(char* buffer, int buffer_size) {
                 } else {
                     write_to_video_text_buffer(backs, buffer[i] == '\t' ? 4 : 1, HEX_WHITE);
                 }
-            } else if (c == 0) {
-                return 0;
+            } else if (c == '\e') {
+                return -1;
             } else {
                 buffer[i++] = c;
                 write_to_video_text_buffer(&c, 1, HEX_WHITE);

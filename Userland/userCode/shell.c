@@ -93,6 +93,7 @@ void run_shell() {
             sys_set_process_readfd(pid_right, pipe);
 
             if (pid_right == -1) {
+                sys_kill_process(pid_left);
                 sys_pipe_close(pipe);
                 continue;
             }
@@ -375,7 +376,7 @@ void cat() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == 0) {
+        if (i == -1) {
             break;
         }
         sys_write(STDOUT, buffer, i, 0x00FFFFFF);
@@ -391,7 +392,7 @@ void wc() {
     
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == 0) {
+        if (i == -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -415,7 +416,7 @@ void filter() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == 0) {
+        if (i == -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -431,7 +432,7 @@ void filter2() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == 0) {
+        if (i == -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
