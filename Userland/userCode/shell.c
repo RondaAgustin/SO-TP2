@@ -34,10 +34,26 @@ ModuleDescriptor modules[] = {
     {"ps", "prints processes list and their details", ps},
     {"test_synchro", "test sync", test_synchro},
     {"test_no_synchro", "test no sync", test_no_synchro},
-    {"mem", "display memory info", mem_info}
-    };
+    {"mem", "display memory info", mem_info},
+    {"producer", "prints to stdout every 1.5s", producer},
+    {"consumer", "reads from stdin and prints", consumer},
+    {"cat", "prints data received by stdin", cat},
+    {"wc", "prints number of lines, words and chars of input", wc},
+    {"filter", "shows only vocals from input", filter},
+    {"filter_2", "shows only consonants from input", filter2},
+};
 
 static int current_font_size = 1;
+
+int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground) {
+    for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) {
+        if (strcmp(cmd_name, modules[i].module_name) == 0){
+            char* argv[] = {modules[i].module_name, NULL};
+            return sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
+        }
+    }
+    return -1;
+}
 
 void run_shell() {
 
@@ -47,6 +63,7 @@ void run_shell() {
     char **shell_args = sys_mm_malloc(MAX_SHELL_ARGS * sizeof(char*));
     shell_args[0] = sys_mm_malloc(MAX_SHELL_INPUT * sizeof(char));
     shell_args[1] = sys_mm_malloc(MAX_SHELL_INPUT * sizeof(char));
+    shell_args[2] = sys_mm_malloc(MAX_SHELL_INPUT * sizeof(char));
 
 
     int shell_args_count = 0;
@@ -60,26 +77,53 @@ void run_shell() {
         scanf("%s", shell_input);
         
         shell_args_count = split(shell_input, ' ', shell_args, MAX_SHELL_ARGS);
-        
-        if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) {
-            foreground = 0;
-            priority = 1;
-        } else {
-            foreground = 1;
-            priority = 20;
-        }
 
-        for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) 
-            if (strcmp(shell_args[0], modules[i].module_name) == 0){
-                char* argv[] = {modules[i].module_name, NULL};
-                int64_t pid = sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
-                if (pid != -1)
-                    if (foreground) sys_wait(pid);
+        if(shell_args_count == 3 && strcmp(shell_args[1], "|") == 0) {
+            char pipe = sys_pipe("shell_pipe");
+
+            // Tengo que crear el proceso de la izquierda con la salida redirigida al pipe
+            int64_t pid_left = execute_command(shell_args[0], 1, 0);
+            sys_set_process_writefd(pid_left, pipe);
+
+            if (pid_left == -1) {
+                sys_pipe_close(pipe);
+                continue;
             }
+
+            // Tengo que crear el proceso de la derecha con la entrada redirigida al pipe
+            int64_t pid_right = execute_command(shell_args[2], 1, 1);
+            sys_set_process_readfd(pid_right, pipe);
+
+            if (pid_right == -1) {
+                sys_kill_process(pid_left);
+                sys_pipe_close(pipe);
+                continue;
+            }
+
+            sys_wait(pid_left);
+            sys_kill_process(pid_right);
+            sys_pipe_close(pipe);
+        } else {
+            if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) {
+                priority = 1;
+                foreground = 0;
+            } else {
+                priority = 20;
+                foreground = 1;
+            }
+
+            int64_t pid = execute_command(shell_args[0], priority, foreground);
+            if (pid != -1) {
+                if (foreground) {
+                    sys_wait(pid);
+                }
+            }
+        }
     }
 
     sys_mm_free(shell_args[0]);
     sys_mm_free(shell_args[1]);
+    sys_mm_free(shell_args[2]);
     sys_mm_free(shell_args);
 }
 
@@ -327,4 +371,95 @@ void mem_info(){
     printf("Total memory: %d bytes\n", sys_mm_get_total_memory());
     printf("Used memory: %d bytes\n", sys_mm_get_used_memory());
     printf("Free memory: %d bytes\n", sys_mm_get_free_memory());
+}
+
+void cat() {
+    char buffer[2048];
+    int i = 0;
+    while (1) {
+        i = sys_read(STDIN, buffer, 2048);
+        if (i == -1) {
+            break;
+        }
+        sys_write(STDOUT, buffer, i, 0x00FFFFFF);
+    }
+}
+
+void wc() {
+    char buffer[2048];
+    int i = 0;
+    int words = 0;
+    int lines = 0;
+    int chars = 0;
+    
+    while (1) {
+        i = sys_read(STDIN, buffer, 2048);
+        if (i == -1) {
+            break;
+        }
+        for (int j = 0; j < i; j++) {
+            if (buffer[j] == ' ' || buffer[j] == '\n') {
+                words++;
+            }
+            if (buffer[j] == '\n') {
+                lines++;
+            }
+            chars++;
+        }
+    }
+    
+    printf("\nWords: %d\n", words);
+    printf("Lines: %d\n", lines);
+    printf("Chars: %d\n", chars);
+}
+
+void filter() {
+    char buffer[2048];
+    int i = 0;
+    while (1) {
+        i = sys_read(STDIN, buffer, 2048);
+        if (i == -1) {
+            break;
+        }
+        for (int j = 0; j < i; j++) {
+            if (buffer[j] == 'a' || buffer[j] == 'e' || buffer[j] == 'i' || buffer[j] == 'o' || buffer[j] == 'u') {
+                sys_write(STDOUT, buffer + j, 1, 0x00FFFFFF);
+            }
+        }
+    }
+}
+
+void filter2() {
+    char buffer[2048];
+    int i = 0;
+    while (1) {
+        i = sys_read(STDIN, buffer, 2048);
+        if (i == -1) {
+            break;
+        }
+        for (int j = 0; j < i; j++) {
+            if (buffer[j] != 'a' && buffer[j] != 'e' && buffer[j] != 'i' && buffer[j] != 'o' && buffer[j] != 'u') {
+                sys_write(STDOUT, buffer + j, 1, 0x00FFFFFF);
+            }
+        }
+    }
+}
+
+void producer() {
+    int count = 0;
+    while (count < 10) {
+        char* data = "test";
+        sys_write(STDOUT, data, strlen(data), 0x00FF0000);
+        count++;
+        sys_delay(1500);
+    }
+}
+
+void consumer() {
+    int i = 0;
+    while (1) {
+        char data[5];
+        i = sys_read(STDIN, data, 5);
+        sys_write(STDOUT, data, i, 0x0000FF00);
+    }
 }

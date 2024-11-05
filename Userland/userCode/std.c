@@ -76,15 +76,15 @@ uint32_t strlen(const char* s) {
 }
 
 void putchar(char c) {
-    sys_write(1, &c, 1);
+    sys_write(STDOUT, &c, 1, 1);
 }
 
 void puts(const char* s) {
-    sys_write(0x00ffffff, s, strlen(s));
+    sys_write(STDOUT, s, strlen(s), 0x00ffffff);
 }
 
 void puts_with_color(const char* s, uint32_t hexColor) {
-    sys_write(hexColor, s, strlen(s));
+    sys_write(STDOUT, s, strlen(s), hexColor);
 }
 
 char* itoa(uint64_t num, char* dest, uint32_t dest_max_len) {
@@ -203,7 +203,7 @@ uint32_t atoi(const char* s) {
 uint64_t scanf(const char* fmt, void* ptr) {
     char scan_buff[SCANF_BUFF_MAX_SIZE] = {0};
 
-    uint32_t len = sys_read(scan_buff, SCANF_BUFF_MAX_SIZE);
+    uint32_t len = sys_read(STDIN, scan_buff, SCANF_BUFF_MAX_SIZE);
     if (len > 0){
         scan_buff[len - 1] = '\0';
 

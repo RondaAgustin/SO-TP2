@@ -13,6 +13,8 @@ typedef enum State {
 typedef struct {
     uint32_t pid;
     uint8_t fg;         // 1 if the process is in the foreground, 0 otherwise
+    char readfd;
+    char writefd;
     char father_pid;
     char* process_name;
     char** argv;

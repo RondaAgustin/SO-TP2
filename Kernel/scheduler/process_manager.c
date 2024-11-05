@@ -67,6 +67,8 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
 
     process_table[i].pid = i;
     process_table[i].fg = fg;
+    process_table[i].readfd = STDIN;
+    process_table[i].writefd = STDOUT;
     process_table[i].father_pid = father_pid;
     process_table[i].process_name = argv[0];
     process_table[i].argv = argv;
@@ -136,6 +138,20 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
 
     _sti();
     return process_table[i].pid;
+}
+
+void set_process_readfd(pid_t pid, char fd) {
+    PCB* process = find_pcb_by_pid(pid);
+    if (process != NULL) {
+        process->readfd = fd;
+    }
+}
+
+void set_process_writefd(pid_t pid, char fd) {
+    PCB* process = find_pcb_by_pid(pid);
+    if (process != NULL) {
+        process->writefd = fd;
+    }
 }
 
 int8_t block_process(pid_t pid){
