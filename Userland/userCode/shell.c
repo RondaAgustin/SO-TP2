@@ -39,6 +39,7 @@ ModuleDescriptor modules[] = {
     {"wc", "prints number of lines, words and chars of input", wc},
     {"filter", "shows only vocals from input", filter},
     {"filter_2", "shows only consonants from input", filter2},
+    {"phylo", "starts philosophers problem", phylo},
 };
 
 static int current_font_size = 1;
@@ -463,4 +464,8 @@ void consumer() {
         }
         sys_write(STDOUT, data, i, 0x0000FF00);
     }
+}
+
+void phylo() {
+    start_phylos();
 }

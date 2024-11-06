@@ -19,6 +19,7 @@
 #include <lib.h>
 #include <test_mm.h>
 #include <types.h>
+#include <phylo.h>
 
 void help();
 void cls();
@@ -57,6 +58,7 @@ void cat();
 void wc();
 void filter();
 void filter2();
+void phylo();
 
 int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground, char fds[]);
 void run_shell();
