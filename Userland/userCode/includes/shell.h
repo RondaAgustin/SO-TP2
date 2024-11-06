@@ -58,7 +58,7 @@ void wc();
 void filter();
 void filter2();
 
-int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground);
+int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground, char fds[]);
 void run_shell();
 
 #endif

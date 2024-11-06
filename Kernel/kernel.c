@@ -85,7 +85,8 @@ int main() {
 
 	char *init_argv[] = {"init", NULL};
 
-	execute_process_wrapper((uint64_t) init, 1, init_argv, 1, 0);
+	char fds[2] = {STDIN, STDOUT};
+	execute_process_wrapper((uint64_t) init, 1, init_argv, 1, 0, fds);
 
 	delay(18);
 

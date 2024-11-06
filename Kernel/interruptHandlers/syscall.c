@@ -170,7 +170,7 @@ uint64_t sys_mm_get_free_memory(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64
 }
 
 uint64_t sys_create_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    return execute_process_wrapper(rdi, rsi, (char**) rdx, r10, r8);
+    return execute_process_wrapper(rdi, rsi, (char**) rdx, r10, r8, (char*)r9);
 }
 
 uint64_t sys_get_pid(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
