@@ -76,7 +76,13 @@ uint8_t get_key_pending(){
 }
 
 char get_pressed_character(){
-    return map_to_ascii[get_key_pending() + caps_enabled * caps_offset];
+    while(1) {
+        if(keys_pending()) {
+            return map_to_ascii[get_key_pending() + caps_enabled * caps_offset];
+        } else {
+            sem_wait(sem);
+        }
+    }
 }
 
 int read_from_keyboard(char* buffer, int buffer_size) {

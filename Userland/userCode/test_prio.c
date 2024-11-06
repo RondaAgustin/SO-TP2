@@ -21,7 +21,7 @@ void test_prio() {
     puts("CREATING PROCESSES...\n");
 
     for (i = 0; i < TOTAL_PROCESSES; i++)
-        pids[i] = sys_create_process((uint64_t) process, 1, argv, 1, 0);
+        pids[i] = sys_create_process((uint64_t) process, 1, argv, 1, 0, NULL);
 
     bussy_wait(WAIT);
     puts("\nCHANGING PRIORITIES...\n");

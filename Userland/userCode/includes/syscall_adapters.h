@@ -27,7 +27,7 @@ uint32_t sys_mm_get_total_memory();
 uint32_t sys_mm_get_used_memory();
 uint32_t sys_mm_get_free_memory();
 // Process Manager
-char sys_create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority, uint8_t fg);
+char sys_create_process(uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority, uint8_t fg, char fds[]);
 pid_t sys_get_pid();
 int8_t sys_block_process(pid_t pid);
 int8_t sys_unblock_process(pid_t pid);

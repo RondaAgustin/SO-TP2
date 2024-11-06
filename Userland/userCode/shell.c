@@ -41,15 +41,16 @@ ModuleDescriptor modules[] = {
     {"wc", "prints number of lines, words and chars of input", wc},
     {"filter", "shows only vocals from input", filter},
     {"filter_2", "shows only consonants from input", filter2},
+    {"phylo", "starts philosophers problem", phylo},
 };
 
 static int current_font_size = 1;
 
-int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground) {
+int64_t execute_command(char* cmd_name, uint32_t priority, uint8_t foreground, char fds[]) {
     for (uint32_t i = 0; i < sizeof(modules) / sizeof(modules[0]); i++) {
         if (strcmp(cmd_name, modules[i].module_name) == 0){
             char* argv[] = {modules[i].module_name, NULL};
-            return sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground);
+            return sys_create_process((uint64_t) modules[i].module, 1, argv, priority, foreground, fds);
         }
     }
     return -1;
@@ -82,8 +83,8 @@ void run_shell() {
             char pipe = sys_pipe("shell_pipe");
 
             // Tengo que crear el proceso de la izquierda con la salida redirigida al pipe
-            int64_t pid_left = execute_command(shell_args[0], 1, 0);
-            sys_set_process_writefd(pid_left, pipe);
+            char fds_left[2] = {STDIN, pipe};
+            int64_t pid_left = execute_command(shell_args[0], 1, 0, fds_left);
 
             if (pid_left == -1) {
                 sys_pipe_close(pipe);
@@ -91,8 +92,8 @@ void run_shell() {
             }
 
             // Tengo que crear el proceso de la derecha con la entrada redirigida al pipe
-            int64_t pid_right = execute_command(shell_args[2], 1, 1);
-            sys_set_process_readfd(pid_right, pipe);
+            char fds_right[2] = {pipe, STDOUT};
+            int64_t pid_right = execute_command(shell_args[2], 1, 1, fds_right);
 
             if (pid_right == -1) {
                 sys_kill_process(pid_left);
@@ -112,7 +113,7 @@ void run_shell() {
                 foreground = 1;
             }
 
-            int64_t pid = execute_command(shell_args[0], priority, foreground);
+            int64_t pid = execute_command(shell_args[0], priority, foreground, NULL);
             if (pid != -1) {
                 if (foreground) {
                     sys_wait(pid);
@@ -460,6 +461,13 @@ void consumer() {
     while (1) {
         char data[5];
         i = sys_read(STDIN, data, 5);
+        if(i == -1) {
+            break;
+        }
         sys_write(STDOUT, data, i, 0x0000FF00);
     }
+}
+
+void phylo() {
+    start_phylos();
 }

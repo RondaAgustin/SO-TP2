@@ -110,9 +110,7 @@ int read_from_pipe(char pipe_id, char* buffer, int buffer_size) {
     if (pipe == NULL) {
         return 0;
     }
-    if(pipe->buffer_size == 0) {
-        sem_wait(pipe->sem_data_available);
-    }
+    sem_wait(pipe->sem_data_available);
     sem_wait(pipe->mutex);
     int i = 0;
     while (i < buffer_size && pipe->buffer_size > 0) {

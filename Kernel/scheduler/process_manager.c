@@ -22,7 +22,7 @@ int8_t init_processes() {
     return 0;
 }
 
-char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg) {
+char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg, char fds[]) {
     if (process_table == NULL) return -1;
     
     _cli();
@@ -58,17 +58,35 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
         }
     }
 
-    if (!found) 
+    if (!found) {
         return -1;
-    
+    }
+        
 
     PCB* running_process = get_running_process();
-    int father_pid = running_process == NULL ? 0 : running_process->pid;
+    int father_pid;
+
+    char process_fds[2];
+
+    if(running_process == NULL) {
+        father_pid = 0;
+        process_fds[0] = STDIN;
+        process_fds[1] = STDOUT;
+    } else {
+        father_pid = running_process->pid;
+        process_fds[0] = running_process->readfd;
+        process_fds[1] = running_process->writefd;
+    }
+
+    if(fds != NULL) {
+        process_fds[0] = fds[0];
+        process_fds[1] = fds[1];
+    }
 
     process_table[i].pid = i;
     process_table[i].fg = fg;
-    process_table[i].readfd = STDIN;
-    process_table[i].writefd = STDOUT;
+    process_table[i].readfd = process_fds[0];
+    process_table[i].writefd = process_fds[1];
     process_table[i].father_pid = father_pid;
     process_table[i].process_name = argv[0];
     process_table[i].argv = argv;
