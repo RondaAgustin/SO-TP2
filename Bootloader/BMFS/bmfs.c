@@ -504,32 +504,36 @@ int initialize(char *diskname, char *size, char *mbr, char *boot, char *kernel)
 	}
 
 	// Write the boot loader if it was specified by the caller.
-	if (ret == 0 && bootFile !=NULL)
-	{
-		printf("Writing %s file.\n", bootFileType);
-		fseek(disk, 8192, SEEK_SET);
-		for (;;)
-		{
-			chunkSize = fread( buffer, 1, bufferSize, bootFile);
-			if (chunkSize > 0)
-			{
-				if (fwrite(buffer, chunkSize, 1, disk) != 1)
-				{
-					printf("Error: Failed to write disk '%s'\n", diskname);
-					ret = 1;
-				}
-			}
-			else
-			{
-				if (ferror(disk))
-				{
-					printf("Error: Failed to read file '%s'\n", boot);
-					ret = 1;
-				}
-				break;
-			}
-		}
-	}
+	if (ret == 0 && kernelFile != NULL)
+{
+    if (disk == NULL) {
+        printf("Error: Disk pointer is NULL\n");
+        ret = 1;
+    } else {
+        printf("Writing kernel.\n");
+        for (;;)
+        {
+            chunkSize = fread(buffer, 1, bufferSize, kernelFile);
+            if (chunkSize > 0)
+            {
+                if (fwrite(buffer, chunkSize, 1, disk) != 1)
+                {
+                    printf("Error: Failed to write disk '%s'\n", diskname);
+                    ret = 1;
+                }
+            }
+            else
+            {
+                if (ferror(disk))
+                {
+                    printf("Error: Failed to read file '%s'\n", kernel);
+                    ret = 1;
+                }
+                break;
+            }
+        }
+    }
+}
 
 	// Write the kernel if it was specified by the caller. The kernel must
 	// immediately follow the boot loader on disk (i.e. no seek needed.)
