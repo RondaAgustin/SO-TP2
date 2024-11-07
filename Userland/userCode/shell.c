@@ -245,7 +245,7 @@ void eliminator() {
 }
 
 void jump() {
-    int64_t dir = 0;
+    int dir = 0;
     printf("Address: ");
     scanf("%d", &dir);
     printf("Jumping to address %d\n", dir);
