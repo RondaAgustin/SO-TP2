@@ -100,7 +100,7 @@ int checkFiles(array_t fileArray) {
 
 }
 
-int write_size(FILE *target, char *filename) {
+void write_size(FILE *target, char *filename) {
 	struct stat st;
 	stat(filename, &st);
 	uint32_t size = st.st_size;

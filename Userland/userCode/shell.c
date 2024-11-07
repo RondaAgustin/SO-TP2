@@ -245,7 +245,7 @@ void eliminator() {
 }
 
 void jump() {
-    uint64_t dir = 0;
+    int64_t dir = 0;
     printf("Address: ");
     scanf("%d", &dir);
     printf("Jumping to address %d\n", dir);
@@ -375,7 +375,7 @@ void mem_info(){
 }
 
 void cat() {
-    char buffer[2048];
+    char buffer[2048] = {0};
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
@@ -387,7 +387,7 @@ void cat() {
 }
 
 void wc() {
-    char buffer[2048];
+    char buffer[2048] = {0};
     int i = 0;
     int words = 0;
     int lines = 0;
@@ -395,7 +395,7 @@ void wc() {
     
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == -1) {
+        if (i <= -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -415,11 +415,11 @@ void wc() {
 }
 
 void filter() {
-    char buffer[2048];
+    char buffer[2048] = {0};
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == -1) {
+        if (i <= 0) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -431,11 +431,11 @@ void filter() {
 }
 
 void filter2() {
-    char buffer[2048];
+    char buffer[2048] = {0};
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == -1) {
+        if (i <= 0) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -459,9 +459,9 @@ void producer() {
 void consumer() {
     int i = 0;
     while (1) {
-        char data[5];
+        char data[5] = {0};
         i = sys_read(STDIN, data, 5);
-        if(i == -1) {
+        if(i <= 0) {
             break;
         }
         sys_write(STDOUT, data, i, 0x0000FF00);

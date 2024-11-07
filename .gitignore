@@ -16,3 +16,9 @@ core
 .viminfo
 .gdb_history
 .cache
+
+#PVS
+report.tasks
+PVS-Studio.log
+strace_out
+pvs.sh

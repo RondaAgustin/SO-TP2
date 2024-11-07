@@ -8,7 +8,7 @@
 extern SchedulerADT my_scheduler;
 
 static uint32_t TICKS_PER_SECOND;
-static unsigned long ticks = 0;
+static volatile unsigned long ticks = 0;
 
 static uint64_t UPDATE_SCREEN_RATE;
 
