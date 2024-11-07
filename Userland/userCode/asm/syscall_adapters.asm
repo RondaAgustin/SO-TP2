@@ -39,6 +39,7 @@ global sys_pipe_open
 global sys_pipe_close
 global sys_set_process_readfd
 global sys_set_process_writefd
+global sys_sem_value
 
 %macro syscall 1
     push rbp
@@ -169,3 +170,6 @@ sys_set_process_readfd
 
 sys_set_process_writefd
     syscall 38
+
+sys_sem_value:
+    syscall 39

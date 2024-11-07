@@ -85,3 +85,8 @@ void sem_wait(uint8_t semId) {
         }
     }
 }
+
+int64_t sem_value(uint8_t semId) {
+    if (semaphores == NULL || semId >= MAX_SEMAPHORES || !semaphores[semId].open) return -1;
+    return semaphores[semId].value;
+}

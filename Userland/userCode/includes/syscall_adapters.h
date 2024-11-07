@@ -33,13 +33,20 @@ int8_t sys_block_process(pid_t pid);
 int8_t sys_unblock_process(pid_t pid);
 int8_t sys_kill_process(pid_t pid);
 int8_t sys_modify_priority(pid_t pid, uint32_t priority);
+
+
 void sys_wait(pid_t pid);
 void sys_yield();
 void sys_ps();
+
+// Synchronization
 char sys_sem_open(uint64_t initialValue);
 void sys_sem_close(char semId);
 void sys_sem_post(char semId);
 void sys_sem_wait(char semId);
+int64_t sys_sem_value(int8_t semId);
+
+// Pipes
 char sys_pipe(char* name);
 char sys_pipe_open(char* name);
 void sys_pipe_close(char pipeId);
