@@ -1,117 +1,234 @@
 #include <phylo.h>
 
-#define MAX_FILOSOFOS 10
-#define THINK_TIME 2000
-#define EAT_TIME 3000
+#define MAX_PHILOSOPHERS 10
+#define INITIAL_PHILOSOPHERS 5
 
-pid_t filosofos[MAX_FILOSOFOS];
-char tenedores[MAX_FILOSOFOS];
-int num_filosofos = 5;
-char print_mutex;
+typedef enum {THINKING, EATING, HUNGRY} State;
 
-typedef enum { ESPERANDO, COMIENDO } Estado;
-Estado estados[MAX_FILOSOFOS];
+typedef struct {
+    pid_t pid;
+    State state;
+    uint16_t left_fork;
+    uint16_t right_fork;
+    uint16_t previous_left_fork;
+    uint16_t previous_right_fork;
+} Philosopher;
 
-void mostrar_mesa() {
+Philosopher philosophers[MAX_PHILOSOPHERS];
+
+uint16_t print_mutex;
+uint16_t philo_qty_mutex; 
+uint16_t status_mutex;
+
+uint64_t philo_qty = 0;
+
+void print_status() {
     sys_sem_wait(print_mutex);
-    for (int i = 0; i < num_filosofos; i++) {
-        if (estados[i] == COMIENDO) {
-            printf("E ");
-        } else {
-            printf(". ");
+    Philosopher p;
+    sys_sem_wait(status_mutex);
+    sys_sem_wait(philo_qty_mutex);
+    for (int i = 0; i < philo_qty; i++){
+        p = philosophers[i];
+        
+        switch (p.state) {
+            case THINKING:
+                printf(". ");
+                break;
+            case EATING:
+                printf("E ");
+                break;
+            case HUNGRY:
+                break;
         }
     }
+    sys_sem_post(philo_qty_mutex);
+    sys_sem_post(status_mutex);
     printf("\n");
     sys_sem_post(print_mutex);
 }
 
-void filosofo(int argc, char *argv[]) {
+void thinking() {
+    print_status();
+    sys_delay(500);
+}
 
-    int id = atoi(argv[0]);
+void eat() {
+    print_status();
+    sys_delay(500);
+}
 
-    int izquierda = id;
-    int derecha = (id + 1) % num_filosofos;
+void pick_forks(uint64_t id) {
+    Philosopher* p = &philosophers[id];
+    
+    uint16_t initial_left_fork;
+    uint16_t initial_right_fork;
 
-    while(1) {
-        estados[id] = ESPERANDO;
-        mostrar_mesa();
-        sys_delay(THINK_TIME);
+    if (id % 2 == 0) {
+        initial_left_fork = p->left_fork;
+        sys_sem_wait(initial_left_fork);
+        initial_right_fork = p->right_fork;
+        sys_sem_wait(initial_right_fork);
+    } else {
+        initial_right_fork = p->right_fork;
+        sys_sem_wait(initial_right_fork);
+        initial_left_fork = p->left_fork;
+        sys_sem_wait(initial_left_fork);
+    }
 
-        sys_sem_wait(tenedores[izquierda]);
-        sys_sem_wait(tenedores[derecha]);  
+    sys_sem_wait(status_mutex); 
+    p->state = EATING;
+    sys_sem_post(status_mutex);
 
-        estados[id] = COMIENDO;
-        mostrar_mesa();
-        sys_delay(EAT_TIME);
+    p->previous_left_fork = initial_left_fork;
+    p->previous_right_fork = initial_right_fork;
+}
 
-        sys_sem_post(tenedores[izquierda]);
-        sys_sem_post(tenedores[derecha]);
+void put_forks(uint64_t id) {
+    Philosopher p = philosophers[id];
+    
+    sys_sem_wait(status_mutex);
+
+    sys_sem_post(p.previous_left_fork);
+    sys_sem_post(p.previous_right_fork);
+    
+    philosophers[id].state = THINKING;
+    sys_sem_post(status_mutex);
+}
+
+void philosoper(uint64_t argc, char* argv[]) {
+    uint64_t id = atoi(argv[1]);
+
+    while (1) {
+        thinking();
+        
+        pick_forks(id);
+
+        eat();
+        
+        put_forks(id);
     }
 }
 
-void crear_filosofo(int i) {
-    tenedores[i] = sys_sem_open(1);
-    if (tenedores[i] == -1) {
-        printf("\n\nError al abrir semaforo\n\n");
-        return;
-    }
-    char buffer[3];
-    itoa(i, buffer, 3);
-    char* argv[] = {buffer, NULL};
-    char pid = sys_create_process((uint64_t)filosofo, 1, argv, 1, 0, NULL);
-    if (pid == -1) {
-        printf("\n\nError al crear proceso\n\n");
-        return;
-    }
-    filosofos[i] = pid;
+uint64_t right_philosopher(uint64_t index) {
+    return (index + 1) % philo_qty;
 }
 
-void agregar_filosofo() {
-    if(num_filosofos == MAX_FILOSOFOS) {
-        printf("\n\nNo se pueden agregar mas filosofos\n\n");
+uint64_t left_philosopher(uint64_t index) {
+    return (index == 0) ? (philo_qty - 1) : (index - 1);
+}
+
+void create_philosopher(uint64_t id) {  
+    sys_sem_wait(philo_qty_mutex);
+
+    if (id >= MAX_PHILOSOPHERS) {
+        printf("Max philosophers reached\n");
+        return;
+    }
+    
+    Philosopher * p = &philosophers[id];
+
+    philo_qty = philo_qty + 1;
+
+    if(id == 0) {
+        p->left_fork = sys_sem_open(1);
+        p->right_fork = sys_sem_open(1);
+    } else if (id == 1) {
+        p->left_fork = philosophers[0].right_fork;
+        p->right_fork = philosophers[0].left_fork;
+    } else {
+        Philosopher* right = &philosophers[right_philosopher(id)];
+        p->right_fork = right->left_fork;
+        Philosopher* left = &philosophers[left_philosopher(id)];
+        left->right_fork = sys_sem_open(1);
+        p->left_fork = left->right_fork;
+    }
+
+    int argc = 2;
+    int number_lenght = 3;
+
+    char id_string[number_lenght];
+    itoa(id, id_string, number_lenght);
+    char* argv[] = {"philosoper", id_string, NULL};
+
+    int aux_pid = sys_create_process((uint64_t) philosoper, argc, argv, 1, 0, NULL);
+
+    p->pid = aux_pid;
+
+    p->state = THINKING;
+
+    sys_sem_post(philo_qty_mutex);
+}
+
+void remove_philosopher(uint64_t id) {
+    sys_sem_wait(philo_qty_mutex);
+
+    if (philo_qty == 0) {
+        printf("No philosophers to remove\n");
         return;
     }
 
-    printf("\n\nAgregando filosofo\n\n");
-    num_filosofos++;
-    crear_filosofo(num_filosofos - 1);
-}
+    Philosopher* p = &philosophers[id];
 
-void borrar_filosofo() {
-    if(num_filosofos == 0) {
-        printf("\n\nNo hay filosofos para borrar\n\n");
-        return;
+    sys_kill_process(p->pid);
+
+    if (p->state == EATING) {   // Tiene los tenedores
+        put_forks(id);
     }
 
-    printf("\n\nBorrando filosofo\n\n");
-    num_filosofos--;
-    sys_kill_process(filosofos[num_filosofos]);
-    sys_sem_close(tenedores[num_filosofos]);
+    if (id == 0) {
+        sys_sem_close(p->left_fork);
+        sys_sem_close(p->right_fork);
+    } else {
+        Philosopher* right = &philosophers[right_philosopher(id)];
+        Philosopher* left = &philosophers[left_philosopher(id)];
+        left->right_fork = right->left_fork;
+
+        sys_sem_close(p->left_fork);
+    }
+
+    p->pid = 0;
+    p->state = THINKING;
+    p->left_fork = 0;
+    p->right_fork = 0;
+    p->previous_left_fork = 0;
+    p->previous_right_fork = 0;
+
+    philo_qty = philo_qty - 1;
+
+    sys_sem_post(philo_qty_mutex);
 }
 
-void capturar_entrada() {
+void catch_input(){
     char c;
     while (1) {
         c = getchar();
-        if (c == 'a') {
-            agregar_filosofo();
-        } else if (c == 'q') {
-            borrar_filosofo();
-        }
+        if (c == 'a' || c == 'A') {
+            printf("\n\nAdding philosopher.\n\n");
+            create_philosopher(philo_qty);
+        } else if (c == 'r' || c == 'R') {
+            printf("\n\nRemoving philosopher.\n\n");
+            remove_philosopher(philo_qty - 1);
+        }    
     }
 }
 
 void start_phylos() {
-    print_mutex = sys_sem_open(1);
+    char print_mutex_aux = sys_sem_open(1);
+    char philo_qty_mutex_aux = sys_sem_open(1);
+    char status_mutex_aux = sys_sem_open(1);
 
-    if (print_mutex == -1) {
+    if (print_mutex_aux == -1 || philo_qty_mutex_aux == -1 || status_mutex_aux == -1) {
+        printf("Error creating mutexs\n");
         return;
     }
 
-    int i;
-    for (i = 0; i < num_filosofos; i++) {
-        crear_filosofo(i);
+    print_mutex = print_mutex_aux;
+    philo_qty_mutex = philo_qty_mutex_aux;
+    status_mutex = status_mutex_aux;
+
+    for (int i = 0; i < INITIAL_PHILOSOPHERS; i++) {
+        create_philosopher(i);
     }
 
-    capturar_entrada();
+    catch_input();
 }
