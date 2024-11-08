@@ -6,6 +6,8 @@
 #define MAX_PHILOSOPHERS 10
 #define INITIAL_PHILOSOPHERS 5
 
+#define PRINT_STATUS_TO_EAT 5
+
 typedef enum {THINKING, EATING, HUNGRY} State;
 
 typedef struct {
@@ -15,6 +17,7 @@ typedef struct {
     uint16_t right_fork;
     uint16_t previous_left_fork;
     uint16_t previous_right_fork;
+    uint64_t last_status_print;
 } Philosopher;
 
 Philosopher philosophers[MAX_PHILOSOPHERS];
@@ -24,33 +27,56 @@ uint16_t philo_qty_mutex;
 uint16_t status_mutex;
 
 uint64_t philo_qty = 0;
+uint64_t print_status_counter = 0;
+
+uint64_t right_philosopher(uint64_t index) {
+    return (index + 1) % philo_qty;
+}
+
+uint64_t left_philosopher(uint64_t index) {
+    return (index == 0) ? (philo_qty - 1) : (index - 1);
+}
+
 
 void print_status() {
     sys_sem_wait(print_mutex);
-    Philosopher p;
+    Philosopher *p;
+    
     sys_sem_wait(status_mutex);
+    print_status_counter++;
+    
     sys_sem_wait(philo_qty_mutex);
+
     for (int i = 0; i < philo_qty; i++){
-        p = philosophers[i];
+        p = &philosophers[i];
         
-        switch (p.state) {
+        switch (p->state) {
             case THINKING:
                 printf(". ");
                 break;
             case EATING:
+                p->last_status_print = print_status_counter;
                 printf("E ");
                 break;
             case HUNGRY:
+                printf(". ");
                 break;
         }
+
+        if (print_status_counter - p->last_status_print > PRINT_STATUS_TO_EAT) {
+            p->state = HUNGRY;
+        }
     }
+    
     sys_sem_post(philo_qty_mutex);
     sys_sem_post(status_mutex);
+    
     printf("\n");
+    
     sys_sem_post(print_mutex);
 }
 
-void thinking() {
+void think() {
     print_status();
     sys_delay(500);
 }
@@ -60,8 +86,15 @@ void eat() {
     sys_delay(500);
 }
 
-void pick_forks(uint64_t id) {
+uint8_t pick_forks(uint64_t id) {
     Philosopher* p = &philosophers[id];
+
+    sys_sem_wait(status_mutex);
+    if (p->state != HUNGRY && (philosophers[left_philosopher(id)].state == HUNGRY || philosophers[right_philosopher(id)].state == HUNGRY)) {
+        sys_sem_post(status_mutex);
+        return 0;
+    }
+    sys_sem_post(status_mutex);
     
     uint16_t initial_left_fork;
     uint16_t initial_right_fork;
@@ -84,17 +117,23 @@ void pick_forks(uint64_t id) {
 
     p->previous_left_fork = initial_left_fork;
     p->previous_right_fork = initial_right_fork;
+
+    return 1;
 }
 
 void put_forks(uint64_t id) {
-    Philosopher p = philosophers[id];
+    Philosopher* p = &philosophers[id];
     
     sys_sem_wait(status_mutex);
-
-    sys_sem_post(p.previous_left_fork);
-    sys_sem_post(p.previous_right_fork);
+    if (p->state != EATING) {
+        sys_sem_post(status_mutex);
+        return;
+    }
     
-    philosophers[id].state = THINKING;
+    sys_sem_post(p->previous_left_fork);
+    sys_sem_post(p->previous_right_fork);
+    
+    p->state = THINKING;
     sys_sem_post(status_mutex);
 }
 
@@ -102,22 +141,14 @@ void philosoper(uint64_t argc, char* argv[]) {
     uint64_t id = atoi(argv[1]);
 
     while (1) {
-        thinking();
-        
-        pick_forks(id);
+        think();
 
-        eat();
+        if (pick_forks(id) == 1){
+            eat();
         
-        put_forks(id);
+            put_forks(id);
+        }
     }
-}
-
-uint64_t right_philosopher(uint64_t index) {
-    return (index + 1) % philo_qty;
-}
-
-uint64_t left_philosopher(uint64_t index) {
-    return (index == 0) ? (philo_qty - 1) : (index - 1);
 }
 
 void create_philosopher(uint64_t id) {  
@@ -158,6 +189,7 @@ void create_philosopher(uint64_t id) {
     p->pid = aux_pid;
 
     p->state = THINKING;
+    p->last_status_print = print_status_counter;
 
     sys_sem_post(philo_qty_mutex);
 }
@@ -195,6 +227,7 @@ void remove_philosopher(uint64_t id) {
     p->right_fork = 0;
     p->previous_left_fork = 0;
     p->previous_right_fork = 0;
+    p->last_status_print = 0;
 
     philo_qty = philo_qty - 1;
 
