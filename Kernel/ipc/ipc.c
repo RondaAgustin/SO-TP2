@@ -39,7 +39,7 @@ char create_pipe(char * name) {
     for (int i = 0; i < MAX_FDS; i++) {
         if (fds[i].name == NULL) {
             fds[i].name = pipe_name;
-            char sem_data_available = sem_open(1);
+            char sem_data_available = sem_open(0);
             if (sem_data_available == -1) {
                 mm_free(pipe_name);
                 return -1;
