@@ -102,7 +102,7 @@ void run_shell() {
             }
 
             sys_wait(pid_left);
-            sys_kill_process(pid_right);
+            sys_wait(pid_right);
             sys_pipe_close(pipe);
         } else {
             if(shell_args_count > 1 && strcmp(shell_args[1], "&") == 0) {
@@ -379,7 +379,7 @@ void cat() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= -1) {
+        if (i <= 0) {
             break;
         }
         sys_write(STDOUT, buffer, i, 0x00FFFFFF);
@@ -395,7 +395,7 @@ void wc() {
     
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= -1) {
+        if (i <= 0) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -419,7 +419,7 @@ void filter() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= -1) {
+        if (i <= 0) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -427,6 +427,7 @@ void filter() {
                 sys_write(STDOUT, buffer + j, 1, 0x00FFFFFF);
             }
         }
+        puts("\n");
     }
 }
 
@@ -435,7 +436,7 @@ void filter2() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= -1) {
+        if (i <= 0) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -443,6 +444,7 @@ void filter2() {
                 sys_write(STDOUT, buffer + j, 1, 0x00FFFFFF);
             }
         }
+        puts("\n");
     }
 }
 
@@ -461,7 +463,7 @@ void consumer() {
     while (1) {
         char data[5] = {0};
         i = sys_read(STDIN, data, 5);
-        if(i <= -1) {
+        if(i <= 0) {
             break;
         }
         sys_write(STDOUT, data, i, 0x0000FF00);
