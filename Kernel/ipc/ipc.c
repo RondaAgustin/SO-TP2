@@ -136,6 +136,9 @@ int write_to_pipe(char pipe_id, char* buffer, int buffer_size) {
         pipe->buffer[(pipe->first_key_index + pipe->buffer_size++) % MAX_SIZE_KEY_BUFFER] = buffer[i];
     }
     sem_post(pipe->mutex);
-    sem_post(pipe->sem_data_available);
+    int64_t data_sem_value = sem_value(pipe->sem_data_available);
+    if(data_sem_value < 1) {
+        sem_post(pipe->sem_data_available);
+    }
     return buffer_size;
 }
