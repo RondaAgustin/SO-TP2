@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <scheduler/process_manager.h>
 #include <scheduler/execute_process_wrapper.h>
+#include <userland_starter.h>
 
 uint64_t init(int argc, char* argv[]);
 

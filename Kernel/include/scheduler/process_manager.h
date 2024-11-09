@@ -47,12 +47,16 @@ void set_process_readfd(pid_t pid, char fd);
 void set_process_writefd(pid_t pid, char fd);
 int8_t unblock_process(pid_t pid);
 int8_t block_process(pid_t pid);
-int8_t kill_process(pid_t pid);
 int8_t modify_process_priority(pid_t pid, uint32_t priority);
 void unblock_waiting_processes(pid_t pid);
 void wait(pid_t pid);
 void ps();
+
+int32_t find_process_by_name(char *name);
+
+int8_t kill_process(pid_t pid);
 void kill_foreground_process();
+int8_t kill_process_in_kernel(pid_t pid);
 
 pid_t get_pid();
 

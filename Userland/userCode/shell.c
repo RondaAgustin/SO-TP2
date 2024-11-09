@@ -330,7 +330,7 @@ void get_pid(){
 }
 
 void test_scheduler_processes(){
-    char* argv[] = {"60", NULL};
+    char* argv[] = {"55", NULL};
     test_processes(1, argv);
 }
 

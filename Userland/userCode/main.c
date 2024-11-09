@@ -16,7 +16,8 @@ int main() {
         show_initial_info = 0;
     }
 
-    run_shell();
+    char* argv_shell[] = {"shell", NULL};
+    sys_create_process((uint64_t) run_shell, 1, argv_shell, 20, 0, NULL);
 
 	return 0xDEADBEEF;
 }

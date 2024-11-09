@@ -6,7 +6,7 @@
 #include <moduleLoader.h>
 #include <drivers/videoDriver.h>
 #include <drivers/pitDriver.h>
-#include <shell_caller.h>
+#include <userland_starter.h>
 #include <memoryManager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <synchro/synchro.h>
@@ -47,8 +47,8 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	void * moduleAddresses[] = {
-		SHELL_CODE_ADDRESS,
-		SHELL_DATA_ADDRESS
+		USERLAND_CODE_ADDRESS,
+		USERLAND_DATA_ADDRESS
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);

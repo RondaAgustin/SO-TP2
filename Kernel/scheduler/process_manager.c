@@ -353,6 +353,27 @@ void kill_foreground_process() {
     }
 }
 
+int8_t kill_process_in_kernel(pid_t pid){
+    if (process_table == NULL) return -1;
+
+    if (basic_kill_process(pid) == -1) return -1;
+
+    return 0;
+}
+
+int32_t find_process_by_name(char *name) {
+    if (process_table == NULL || name == NULL) return -1;
+
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (process_table[i].state != EXITED && my_strcmp(process_table[i].process_name, name) == 0) {
+            return process_table[i].pid;
+        }
+    }
+
+    return -1;
+}
+
+
 static int8_t basic_kill_process(pid_t pid){
     PCB* process_to_kill = find_pcb_by_pid(pid);
     
