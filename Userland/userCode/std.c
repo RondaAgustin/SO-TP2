@@ -6,11 +6,15 @@
 
 uint32_t strcmp(const char* s1, const char* s2) {
     uint32_t i;
-    for (i = 0; s1[i] != '\0' && s2[i] != '\0'; i++)
-        if (s1[i] != s2[i])
+    for (i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {
+        if (s1[i] != s2[i]) {
             return s1[i] - s2[i];
+        }
+    }
 
-    if (s1[i] == '\0' && s2[i] == '\0') return 0;
+    if (s1[i] == '\0' && s2[i] == '\0') {
+        return 0;
+    }
 
     return s1[i] - s2[i];
 }
@@ -18,8 +22,9 @@ uint32_t strcmp(const char* s1, const char* s2) {
 void strcpy(char* dest, const char* src) {
     uint32_t i;
 
-    for (i = 0; src[i] != '\0'; i++)
+    for (i = 0; src[i] != '\0'; i++) {
         dest[i] = src[i];
+    }
 
     dest[i] = '\0';
 }
@@ -28,11 +33,13 @@ void strcat(char* dest, const char* str1, const char * str2) {
     uint32_t i;
     uint32_t j;
 
-    for (i = 0; str1[i] != '\0'; i++)
+    for (i = 0; str1[i] != '\0'; i++) {
         dest[i] = str1[i];
+    }
 
-    for (j = 0; str2[j] != '\0'; j++)
+    for (j = 0; str2[j] != '\0'; j++) {
         dest[i + j] = str2[j];
+    }
 
     dest[i + j] = '\0';
 }
@@ -70,7 +77,7 @@ int split(const char* source, char separator, char* dest[], int dest_qty) {
 uint32_t strlen(const char* s) {
     uint32_t i;
 
-    for (i = 0; s[i] != '\0'; i++) ;
+    for (i = 0; s[i] != '\0'; i++);
 
     return i;
 }
@@ -142,15 +149,14 @@ void printf(const char* fmt, ...) {
     for (uint32_t i = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && fmt[i] != '\0'; i++) {
         if (fmt[i] == '%' && fmt[i + 1] == 's') {
             char* arg_s = va_arg(arg_list, char*);
-            for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && arg_s[j] != '\0'; j++)
+            for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && arg_s[j] != '\0'; j++) {
                 printf_buff[k++] = arg_s[j];
+            }
             i++;  // Saltar el 's'
-        }
-        else if (fmt[i] == '%' && fmt[i + 1] == 'c') {
+        } else if (fmt[i] == '%' && fmt[i + 1] == 'c') {
             printf_buff[k++] = (char)va_arg(arg_list, int);  // Convertir a char correctamente
             i++;  // Saltar el 'c'
-        }
-        else if (fmt[i] == '%' && fmt[i + 1] == 'd') {
+        } else if (fmt[i] == '%' && fmt[i + 1] == 'd') {
             int32_t arg_d = va_arg(arg_list, int32_t);  // Cambiado a int32_t para manejar números con signo
             char temp[ITOA_BUFF_MAX_SIZE];
             
@@ -164,8 +170,9 @@ void printf(const char* fmt, ...) {
             
             itoa(arg_d, temp, ITOA_BUFF_MAX_SIZE);
 
-            for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && temp[j] != '\0'; j++)
+            for (uint32_t j = 0; k < PRINTF_PRINT_BUFF_MAX_SIZE && temp[j] != '\0'; j++) {
                 printf_buff[k++] = temp[j];
+            }
 
             i++;  // Saltar el 'd'
         }
@@ -194,8 +201,9 @@ char getchar() {
 uint32_t atoi(const char* s) {
     uint32_t out = 0;
 
-    for (uint32_t i = 0; s[i] != '\0'; i++)
+    for (uint32_t i = 0; s[i] != '\0'; i++) {
         out = out * 10 + (s[i] - '0');
+    }
 
     return out;
 }
@@ -207,12 +215,13 @@ uint64_t scanf(const char* fmt, void* ptr) {
     if (len > 0){
         scan_buff[len - 1] = '\0';
 
-        if (strcmp(fmt, "%d") == 0)
+        if (strcmp(fmt, "%d") == 0) {
             *((uint32_t*)ptr) = atoi(scan_buff);
-        else if (strcmp(fmt, "%s") == 0)
+        } else if (strcmp(fmt, "%s") == 0) {
             strcpy((char*)ptr, scan_buff);
-        else if (strcmp(fmt, "%c") == 0)
+        } else if (strcmp(fmt, "%c") == 0) {
             *((char*)ptr) = scan_buff[0];
+        }
     }
     return len;
 }
@@ -225,8 +234,9 @@ void * memset(void * destination, int32_t c, uint64_t length){
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
 
-	while(length--)
-		dst[length] = chr;
+	while(length--) {
+        dst[length] = chr;
+    }
 
 	return destination;
 }
@@ -248,21 +258,20 @@ void * memcpy(void * destination, const void * source, uint64_t length){
 
 	if ((uint64_t)destination % sizeof(uint32_t) == 0 &&
 		(uint64_t)source % sizeof(uint32_t) == 0 &&
-		length % sizeof(uint32_t) == 0)
-	{
+		length % sizeof(uint32_t) == 0) {
 		uint32_t *d = (uint32_t *) destination;
 		const uint32_t *s = (const uint32_t *)source;
 
-		for (i = 0; i < length / sizeof(uint32_t); i++)
-			d[i] = s[i];
-	}
-	else
-	{
+		for (i = 0; i < length / sizeof(uint32_t); i++) {
+            d[i] = s[i];
+        }
+	} else {
 		uint8_t * d = (uint8_t*)destination;
 		const uint8_t * s = (const uint8_t*)source;
 
-		for (i = 0; i < length; i++)
-			d[i] = s[i];
+		for (i = 0; i < length; i++) {
+            d[i] = s[i];
+        }
 	}
 
 	return destination;

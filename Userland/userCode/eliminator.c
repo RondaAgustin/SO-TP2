@@ -7,8 +7,8 @@ static uint32_t screen_height;
 
 static uint8_t players = 1;
 
-static PlayerData player1Data = {"PLAYER 1", 8, 0, 0, 0, HEX_RED, 0, 1, 1};
-static PlayerData player2Data = {"PLAYER 1", 8, 0, 0, 0, HEX_GREEN, 0, 1, 1};
+static PlayerData player_1_data = {"PLAYER 1", 8, 0, 0, 0, HEX_RED, 0, 1, 1};
+static PlayerData player_2_data = {"PLAYER 1", 8, 0, 0, 0, HEX_GREEN, 0, 1, 1};
 
 static uint8_t speed = 1;
 
@@ -37,8 +37,8 @@ void change_settings_and_play() {
 
     sys_clear_text_buffer(0);
 
-    player1Data.score = 0;
-    player2Data.score = 0;
+    player_1_data.score = 0;
+    player_2_data.score = 0;
 
     sys_put_text("SPEED (1-5): ", 13, HEX_RED, 100, 100);
     char key = 0;
@@ -57,10 +57,10 @@ void change_settings_and_play() {
     players = key - '0';
     print_setting("PLAYERS (1-2): ", 16, players, HEX_RED, 100, 150);
 
-    scan_player_name("PLAYER 1: ", 10, 1, &player1Data);
+    scan_player_name("PLAYER 1: ", 10, 1, &player_1_data);
 
     if(players == 2) {
-        scan_player_name("PLAYER 2: ", 10, 2, &player2Data);
+        scan_player_name("PLAYER 2: ", 10, 2, &player_2_data);
     }
 
     sys_put_text("Press any key to start", 22, HEX_RED, 100, 400);
@@ -89,41 +89,41 @@ void scan_player_name(char * text, int len, uint8_t player_number, PlayerData* p
     player->name_len = i;
 }
 
-void print_setting(char * text, uint8_t max_text_size, uint8_t value, uint32_t hexColor, uint32_t posX, uint32_t posY) {
+void print_setting(char * text, uint8_t max_text_size, uint8_t value, uint32_t hex_color, uint32_t pos_x, uint32_t pos_y) {
     char dest[max_text_size + 1];
     char number[2] = {value + '0', '\0'};
     strcat(dest, text, number);
-    sys_put_text(dest, max_text_size, hexColor, posX, posY);
+    sys_put_text(dest, max_text_size, hex_color, pos_x, pos_y);
 }
 
-void changeDirection(char key, int* p1Dir, int* p2Dir){
+void changeDirection(char key, int* p1_dir, int* p2_dir){
     switch (key)
     {
     case 0:
         break;
     case W_KEY_CODE_PRESSED:
-        if(player1Data.direction != DOWN_DIRECTION) *p1Dir = UP_DIRECTION;
+        if(player_1_data.direction != DOWN_DIRECTION) *p1_dir = UP_DIRECTION;
         break;
     case D_KEY_CODE_PRESSED:
-        if(player1Data.direction != LEFT_DIRECTION) *p1Dir = RIGHT_DIRECTION;
+        if(player_1_data.direction != LEFT_DIRECTION) *p1_dir = RIGHT_DIRECTION;
         break;
     case S_KEY_CODE_PRESSED:
-        if(player1Data.direction != UP_DIRECTION) *p1Dir = DOWN_DIRECTION;
+        if(player_1_data.direction != UP_DIRECTION) *p1_dir = DOWN_DIRECTION;
         break;
     case A_KEY_CODE_PRESSED:
-        if(player1Data.direction != RIGHT_DIRECTION) *p1Dir = LEFT_DIRECTION;
+        if(player_1_data.direction != RIGHT_DIRECTION) *p1_dir = LEFT_DIRECTION;
         break;
     case UP_ARROW_CODE_PRESSED:
-        if(player2Data.direction != DOWN_DIRECTION) *p2Dir = UP_DIRECTION;
+        if(player_2_data.direction != DOWN_DIRECTION) *p2_dir = UP_DIRECTION;
         break;
     case RIGHT_ARROW_CODE_PRESSED:
-        if(player2Data.direction != LEFT_DIRECTION) *p2Dir = RIGHT_DIRECTION;
+        if(player_2_data.direction != LEFT_DIRECTION) *p2_dir = RIGHT_DIRECTION;
         break;
     case DOWN_ARROW_CODE_PRESSED:
-        if(player2Data.direction != UP_DIRECTION) *p2Dir = DOWN_DIRECTION;
+        if(player_2_data.direction != UP_DIRECTION) *p2_dir = DOWN_DIRECTION;
         break;
     case LEFT_ARROW_CODE_PRESSED:
-        if(player2Data.direction != RIGHT_DIRECTION) *p2Dir = LEFT_DIRECTION;
+        if(player_2_data.direction != RIGHT_DIRECTION) *p2_dir = LEFT_DIRECTION;
         break;
     default:
         break;
@@ -148,64 +148,64 @@ void play() {
             sys_draw_square(HEX_RED, normalized_screen_width - SQUARE_SIZE * 2, y, SQUARE_SIZE);
         }
 
-        uint32_t bufferWidth = normalized_screen_width/SQUARE_SIZE - 4;
-        uint32_t bufferHeight = normalized_screen_height/SQUARE_SIZE - 4;
-        uint32_t buffer[bufferHeight][bufferWidth];
-        for(int i=0; i<bufferHeight; i++){
-            for(int j=0; j<bufferWidth; j++){
+        uint32_t buffer_width = normalized_screen_width/SQUARE_SIZE - 4;
+        uint32_t buffer_height = normalized_screen_height/SQUARE_SIZE - 4;
+        uint32_t buffer[buffer_height][buffer_width];
+        for(int i=0; i<buffer_height; i++){
+            for(int j=0; j<buffer_width; j++){
                 buffer[i][j] = 0;
             }
         }
 
         sys_beep(400, 300);
 
-        player1Data.x = bufferWidth / 2;
-        player1Data.y = STARTING_HEIGHT;
-        player1Data.direction = DOWN_DIRECTION;
-        player1Data.alive = 1;
+        player_1_data.x = buffer_width / 2;
+        player_1_data.y = STARTING_HEIGHT;
+        player_1_data.direction = DOWN_DIRECTION;
+        player_1_data.alive = 1;
 
-        player2Data.x = bufferWidth / 2;
-        player2Data.y = bufferHeight - 1 - STARTING_HEIGHT;
-        player2Data.direction = UP_DIRECTION;
-        player2Data.alive = 1;
+        player_2_data.x = buffer_width / 2;
+        player_2_data.y = buffer_height - 1 - STARTING_HEIGHT;
+        player_2_data.direction = UP_DIRECTION;
+        player_2_data.alive = 1;
 
-        while(player1Data.alive == 1 && (players != 2 || player2Data.alive == 1)) {
+        while(player_1_data.alive == 1 && (players != 2 || player_2_data.alive == 1)) {
             char key;
-            int player1Dir = player1Data.direction;
-            int player2Dir = player2Data.direction;
+            int player_1_dir = player_1_data.direction;
+            int player_2_dir = player_2_data.direction;
             while((key = sys_get_key_pressed()) != 0){
-                changeDirection(key, &player1Dir, &player2Dir);
+                changeDirection(key, &player_1_dir, &player_2_dir);
             }
-            player1Data.direction = player1Dir;
-            player2Data.direction = player2Dir;
+            player_1_data.direction = player_1_dir;
+            player_2_data.direction = player_2_dir;
 
-            player1Data.x += (player1Data.direction == 1) - (player1Data.direction == 3);
-            player1Data.y += (player1Data.direction == 2) - (player1Data.direction == 0);
+            player_1_data.x += (player_1_data.direction == 1) - (player_1_data.direction == 3);
+            player_1_data.y += (player_1_data.direction == 2) - (player_1_data.direction == 0);
 
-            player2Data.x += (player2Data.direction == 1) - (player2Data.direction == 3);
-            player2Data.y += (player2Data.direction == 2) - (player2Data.direction == 0);
+            player_2_data.x += (player_2_data.direction == 1) - (player_2_data.direction == 3);
+            player_2_data.y += (player_2_data.direction == 2) - (player_2_data.direction == 0);
 
-            if(player1Data.x < 0 || player1Data.x > bufferWidth - 1 || player1Data.y < 0 || player1Data.y > bufferHeight - 1 || buffer[player1Data.y][player1Data.x] == 1) {
-                player1Data.alive = 0;
-            }
-
-            if(player2Data.x < 0 || player2Data.x > bufferWidth - 1 || player2Data.y < 0 || player2Data.y > bufferHeight - 1 || buffer[player2Data.y][player2Data.x] == 1) {
-                player2Data.alive = 0;
+            if(player_1_data.x < 0 || player_1_data.x > buffer_width - 1 || player_1_data.y < 0 || player_1_data.y > buffer_height - 1 || buffer[player_1_data.y][player_1_data.x] == 1) {
+                player_1_data.alive = 0;
             }
 
-            if(player1Data.x == player2Data.x && player1Data.y == player2Data.y) {
-                player1Data.alive = 0;
-                player2Data.alive = 0;
+            if(player_2_data.x < 0 || player_2_data.x > buffer_width - 1 || player_2_data.y < 0 || player_2_data.y > buffer_height - 1 || buffer[player_2_data.y][player_2_data.x] == 1) {
+                player_2_data.alive = 0;
             }
 
-            if(player1Data.alive){
-                buffer[player1Data.y][player1Data.x] = 1;
-                sys_draw_square(player1Data.color, (player1Data.x + 2) * SQUARE_SIZE, (player1Data.y + 2) * SQUARE_SIZE, SQUARE_SIZE);
+            if(player_1_data.x == player_2_data.x && player_1_data.y == player_2_data.y) {
+                player_1_data.alive = 0;
+                player_2_data.alive = 0;
             }
 
-            if(players == 2 && player2Data.alive) {
-                buffer[player2Data.y][player2Data.x] = 1;
-                sys_draw_square(player2Data.color, (player2Data.x + 2) * SQUARE_SIZE, (player2Data.y + 2) * SQUARE_SIZE, SQUARE_SIZE);
+            if(player_1_data.alive){
+                buffer[player_1_data.y][player_1_data.x] = 1;
+                sys_draw_square(player_1_data.color, (player_1_data.x + 2) * SQUARE_SIZE, (player_1_data.y + 2) * SQUARE_SIZE, SQUARE_SIZE);
+            }
+
+            if(players == 2 && player_2_data.alive) {
+                buffer[player_2_data.y][player_2_data.x] = 1;
+                sys_draw_square(player_2_data.color, (player_2_data.x + 2) * SQUARE_SIZE, (player_2_data.y + 2) * SQUARE_SIZE, SQUARE_SIZE);
             }
 
             sys_delay(MAX_DELAY / speed);
@@ -220,31 +220,31 @@ int endGame() {
 
     if (players == 2)
     {
-        if(player1Data.alive == 0 && player2Data.alive == 1) {
-            player2Data.score += 1;
+        if(player_1_data.alive == 0 && player_2_data.alive == 1) {
+            player_2_data.score += 1;
             int n = 1;
             int i;
-            for(i=1; n*10 <= player2Data.score && i<MAX_DIGITS_SCORE; i++) n*=10;
-            player2Data.score_digits = i;
-        } else if (player1Data.alive == 1 && player2Data.alive == 0) {
-            player1Data.score += 1;
+            for(i=1; n*10 <= player_2_data.score && i<MAX_DIGITS_SCORE; i++) n*=10;
+            player_2_data.score_digits = i;
+        } else if (player_1_data.alive == 1 && player_2_data.alive == 0) {
+            player_1_data.score += 1;
             int n = 1;
             int i;
-            for(i=1; n*10 <= player1Data.score && i<MAX_DIGITS_SCORE; i++) n*=10;
-            player1Data.score_digits = i;
+            for(i=1; n*10 <= player_1_data.score && i<MAX_DIGITS_SCORE; i++) n*=10;
+            player_1_data.score_digits = i;
         }
     }
     
     char dest[MAX_LENGTH_PLAYER_NAME + 2 + MAX_DIGITS_SCORE + 1] = {0};
     char number[MAX_DIGITS_SCORE + 1] = {0};
-    strcat(dest, player1Data.name, ": ");
-    strcat(dest, dest, itoa(player1Data.score, number, player1Data.score_digits));
-    sys_put_text(dest, player1Data.name_len + 2 + player1Data.score_digits, player1Data.color, 100, 100);
+    strcat(dest, player_1_data.name, ": ");
+    strcat(dest, dest, itoa(player_1_data.score, number, player_1_data.score_digits));
+    sys_put_text(dest, player_1_data.name_len + 2 + player_1_data.score_digits, player_1_data.color, 100, 100);
 
     if(players == 2) {
-        strcat(dest, player2Data.name, ": ");
-        strcat(dest, dest, itoa(player2Data.score, number, player2Data.score_digits));
-        sys_put_text(dest, player2Data.name_len + 2 + player2Data.score_digits, player2Data.color, 100, 150);
+        strcat(dest, player_2_data.name, ": ");
+        strcat(dest, dest, itoa(player_2_data.score, number, player_2_data.score_digits));
+        sys_put_text(dest, player_2_data.name_len + 2 + player_2_data.score_digits, player_2_data.color, 100, 150);
     }
 
     sys_put_text("Press [SPACE BAR] to play again", 31, HEX_WHITE, 50, 250);

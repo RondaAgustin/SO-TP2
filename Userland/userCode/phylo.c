@@ -234,7 +234,7 @@ void remove_philosopher(uint64_t id) {
     sys_sem_post(philo_qty_mutex);
 }
 
-void catch_input(){
+void catch_input() {
     char c;
     while (1) {
         c = getchar();

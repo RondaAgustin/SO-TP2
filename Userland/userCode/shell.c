@@ -169,30 +169,30 @@ void info() {
     putchar('\n');
 }
 
-void font_size(){
+void font_size() {
     int n = 0;
     printf("Choose font size (1-5) or 0 to exit: ");
     scanf("%d", &n);
-    while(n < 0 || n >= 6){
+    while(n < 0 || n >= 6) {
         printf("Choose a valid font size (1-5) or 0 to exit: ");
         scanf("%d", &n);
     }
-    if(n != 0){
+    if(n != 0) {
         current_font_size = n;
         printf("Font size set to %d\n", n);
     }
 }
 
-void time(){
+void time() {
     char * time = sys_get_time(-3);
     printf("%s\n", time);
 }
 
-void regs(){
+void regs() {
     sys_print_registers();
 }
 
-void song(){
+void song() {
     play_la_cucaracha();
 }
 
@@ -201,7 +201,7 @@ void beep() {
     sys_beep(2000, 100);
 }
 
-void calculator(){
+void calculator() {
     uint32_t num1 = 0;
     uint32_t num2 = 0;
     uint32_t response = 0;
@@ -256,12 +256,12 @@ void ps() {
     sys_ps();
 }
 
-void test_memory(){
+void test_memory() {
     char* argv[] = {"20971520", NULL};
     test_mm(1, argv);
 }
 
-void block_process(){
+void block_process() {
     pid_t pid;
 
     printf("Pid to block: ");
@@ -269,14 +269,14 @@ void block_process(){
 
     char result = sys_block_process(pid);
 
-    if (result == 0){
+    if (result == 0) {
         puts("Process blocked correctly\n");
         return;
     }
     puts("Error to block process\n");
 }
 
-void unblock_process(){
+void unblock_process() {
     pid_t pid;
 
     printf("Pid to unblock: ");
@@ -284,7 +284,7 @@ void unblock_process(){
 
     char result = sys_unblock_process(pid);
 
-    if (result == 0){
+    if (result == 0) {
         puts("Process unblocked correctly\n");
         return;
     }
@@ -292,17 +292,17 @@ void unblock_process(){
     
 }
 
-void create_process_1(){
+void create_process_1() {
     char* argv[] = {"Process 1", NULL};
     process(1, argv);
 }
 
-void create_process_2(){
+void create_process_2() {
     char* argv[] = {"Process 2", NULL};
     process(1, argv);
 }
 
-void kill_process(){
+void kill_process() {
     pid_t pid;
 
     printf("Pid to kill: ");
@@ -310,7 +310,7 @@ void kill_process(){
 
     char result = sys_kill_process(pid);
 
-    if (result == 0){
+    if (result == 0) {
         puts("Process killed correctly\n");
         return;
     }
@@ -319,22 +319,22 @@ void kill_process(){
 
 }
 
-void loop(){
-    while (1){
+void loop() {
+    while (1) {
         printf("Loop process pid: %d\n", sys_get_pid());
     }
 }
 
-void get_pid(){
+void get_pid() {
     printf("Shell pid = %d\n", sys_get_pid());
 }
 
-void test_scheduler_processes(){
+void test_scheduler_processes() {
     char* argv[] = {"55", NULL};
     test_processes(1, argv);
 }
 
-void modify_priority(){
+void modify_priority() {
     pid_t pid;
     uint32_t priority;
 
@@ -358,17 +358,17 @@ void test_priority_processes() {
     test_prio(1, argv);
 }
 
-void test_synchro(){
+void test_synchro() {
     char* argv[] = {"5", "1", NULL};
     test_sync(2 ,argv);
 }
 
-void test_no_synchro(){
+void test_no_synchro() {
     char* argv[] = {"5", "0", NULL};
     test_sync(2, argv);
 }
 
-void mem_info(){
+void mem_info() {
     printf("Total memory: %d bytes\n", sys_mm_get_total_memory());
     printf("Used memory: %d bytes\n", sys_mm_get_used_memory());
     printf("Free memory: %d bytes\n", sys_mm_get_free_memory());
@@ -379,7 +379,7 @@ void cat() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i == -1) {
+        if (i <= -1) {
             break;
         }
         sys_write(STDOUT, buffer, i, 0x00FFFFFF);
@@ -419,7 +419,7 @@ void filter() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= 0) {
+        if (i <= -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -435,7 +435,7 @@ void filter2() {
     int i = 0;
     while (1) {
         i = sys_read(STDIN, buffer, 2048);
-        if (i <= 0) {
+        if (i <= -1) {
             break;
         }
         for (int j = 0; j < i; j++) {
@@ -461,7 +461,7 @@ void consumer() {
     while (1) {
         char data[5] = {0};
         i = sys_read(STDIN, data, 5);
-        if(i <= 0) {
+        if(i <= -1) {
             break;
         }
         sys_write(STDOUT, data, i, 0x0000FF00);

@@ -21,15 +21,15 @@ note_t notes[] = {
 
 const uint32_t scale = 10;
 
-void play_la_cucaracha(){
+void play_la_cucaracha() {
     sys_clear_screen(0);
 
     const uint32_t frame_count = sizeof(cucaracha_gif) / sizeof(cucaracha_gif[0]);
     const uint32_t song_length = sizeof(notes) / sizeof(notes[0]);
 
     uint32_t frame = 0;
-    uint32_t startXPos = (sys_get_screen_width() - CUCARACHA_GIF_WIDTH * scale) / 2;
-    uint32_t startYPos = (sys_get_screen_height() - CUCARACHA_GIF_HEIGHT * scale) / 2;
+    uint32_t start_x_pos = (sys_get_screen_width() - CUCARACHA_GIF_WIDTH * scale) / 2;
+    uint32_t start_y_pos = (sys_get_screen_height() - CUCARACHA_GIF_HEIGHT * scale) / 2;
     for (uint32_t i = 0; i < song_length; i++, frame++) {
         frame %= frame_count;
 
@@ -40,11 +40,11 @@ void play_la_cucaracha(){
                 uint32_t green = ((col & 28) >> 2) * 32;
                 uint32_t red = (col >> 5) * 32;
                 uint32_t hex_color = blue + (green << 8) + (red << 16);
-                sys_draw_square(hex_color, startXPos + x * scale, startYPos + y * scale, scale);
+                sys_draw_square(hex_color, start_x_pos + x * scale, start_y_pos + y * scale, scale);
             }
         }
 
-        sys_beep(notes[i].freq, notes[i].duration*0.75);
-        sys_delay(notes[i].delay*0.75);
+        sys_beep(notes[i].freq, notes[i].duration * 0.75);
+        sys_delay(notes[i].delay * 0.75);
     }
 }
