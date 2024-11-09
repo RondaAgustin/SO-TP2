@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <registers.h>
-#include <drivers/videoDriver.h>
+#include <drivers/video_driver.h>
 #include <lib.h>
 
 registers64_t registers_to_print;

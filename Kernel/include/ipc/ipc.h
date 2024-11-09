@@ -2,7 +2,7 @@
 #define _IPC_H_
 
 #include <stdint.h>
-#include <drivers/keyboardDriver.h>
+#include <drivers/keyboard_driver.h>
 #include <synchro/synchro.h>
 
 // Dividimos entre 4 porque cada pipe tiene 2 semaforos, pudiendo llegar a consumir la mitad de los semaforos.

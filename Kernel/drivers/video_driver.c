@@ -1,9 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
-#include <drivers/videoDriver.h>
+#include <drivers/video_driver.h>
 #include <lib.h>
-#include <interruptHandlers/interrupts.h>
+#include <interrupt_handlers/interrupts.h>
 
 struct vbe_mode_info_structure {
 	uint16_t attributes;		// deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -67,8 +67,9 @@ void update_frame_buffer() {
 }
 
 void put_pixel(uint32_t hexColor, uint64_t x, uint64_t y) {
-    if (y > get_video_buffer_height() || x > get_video_buffer_width())
+    if (y > get_video_buffer_height() || x > get_video_buffer_width()){
         return;
+    }
 
     uint64_t offset = (x * get_video_buffer_bytes_per_pixel()) + (y * VBE_mode_info->pitch);
     video_buffer[offset]     =  (hexColor) & 0xFF;
@@ -77,8 +78,9 @@ void put_pixel(uint32_t hexColor, uint64_t x, uint64_t y) {
 }
 
 void draw_rect(uint32_t hexColor, uint32_t posX, uint32_t posY, uint32_t width, uint32_t height) {
-    if (posX + width > get_video_buffer_width() || posY + height > get_video_buffer_height())
+    if (posX + width > get_video_buffer_width() || posY + height > get_video_buffer_height()){
         return;
+    }
 
     uint8_t r = (hexColor) & 0xFF;
     uint8_t g = (hexColor >> 8) & 0xFF;
@@ -221,8 +223,10 @@ void update_screen_text_buffer() {
     uint32_t lower_y_limit = (linesPerScreen <= screenTextInfo.indexY) ? screenTextInfo.indexY  - linesPerScreen : 0;
     uint32_t upper_x_limit = get_chars_per_buff_line();
 
-    for (uint32_t y = screenTextInfo.indexY; y + 1 > lower_y_limit; y--)
-        for (uint32_t x = 0; x < upper_x_limit; x++)
+    for (uint32_t y = screenTextInfo.indexY; y + 1 > lower_y_limit; y--){
+        for (uint32_t x = 0; x < upper_x_limit; x++){
             draw_char(screenTextInfo.buffer[y][x].c, screenTextInfo.buffer[y][x].hexColor, x * fontWidth, (y - lower_y_limit) * fontHeight);
+        }
+    }
     _sti();
 }

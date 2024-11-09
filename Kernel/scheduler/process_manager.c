@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <scheduler/process_manager.h>
-#include <interruptHandlers/interrupts.h>
+#include <interrupt_handlers/interrupts.h>
 
 
 PCB* process_table;
@@ -12,8 +12,9 @@ static void free_argv(char** argv, uint32_t argc);
 
 int8_t init_processes() {
     process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
-    if (process_table == NULL) return -1;
-    
+    if (process_table == NULL) {
+        return -1;
+    }
     for (int i = 0; i < MAX_PROCESSES; i++) {
         process_table[i].pid = -1;
         process_table[i].state = EXITED;
@@ -23,16 +24,20 @@ int8_t init_processes() {
 }
 
 char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg, char fds[]) {
-    if (process_table == NULL) return -1;
-    
+    if (process_table == NULL) {
+        return -1;
+    }
     _cli();
 
-    if (argc <= 0 || shell_argv == NULL || shell_argv[0] == NULL) 
+    if (argc <= 0 || shell_argv == NULL || shell_argv[0] == NULL) {
         return -1;
+    }
 
     char** argv = mm_malloc(sizeof(char*) * (argc + 1));
 
-    if (argv == NULL) return -1;
+    if (argv == NULL) {
+        return -1;
+    }
 
     for (int i = 0; i < argc; i++) {
         argv[i] = mm_malloc(my_strlen(shell_argv[i]) + 1);
@@ -42,9 +47,9 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
         }
     }
 
-    for (int i = 0; i < argc; i++)
+    for (int i = 0; i < argc; i++){
         my_strcpy(argv[i], shell_argv[i]);
-    
+    }
     
     argv[argc] = NULL;
     
@@ -151,8 +156,9 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
 
     add_ready_process(&process_table[i]);
 
-    if (fg == 1) 
+    if (fg == 1) {
         foreground_process_pid = i;
+    }
 
     _sti();
     return process_table[i].pid;
@@ -173,15 +179,21 @@ void set_process_writefd(pid_t pid, char fd) {
 }
 
 int8_t block_process(pid_t pid){
-    if (process_table == NULL) return -1;
+    if (process_table == NULL) {
+        return -1;
+    }
 
     PCB* process_to_block = find_pcb_by_pid(pid);
 
-    if (process_to_block == NULL) return -1;
+    if (process_to_block == NULL) {
+        return -1;
+    }
 
     State state = process_to_block->state;
 
-    if (state == EXITED || state == BLOCKED) return -1;
+    if (state == EXITED || state == BLOCKED) {
+        return -1;
+    }
     
     process_to_block->state = BLOCKED;
     remove_ready_process(process_to_block);
@@ -193,15 +205,21 @@ int8_t block_process(pid_t pid){
 }
 
 int8_t unblock_process(pid_t pid){
-    if (process_table == NULL) return -1;
+    if (process_table == NULL) {
+        return -1;
+    }
 
     PCB* blocked_process = find_pcb_by_pid(pid);
 
-    if (blocked_process == NULL) return -1;
+    if (blocked_process == NULL) {
+        return -1;
+    }
 
     State state = blocked_process->state;
     
-    if (state != BLOCKED) return -1;
+    if (state != BLOCKED) {
+        return -1;
+    }
 
     blocked_process->state = READY;
     add_ready_process(blocked_process);
@@ -226,9 +244,13 @@ void unblock_waiting_processes(pid_t pid) {
 }
 
 int8_t kill_process(pid_t pid){
-    if (process_table == NULL) return -1;
+    if (process_table == NULL) {
+        return -1;
+    }
 
-    if (basic_kill_process(pid) == -1) return -1;
+    if (basic_kill_process(pid) == -1) {
+        return -1;
+    }
 
     PCB* process_to_kill = find_pcb_by_pid(pid);    
 
@@ -239,15 +261,21 @@ int8_t kill_process(pid_t pid){
 }
 
 int8_t modify_process_priority(pid_t pid, uint32_t priority){
-    if (process_table == NULL) return -1;
+    if (process_table == NULL) {
+        return -1;
+    }
 
     PCB* process = find_pcb_by_pid(pid);
 
-    if (process == NULL) return -1;
+    if (process == NULL) {
+        return -1;
+    }
 
     State state = process->state;
 
-    if (state == EXITED) return -1;
+    if (state == EXITED) {
+        return -1;
+    }
 
     if(state == BLOCKED) {
         process->priority = priority;
@@ -264,8 +292,9 @@ int8_t modify_process_priority(pid_t pid, uint32_t priority){
 }
 
 PCB* find_pcb_by_pid(pid_t pid){
-    if (process_table == NULL) return NULL;
-    if (pid >= MAX_PROCESSES) return NULL;
+    if (process_table == NULL || pid >= MAX_PROCESSES) {
+        return NULL;
+    }
     
     return &process_table[pid];
 }
@@ -276,13 +305,19 @@ pid_t get_pid(){
 }
 
 void wait(pid_t pid){
-    if (process_table == NULL) return;
+    if (process_table == NULL) {
+        return;
+    }
 
     PCB* process_to_wait = find_pcb_by_pid(pid);
 
-    if (process_to_wait == NULL) return;
+    if (process_to_wait == NULL) {
+        return;
+    }
 
-    if (process_to_wait->state == EXITED) return;
+    if (process_to_wait->state == EXITED) {
+        return;
+    }
 
     pid_t pid_running = get_pid();
 
@@ -292,7 +327,9 @@ void wait(pid_t pid){
 }
 
 void ps() {
-    if (process_table == NULL) return;
+    if (process_table == NULL) {
+        return;
+    }
 
     char buffer[100];
     for (int i = 0; i < MAX_PROCESSES; i++) {
@@ -344,7 +381,9 @@ void ps() {
 }
 
 void kill_foreground_process() {
-    if (process_table == NULL) return;
+    if (process_table == NULL) {
+        return;
+    }
 
     if (foreground_process_pid != -1){
         if (process_table[foreground_process_pid].state != EXITED && process_table[foreground_process_pid].fg == 1){
@@ -354,15 +393,21 @@ void kill_foreground_process() {
 }
 
 int8_t kill_process_in_kernel(pid_t pid){
-    if (process_table == NULL) return -1;
+    if (process_table == NULL) {
+        return -1;
+    }
 
-    if (basic_kill_process(pid) == -1) return -1;
+    if (basic_kill_process(pid) == -1) {
+        return -1;
+    }
 
     return 0;
 }
 
 int32_t find_process_by_name(char *name) {
-    if (process_table == NULL || name == NULL) return -1;
+    if (process_table == NULL || name == NULL) {
+        return -1;
+    }
 
     for (int i = 0; i < MAX_PROCESSES; i++) {
         if (process_table[i].state != EXITED && my_strcmp(process_table[i].process_name, name) == 0) {
@@ -377,11 +422,15 @@ int32_t find_process_by_name(char *name) {
 static int8_t basic_kill_process(pid_t pid){
     PCB* process_to_kill = find_pcb_by_pid(pid);
     
-    if (process_to_kill == NULL) return -1;
+    if (process_to_kill == NULL) {
+        return -1;
+    }
 
     State state = process_to_kill->state;
     
-    if (state == EXITED) return -1;
+    if (state == EXITED) {
+        return -1;
+    }
 
     process_to_kill->state = EXITED;
 

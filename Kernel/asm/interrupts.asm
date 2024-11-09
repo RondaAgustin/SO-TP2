@@ -5,9 +5,9 @@ GLOBAL _irq00Handler, _irq01Handler, _int80Handler
 
 GLOBAL _exception0Handler, _exception6Handler
 
-EXTERN irqDispatcher
-EXTERN softIntDispatcher
-EXTERN exceptionDispatcher
+EXTERN irq_dispatcher
+EXTERN soft_int_dispatcher
+EXTERN exception_dispatcher
 
 SECTION .text
 
@@ -69,7 +69,7 @@ SECTION .text
 	pushState
 	mov rdi, %1 ; pasaje de parametro
 	mov rsi, rsp
-	call irqDispatcher
+	call irq_dispatcher
 	mov rsp, rax
 	mov al, 20h	; signal pic EOI (End of Interrupt)
 	out 20h, al
@@ -81,7 +81,7 @@ SECTION .text
 	pushState
 	mov rdi, rsp
 	sti
-	call softIntDispatcher
+	call soft_int_dispatcher
 	popStateWithoutRax ; Preserving interrupts' return value
 	iretq
 %endmacro
@@ -90,7 +90,7 @@ SECTION .text
 	pushState
 	mov rdi, %1
 	mov rsi, rsp
-	call exceptionDispatcher
+	call exception_dispatcher
 	popState
 	iretq
 %endmacro

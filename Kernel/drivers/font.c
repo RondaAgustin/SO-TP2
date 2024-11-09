@@ -28,7 +28,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // http://www.helenos.org/doc/refman/uspace-ia32/font-8x16_8c-source.html
-#include <drivers/videoDriver.h>
+#include <drivers/video_driver.h>
 
 unsigned char font_bitmap[4096] = {
         /* 0 0x00 '^@' */

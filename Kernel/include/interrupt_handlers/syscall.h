@@ -6,15 +6,15 @@
 #include <types.h>
 #include <lib.h>
 
-#include <interruptHandlers/syscall.h>
-#include <interruptHandlers/interrupts.h>
-#include <drivers/pitDriver.h>
-#include <drivers/videoDriver.h>
-#include <drivers/rtcDriver.h>
-#include <drivers/keyboardDriver.h>
-#include <drivers/soundDriver.h>
-#include <interruptHandlers/interrupts.h>
-#include <memoryManager/memory_manager.h>
+#include <interrupt_handlers/syscall.h>
+#include <interrupt_handlers/interrupts.h>
+#include <drivers/pit_driver.h>
+#include <drivers/video_driver.h>
+#include <drivers/rtc_driver.h>
+#include <drivers/keyboard_driver.h>
+#include <drivers/sound_driver.h>
+#include <interrupt_handlers/interrupts.h>
+#include <memory_manager/memory_manager.h>
 #include <scheduler/process_manager.h>
 #include <scheduler/execute_process_wrapper.h>
 #include <synchro/synchro.h>

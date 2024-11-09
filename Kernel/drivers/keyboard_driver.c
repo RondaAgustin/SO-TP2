@@ -1,6 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <drivers/keyboardDriver.h>
+#include <drivers/keyboard_driver.h>
 #include <registers.h>
 #include <lib.h>
 
@@ -58,7 +58,10 @@ void keyboard_handler(const registers64_t * registers){
         scan_code = 84; // EOF (lo llamamos '\e')
     }
 
-    if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) return;
+    if(scan_code > 0x80 || buffer_size >= MAX_SIZE_KEY_BUFFER) {
+        return;
+    } 
+        
     key_buffer[(first_key_index + buffer_size++) % MAX_SIZE_KEY_BUFFER] = scan_code;
     sem_post(sem);
 }
@@ -68,7 +71,9 @@ int keys_pending(){
 }
 
 uint8_t get_key_pending(){
-    if(!keys_pending()) return 0;
+    if(!keys_pending()) {
+        return 0;
+    }
     uint8_t key = key_buffer[first_key_index];
     first_key_index = (first_key_index + 1) % MAX_SIZE_KEY_BUFFER;
     buffer_size--;

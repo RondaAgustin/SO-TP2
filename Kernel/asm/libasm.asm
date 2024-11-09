@@ -1,8 +1,8 @@
-GLOBAL cpuVendor, outb, inb
+GLOBAL cpu_vendor, outb, inb
 
 section .text
 	
-cpuVendor:
+cpu_vendor:
 	push rbp
 	mov rbp, rsp
 

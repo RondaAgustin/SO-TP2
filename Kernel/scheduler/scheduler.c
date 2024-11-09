@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <scheduler/scheduler.h>
-#include <interruptHandlers/interrupts.h>
+#include <interrupt_handlers/interrupts.h>
 #include <lib.h>
 
 typedef struct Scheduler {
@@ -19,7 +19,9 @@ int8_t init_scheduler(){
     _cli();
 
     scheduler = mm_malloc(sizeof(Scheduler));
-    if (scheduler == NULL) return -1;
+    if (scheduler == NULL) {
+        return -1;
+    }
     
     scheduler->current = NULL;
     scheduler->scheduling_process = list_create();
@@ -52,14 +54,15 @@ uint64_t context_switch(uint64_t rsp){
 }
 
 void add_ready_process(PCB* process_pcb){
-    for (int i = 0; i < process_pcb->priority; i++)
+    for (int i = 0; i < process_pcb->priority; i++) {
         list_add(scheduler->scheduling_process, process_pcb);  
+    }
 }
 
 void remove_ready_process(PCB *process_pcb){
-    for (int i = 0; i < process_pcb->priority; i++)
+    for (int i = 0; i < process_pcb->priority; i++) {
         list_remove(scheduler->scheduling_process, process_pcb, cmp);
-    // list_remove_all(scheduler->scheduling_process, process_pcb, cmp);
+    }
 }
 
 PCB* get_running_process(){

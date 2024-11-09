@@ -2,8 +2,8 @@
 #define __IDLE__
 
 #include <stdint.h>
-#include "interruptHandlers/interrupts.h"
-#include "drivers/videoDriver.h"
+#include "interrupt_handlers/interrupts.h"
+#include "drivers/video_driver.h"
 
 uint64_t idle(int argc, char* argv[]);
 

@@ -3,17 +3,17 @@
 #include <stdint.h>
 #include <string.h>
 #include <lib.h>
-#include <moduleLoader.h>
-#include <drivers/videoDriver.h>
-#include <drivers/pitDriver.h>
+#include <module_loader.h>
+#include <drivers/video_driver.h>
+#include <drivers/pit_driver.h>
 #include <userland_starter.h>
-#include <memoryManager/memory_manager.h>
+#include <memory_manager/memory_manager.h>
 #include <scheduler/scheduler.h>
 #include <synchro/synchro.h>
 #include <process/init.h>
 #include <process/idle.h>
 #include <ipc/ipc.h>
-#include <drivers/keyboardDriver.h>
+#include <drivers/keyboard_driver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -30,12 +30,12 @@ typedef int (*EntryPoint)();
 
 void load_idt();
 
-void clearBSS(void * bssAddress, uint64_t bssSize)
+void clearBSS(void * bss_address, uint64_t bss_size)
 {
-	memset(bssAddress, 0, bssSize);
+	memset(bss_address, 0, bss_size);
 }
 
-void * getStackBase()
+void * get_stack_base()
 {
 	return (void*)(
 		(uint64_t)&endOfKernel
@@ -44,21 +44,19 @@ void * getStackBase()
 	);
 }
 
-void * initializeKernelBinary()
+void * initialize_kernel_binary()
 {
 	void * moduleAddresses[] = {
 		USERLAND_CODE_ADDRESS,
 		USERLAND_DATA_ADDRESS
 	};
 
-	loadModules(&endOfKernelBinary, moduleAddresses);
+	load_modules(&endOfKernelBinary, moduleAddresses);
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	return getStackBase();
+	return get_stack_base();
 }
-
-extern uint64_t test_mm(uint64_t argc, char *argv[]);
 
 int main() {
 	initialize_pit(60);
@@ -67,9 +65,6 @@ int main() {
     clear_video_text_buffer();
 
   	mm_init((void *)0x1000000, MEM_SIZE);
-
-    write_to_video_text_buffer("GRUPO 9\n", 8, 0x006fb5fb);
-    write_to_video_text_buffer("Kernel initialized\nRunning user code...\n\n", 41, HEX_GRAY);
 
 	if (init_fds() == -1)
 		write_to_video_text_buffer("Error initializing file descriptors\n", 36, HEX_RED);
@@ -89,10 +84,6 @@ int main() {
 
 	char fds[2] = {STDIN, STDOUT};
 	execute_process_wrapper((uint64_t) init, 1, init_argv, 1, 0, fds);
-
-	delay(18);
-
-    write_to_video_text_buffer("Back in kernel...\n", 18, HEX_GRAY);
 
 	delay(1000);
 

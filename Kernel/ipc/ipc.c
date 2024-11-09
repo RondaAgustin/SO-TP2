@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <ipc/ipc.h>
-#include <memoryManager/memory_manager.h>
+#include <memory_manager/memory_manager.h>
 #include <lib.h>
 
 FileDescriptor* fds;
@@ -30,31 +30,31 @@ char init_fds() {
 char create_pipe(char * name) {
     
     uint32_t len = my_strlen(name);
-    char* pipeName = (char*) mm_malloc(len + 1);
-    if (pipeName == NULL) {
+    char* pipe_name = (char*) mm_malloc(len + 1);
+    if (pipe_name == NULL) {
         return -1;
     }
-    my_strcpy(pipeName, name);
+    my_strcpy(pipe_name, name);
 
     for (int i = 0; i < MAX_FDS; i++) {
         if (fds[i].name == NULL) {
-            fds[i].name = pipeName;
+            fds[i].name = pipe_name;
             char sem_data_available = sem_open(1);
             if (sem_data_available == -1) {
-                mm_free(pipeName);
+                mm_free(pipe_name);
                 return -1;
             }
             fds[i].sem_data_available = sem_data_available;
             char mutex = sem_open(1);
             if (mutex == -1) {
-                mm_free(pipeName);
+                mm_free(pipe_name);
                 sem_close(sem_data_available);
                 return -1;
             }
             fds[i].mutex = mutex;
             char* buffer = (char*) mm_malloc(MAX_SIZE_KEY_BUFFER);
             if (buffer == NULL) {
-                mm_free(pipeName);
+                mm_free(pipe_name);
                 sem_close(sem_data_available);
                 sem_close(mutex);
                 return -1;

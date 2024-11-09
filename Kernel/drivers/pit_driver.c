@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <drivers/pitDriver.h>
-#include <drivers/videoDriver.h>
+#include <drivers/pit_driver.h>
+#include <drivers/video_driver.h>
 #include <scheduler/scheduler.h>
 #include <lib.h>
 
@@ -23,7 +23,6 @@ void initialize_pit(uint32_t frequency){
 
 uint64_t timer_handler(const uint64_t rsp) {
 	ticks++;
-
     return context_switch(rsp);
 }
 

@@ -1,6 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <memoryManager/bitmap/bitmap_memory_manager.h>
+#include <memory_manager/bitmap/bitmap_memory_manager.h>
 
 typedef struct MemoryZone {
     void * start;
@@ -17,19 +17,19 @@ typedef struct MemoryManager {
     unsigned char bitmap[BLOCK_COUNT];
 } MemoryManager;
 
-MemoryManager memoryManager;
+MemoryManager memory_manager;
 
 int8_t mm_init(void * p, uint32_t s) {
-    memoryManager.start = p;
-    memoryManager.size = s; 
-    memoryManager.usedMemory = 0;
+    memory_manager.start = p;
+    memory_manager.size = s; 
+    memory_manager.usedMemory = 0;
 
     for (int i = 0; i < BLOCK_COUNT; i++) {
-        MemoryZone memoryZone;
-        memoryZone.size = 0;
-        memoryZone.start = NULL;
-        memoryManager.reservedMemoryZone[i] = memoryZone;
-        memoryManager.bitmap[i] = FREE;
+        MemoryZone memory_zone;
+        memory_zone.size = 0;
+        memory_zone.start = NULL;
+        memory_manager.reservedMemoryZone[i] = memory_zone;
+        memory_manager.bitmap[i] = FREE;
     }
     
     return 0;
@@ -45,7 +45,7 @@ void * mm_malloc(uint32_t size) {
             if (i + j >= BLOCK_COUNT) {
                 return NULL;
             }
-            if (memoryManager.bitmap[i+j] == RESERVED) {
+            if (memory_manager.bitmap[i+j] == RESERVED) {
                 break;
             }
         }
@@ -56,19 +56,19 @@ void * mm_malloc(uint32_t size) {
     }
     if (flag) {
         for (j = 0; j < c; j++) {
-            memoryManager.bitmap[i+j] = RESERVED;
+            memory_manager.bitmap[i+j] = RESERVED;
         }
 
-        void * response = memoryManager.start + i * BLOCK_SIZE;
+        void * response = memory_manager.start + i * BLOCK_SIZE;
 
-        MemoryZone memoryZone;
+        MemoryZone memory_zone;
 
-        memoryZone.size = c;
-        memoryZone.start = response;
+        memory_zone.size = c;
+        memory_zone.start = response;
 
-        memoryManager.reservedMemoryZone[i] = memoryZone;
+        memory_manager.reservedMemoryZone[i] = memory_zone;
 
-        memoryManager.usedMemory += c * BLOCK_SIZE;
+        memory_manager.usedMemory += c * BLOCK_SIZE;
 
         return response;
     }
@@ -78,24 +78,24 @@ void * mm_malloc(uint32_t size) {
 
 void mm_free(void * p) {
     for (int i = 0; i < BLOCK_COUNT; i++) {
-        if (memoryManager.reservedMemoryZone[i].start == p) {
-            for (int j = 0; j < memoryManager.reservedMemoryZone[i].size; j++) {
-                memoryManager.bitmap[i+j] = FREE;
-                memoryManager.usedMemory -= BLOCK_SIZE;
+        if (memory_manager.reservedMemoryZone[i].start == p) {
+            for (int j = 0; j < memory_manager.reservedMemoryZone[i].size; j++) {
+                memory_manager.bitmap[i+j] = FREE;
+                memory_manager.usedMemory -= BLOCK_SIZE;
             }
-            memoryManager.reservedMemoryZone[i].size = 0;
-            memoryManager.reservedMemoryZone[i].start = NULL;
+            memory_manager.reservedMemoryZone[i].size = 0;
+            memory_manager.reservedMemoryZone[i].start = NULL;
             break;
         }
     }
 }
 
 uint32_t mm_get_total_memory() {
-    return memoryManager.size;
+    return memory_manager.size;
 }
 
 uint32_t mm_get_used_memory() {
-    return memoryManager.usedMemory;
+    return memory_manager.usedMemory;
 }
 
 uint32_t mm_get_free_memory() {

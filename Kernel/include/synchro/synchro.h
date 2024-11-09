@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <scheduler/process_manager.h>
-#include <memoryManager/memory_manager.h>
+#include <memory_manager/memory_manager.h>
 #include <synchro/lock.h>
 #include <utils/list.h>
 

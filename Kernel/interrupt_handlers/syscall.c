@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <stdint.h>
 #include <registers.h>
-#include <interruptHandlers/syscall.h>
+#include <interrupt_handlers/syscall.h>
 
 uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
     sys_read, sys_write, sys_put_text, 
@@ -127,7 +127,7 @@ uint64_t sys_clear_text_buffer(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_
 }
 
 uint64_t sys_get_cpu_vendor(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
-    cpuVendor((char*)rdi);
+    cpu_vendor((char*)rdi);
     return 0;
 }
 

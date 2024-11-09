@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-#include <memoryManager/memory_manager.h>
+#include <memory_manager/memory_manager.h>
 
 #include <utils/list.h>
 #include <types.h>
@@ -13,7 +13,7 @@
 #include <scheduler/process_manager.h>
 #include <scheduler/execute_process_wrapper.h>
 
-#include <drivers/pitDriver.h>
+#include <drivers/pit_driver.h>
 
 #include <process/idle.h>
 #include <userland_starter.h>
