@@ -326,58 +326,42 @@ void wait(pid_t pid){
     block_process(pid_running);
 }
 
-void ps() {
-    if (process_table == NULL) {
-        return;
+uint64_t ps(ProcessInfo processes_info[]) {
+    if (process_table == NULL || processes_info == NULL) {
+        return 0;
     }
 
-    char buffer[100];
+    ProcessInfo* process_info;
+    uint64_t process_count = 0;
     for (int i = 0; i < MAX_PROCESSES; i++) {
         if (process_table[i].state != EXITED) {
+            process_info = &processes_info[process_count++];
 
-            write_to_video_text_buffer("PID: ", 5, 0xFFFFFFFF);
-            my_itoa(process_table[i].pid, buffer, 10);
-            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
-            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+            process_info->pid = process_table[i].pid;
 
-            write_to_video_text_buffer("NAME: ", 6, 0xFFFFFFFF);
-            write_to_video_text_buffer(process_table[i].process_name, my_strlen(process_table[i].process_name), 0xFFFFFFFF);
-            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
+            my_strcpy(process_info->process_name, process_table[i].process_name);
 
-            write_to_video_text_buffer("STATE: ", 7, 0xFFFFFFFF);
+            process_info->priority = process_table[i].priority;
+            process_info->sp = process_table[i].sp;
+            process_info->bp = process_table[i].base;
+
             switch (process_table[i].state) {
                 case READY:
-                    write_to_video_text_buffer("READY", 5, 0xFFdbfa2d);
+                    my_strcpy(process_info->state, "READY");
                     break;
                 case RUNNING:
-                    write_to_video_text_buffer("RUNNING", 7, 0xFF00e381);
+                    my_strcpy(process_info->state, "RUNNING");
                     break;
                 case BLOCKED:
-                    write_to_video_text_buffer("BLOCKED", 7, 0xFFf71b07);
+                    my_strcpy(process_info->state, "BLOCKED");
                     break;
                 case EXITED:
-                    write_to_video_text_buffer("EXITED", 6, 0xFFf71b07);
+                    my_strcpy(process_info->state, "EXITED");
                     break;
             }
-            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
-
-            write_to_video_text_buffer("PRIORITY: ", 10, 0xFFFFFFFF);
-            my_itoa(process_table[i].priority, buffer, 10);
-            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFF00FF00);
-            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
-
-            write_to_video_text_buffer("SP: 0x", 6, 0xFFFFFFFF);
-            uint64_to_hex_string(process_table[i].sp, buffer, 17);
-            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
-            write_to_video_text_buffer(" | ", 3, 0xFFFFFFFF);
-
-            write_to_video_text_buffer("BP: 0x", 6, 0xFFFFFFFF);
-            uint64_to_hex_string(process_table[i].base, buffer, 17);
-            write_to_video_text_buffer(buffer, my_strlen(buffer), 0xFFFFFFFF);
-
-            write_to_video_text_buffer("\n", 1, 0xFFFFFFFF);
         }
     }
+    return process_count;
 }
 
 void kill_foreground_process() {

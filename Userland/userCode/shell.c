@@ -253,7 +253,36 @@ void jump() {
 }
 
 void ps() {
-    sys_ps();
+    ProcessInfo processes_info[64];
+    for (uint64_t i = 0; i < 64; i++){
+        processes_info[i].process_name = (char *) sys_mm_malloc(128 * sizeof(char));
+        processes_info[i].state = (char *) sys_mm_malloc(16 * sizeof(char));
+        if (processes_info[i].process_name == NULL || processes_info[i].state == NULL){
+            for (uint64_t j = 0; j < i; j++){
+                sys_mm_free((void *) processes_info[j].process_name);
+                sys_mm_free((void *) processes_info[j].state);
+            }
+        }
+    }
+
+    uint64_t process_count = sys_ps(processes_info);
+
+    for (uint64_t i = 0; i < process_count; i++) {
+        printf("PID: %d | NAME: ", processes_info[i].pid);
+        puts((char *) processes_info[i].process_name);
+        printf(" | STATE: ");
+        puts((char *) processes_info[i].state);
+        printf(" | PRIORITY: %d", processes_info[i].priority);
+        printf(" | SP: %d", processes_info[i].sp);
+        printf(" | BP: %d", processes_info[i].bp);
+        puts("\n");
+    }
+
+    for(uint64_t i = 0; i < 64; i++){
+        sys_mm_free((void *) processes_info[i].process_name);
+        sys_mm_free((void *) processes_info[i].state);
+    }
+    
 }
 
 void test_memory() {

@@ -37,6 +37,15 @@ typedef struct {
     uint64_t align;
 } InitialStack;
 
+typedef struct {
+    uint64_t pid;
+    char* process_name;
+    char* state;
+    int64_t priority;
+    uint64_t sp;
+    uint64_t bp;
+} ProcessInfo;
+
 extern PCB* process_table;
 
 int8_t init_processes();
@@ -50,7 +59,7 @@ int8_t block_process(pid_t pid);
 int8_t modify_process_priority(pid_t pid, uint32_t priority);
 void unblock_waiting_processes(pid_t pid);
 void wait(pid_t pid);
-void ps();
+uint64_t ps(ProcessInfo processes_info[]);
 
 int32_t find_process_by_name(char *name);
 
