@@ -40,6 +40,8 @@ global sys_pipe_close
 global sys_set_process_readfd
 global sys_set_process_writefd
 global sys_sem_value
+global sys_get_free_processes
+global sys_get_existing_processes
 
 %macro syscall 1
     push rbp
@@ -173,3 +175,9 @@ sys_set_process_writefd
 
 sys_sem_value:
     syscall 39
+
+sys_get_free_processes:
+    syscall 40
+
+sys_get_existing_processes:
+    syscall 41

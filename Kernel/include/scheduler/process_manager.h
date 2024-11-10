@@ -46,8 +46,6 @@ typedef struct {
     uint64_t bp;
 } ProcessInfo;
 
-extern PCB* process_table;
-
 int8_t init_processes();
 
 char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* argv[], uint32_t priority, uint8_t fg, char fds[]);
@@ -68,6 +66,8 @@ void kill_foreground_process();
 int8_t kill_process_in_kernel(pid_t pid);
 
 pid_t get_pid();
+uint64_t get_free_processes();
+uint64_t get_existing_processes();
 
 PCB* find_pcb_by_pid(pid_t pid);
 

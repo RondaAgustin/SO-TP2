@@ -33,6 +33,8 @@ int8_t sys_block_process(pid_t pid);
 int8_t sys_unblock_process(pid_t pid);
 int8_t sys_kill_process(pid_t pid);
 int8_t sys_modify_priority(pid_t pid, uint32_t priority);
+int64_t sys_get_free_processes();
+int64_t sys_get_existing_processes();
 
 
 void sys_wait(pid_t pid);

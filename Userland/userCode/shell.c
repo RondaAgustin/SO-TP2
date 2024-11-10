@@ -262,10 +262,13 @@ void ps() {
                 sys_mm_free((void *) processes_info[j].process_name);
                 sys_mm_free((void *) processes_info[j].state);
             }
+            return;
         }
     }
 
     uint64_t process_count = sys_ps(processes_info);
+
+    printf("EXISTING: %d | FREE: %d\n", sys_get_existing_processes(), sys_get_free_processes());
 
     for (uint64_t i = 0; i < process_count; i++) {
         printf("PID: %d | NAME: ", processes_info[i].pid);

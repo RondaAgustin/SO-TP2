@@ -4,27 +4,36 @@
 #include <interrupt_handlers/interrupts.h>
 
 
-PCB* process_table;
-pid_t foreground_process_pid = -1;
+typedef struct {
+    PCB* process_table;
+    int64_t foreground_process_pid;
+    int64_t free_processes;
+    int64_t existing_processes;
+} ProcessManager;
+
+ProcessManager process_manager;
 
 static int8_t basic_kill_process(pid_t pid);
 static void free_argv(char** argv, uint32_t argc);
 
 int8_t init_processes() {
-    process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
-    if (process_table == NULL) {
+    process_manager.process_table = mm_malloc(MAX_PROCESSES * sizeof(PCB));
+    if (process_manager.process_table == NULL) {
         return -1;
     }
     for (int i = 0; i < MAX_PROCESSES; i++) {
-        process_table[i].pid = -1;
-        process_table[i].state = EXITED;
-    }   
+        process_manager.process_table[i].pid = -1;
+        process_manager.process_table[i].state = EXITED;
+    }
+    process_manager.foreground_process_pid = -1;
+    process_manager.free_processes = MAX_PROCESSES;
+    process_manager.existing_processes = 0;   
 
     return 0;
 }
 
 char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t argc, char* shell_argv[], uint32_t priority, uint8_t fg, char fds[]) {
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL || process_manager.free_processes == 0) {
         return -1;
     }
     _cli();
@@ -57,7 +66,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     int i;
     char found = 0;
     for (i = 0; i < MAX_PROCESSES; i++) {
-        if (process_table[i].state == EXITED) {
+        if (process_manager.process_table[i].state == EXITED) {
             found = 1;
             break;
         }
@@ -88,39 +97,39 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
         process_fds[1] = fds[1];
     }
 
-    process_table[i].pid = i;
-    process_table[i].fg = fg;
-    process_table[i].readfd = process_fds[0];
-    process_table[i].writefd = process_fds[1];
-    process_table[i].father_pid = father_pid;
-    process_table[i].process_name = argv[0];
-    process_table[i].argv = argv;
-    process_table[i].argc = argc;
-    process_table[i].priority = priority;
-    process_table[i].state = READY;
+    process_manager.process_table[i].pid = i;
+    process_manager.process_table[i].fg = fg;
+    process_manager.process_table[i].readfd = process_fds[0];
+    process_manager.process_table[i].writefd = process_fds[1];
+    process_manager.process_table[i].father_pid = father_pid;
+    process_manager.process_table[i].process_name = argv[0];
+    process_manager.process_table[i].argv = argv;
+    process_manager.process_table[i].argc = argc;
+    process_manager.process_table[i].priority = priority;
+    process_manager.process_table[i].state = READY;
     
-    process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
+    process_manager.process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
 
-    if ((void *) process_table[i].limit == NULL){
+    if ((void *) process_manager.process_table[i].limit == NULL){
         free_argv(argv, argc);
-        process_table[i].state = EXITED;
+        process_manager.process_table[i].state = EXITED;
         return -1;
     }
     
-    process_table[i].sp = process_table[i].limit + STACK_SIZE;
-    process_table[i].base = process_table[i].sp - sizeof(uint64_t);
-    process_table[i].processes_blocked_by_me = list_create();
+    process_manager.process_table[i].sp = process_manager.process_table[i].limit + STACK_SIZE;
+    process_manager.process_table[i].base = process_manager.process_table[i].sp - sizeof(uint64_t);
+    process_manager.process_table[i].processes_blocked_by_me = list_create();
 
-    if (process_table[i].processes_blocked_by_me == NULL){
-        mm_free((void *) process_table[i].limit);
+    if (process_manager.process_table[i].processes_blocked_by_me == NULL){
+        mm_free((void *) process_manager.process_table[i].limit);
         free_argv(argv, argc);
-        process_table[i].state = EXITED;
+        process_manager.process_table[i].state = EXITED;
         return -1;
     }
     
     
     // Inicializamos el stack pointer
-    uint64_t* stack_ptr = (uint64_t*) process_table[i].sp;
+    uint64_t* stack_ptr = (uint64_t*) process_manager.process_table[i].sp;
 
     // Ajustamos el stack pointer para dejar espacio para InitialStack
     stack_ptr -= sizeof(InitialStack) / sizeof(uint64_t);
@@ -131,7 +140,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     stack->rbx = 0;
     stack->rcx = i;
     stack->rdx = (uint64_t) argv;
-    stack->rbp = process_table[i].sp - sizeof(uint64_t);
+    stack->rbp = process_manager.process_table[i].sp - sizeof(uint64_t);
     stack->rdi = entry_point;
     stack->rsi = argc;
     stack->r8 = 0;
@@ -144,7 +153,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     stack->r15 = 0;
 
     // Configuramos los registros de interrupción y de estado
-    stack->rsp = process_table[i].sp;
+    stack->rsp = process_manager.process_table[i].sp;
     stack->rip = wrapper_entry_point;
     stack->cs = 0x08;
     stack->rflags = 0x202;
@@ -152,16 +161,19 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     stack->align = 0;
 
     // Actualizamos el stack pointer del proceso
-    process_table[i].sp = (uint64_t) stack_ptr;
+    process_manager.process_table[i].sp = (uint64_t) stack_ptr;
 
-    add_ready_process(&process_table[i]);
+    add_ready_process(&process_manager.process_table[i]);
 
     if (fg == 1) {
-        foreground_process_pid = i;
+        process_manager.foreground_process_pid = i;
     }
 
+    process_manager.free_processes--;
+    process_manager.existing_processes++;
+
     _sti();
-    return process_table[i].pid;
+    return process_manager.process_table[i].pid;
 }
 
 void set_process_readfd(pid_t pid, char fd) {
@@ -179,7 +191,7 @@ void set_process_writefd(pid_t pid, char fd) {
 }
 
 int8_t block_process(pid_t pid){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return -1;
     }
 
@@ -205,7 +217,7 @@ int8_t block_process(pid_t pid){
 }
 
 int8_t unblock_process(pid_t pid){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return -1;
     }
 
@@ -231,7 +243,7 @@ static int cmp_pid(pid_t d1, pid_t d2){
 }
 
 void unblock_waiting_processes(pid_t pid) {
-    if (process_table == NULL) return;
+    if (process_manager.process_table == NULL) return;
 
     PCB* process = find_pcb_by_pid(pid);
     if (process == NULL) return;
@@ -244,7 +256,7 @@ void unblock_waiting_processes(pid_t pid) {
 }
 
 int8_t kill_process(pid_t pid){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return -1;
     }
 
@@ -261,7 +273,7 @@ int8_t kill_process(pid_t pid){
 }
 
 int8_t modify_process_priority(pid_t pid, uint32_t priority){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return -1;
     }
 
@@ -292,11 +304,11 @@ int8_t modify_process_priority(pid_t pid, uint32_t priority){
 }
 
 PCB* find_pcb_by_pid(pid_t pid){
-    if (process_table == NULL || pid >= MAX_PROCESSES) {
+    if (process_manager.process_table == NULL || pid >= MAX_PROCESSES) {
         return NULL;
     }
     
-    return &process_table[pid];
+    return &process_manager.process_table[pid];
 }
 
 pid_t get_pid(){
@@ -305,7 +317,7 @@ pid_t get_pid(){
 }
 
 void wait(pid_t pid){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return;
     }
 
@@ -327,25 +339,25 @@ void wait(pid_t pid){
 }
 
 uint64_t ps(ProcessInfo processes_info[]) {
-    if (process_table == NULL || processes_info == NULL) {
+    if (process_manager.process_table == NULL || processes_info == NULL) {
         return 0;
     }
 
     ProcessInfo* process_info;
     uint64_t process_count = 0;
     for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (process_table[i].state != EXITED) {
+        if (process_manager.process_table[i].state != EXITED) {
             process_info = &processes_info[process_count++];
 
-            process_info->pid = process_table[i].pid;
+            process_info->pid = process_manager.process_table[i].pid;
 
-            my_strcpy(process_info->process_name, process_table[i].process_name);
+            my_strcpy(process_info->process_name, process_manager.process_table[i].process_name);
 
-            process_info->priority = process_table[i].priority;
-            process_info->sp = process_table[i].sp;
-            process_info->bp = process_table[i].base;
+            process_info->priority = process_manager.process_table[i].priority;
+            process_info->sp = process_manager.process_table[i].sp;
+            process_info->bp = process_manager.process_table[i].base;
 
-            switch (process_table[i].state) {
+            switch (process_manager.process_table[i].state) {
                 case READY:
                     my_strcpy(process_info->state, "READY");
                     break;
@@ -365,19 +377,19 @@ uint64_t ps(ProcessInfo processes_info[]) {
 }
 
 void kill_foreground_process() {
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return;
     }
 
-    if (foreground_process_pid != -1){
-        if (process_table[foreground_process_pid].state != EXITED && process_table[foreground_process_pid].fg == 1){
-            basic_kill_process(foreground_process_pid);
+    if (process_manager.foreground_process_pid != -1){
+        if (process_manager.process_table[process_manager.foreground_process_pid].state != EXITED && process_manager.process_table[process_manager.foreground_process_pid].fg == 1){
+            basic_kill_process(process_manager.foreground_process_pid);
         }
     }
 }
 
 int8_t kill_process_in_kernel(pid_t pid){
-    if (process_table == NULL) {
+    if (process_manager.process_table == NULL) {
         return -1;
     }
 
@@ -389,19 +401,36 @@ int8_t kill_process_in_kernel(pid_t pid){
 }
 
 int32_t find_process_by_name(char *name) {
-    if (process_table == NULL || name == NULL) {
+    if (process_manager.process_table == NULL || name == NULL) {
         return -1;
     }
 
     for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (process_table[i].state != EXITED && my_strcmp(process_table[i].process_name, name) == 0) {
-            return process_table[i].pid;
+        if (process_manager.process_table[i].state != EXITED && my_strcmp(process_manager.process_table[i].process_name, name) == 0) {
+            return process_manager.process_table[i].pid;
         }
     }
 
     return -1;
 }
 
+uint64_t get_existing_processes() {
+    if (process_manager.process_table == NULL) {
+        return 0;
+    }
+    return process_manager.existing_processes;
+}
+
+uint64_t get_free_processes() {
+    if (process_manager.process_table == NULL) {
+        return 0;
+    }
+    return process_manager.free_processes;
+}
+
+uint64_t get_foreground_process_pid() {
+    return process_manager.foreground_process_pid;
+}
 
 static int8_t basic_kill_process(pid_t pid){
     PCB* process_to_kill = find_pcb_by_pid(pid);
@@ -430,6 +459,9 @@ static int8_t basic_kill_process(pid_t pid){
         mm_free(process_to_kill->argv[i]);
     
     mm_free(process_to_kill->argv);
+
+    process_manager.free_processes++;
+    process_manager.existing_processes--;
 
     return 0;
 }

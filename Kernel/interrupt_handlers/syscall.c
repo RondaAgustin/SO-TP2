@@ -18,7 +18,7 @@ uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_
     sys_sem_open, sys_sem_close, sys_sem_wait,
     sys_sem_post, sys_pipe, sys_pipe_open,
     sys_pipe_close, sys_set_process_readfd, sys_set_process_writefd,
-    sys_sem_value
+    sys_sem_value, sys_get_free_processes, sys_get_existing_processes
 };
 
 uint64_t syscall_handler(const registers64_t *registers) {
@@ -194,6 +194,14 @@ uint64_t sys_kill_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10
 
 uint64_t sys_priority_process(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
     return modify_process_priority(rdi, rsi);
+}
+
+uint64_t sys_get_free_processes(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    return get_free_processes();
+}
+
+uint64_t sys_get_existing_processes(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9){
+    return get_existing_processes();
 }
 
 uint64_t sys_wait(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t r10, uint64_t r8, uint64_t r9) {
