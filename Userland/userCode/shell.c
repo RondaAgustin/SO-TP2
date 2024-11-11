@@ -73,9 +73,18 @@ void run_shell() {
     uint32_t priority = 1;
 
     while (strcmp(shell_input, "exit") != 0) {
+        strcpy(shell_input, "");
+        strcpy(shell_args[0], "");
+        strcpy(shell_args[1], "");
+        strcpy(shell_args[2], "");
+
         sys_set_font_size(current_font_size);
         puts_with_color("shell> ", 0x006fb5fb);
         scanf("%s", shell_input);
+
+        if (strcmp(shell_input, "") == 0) {
+            continue;
+        }
         
         shell_args_count = split(shell_input, ' ', shell_args, MAX_SHELL_ARGS);
 

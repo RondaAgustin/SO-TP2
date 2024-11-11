@@ -226,7 +226,7 @@ uint32_t atoi(const char* s) {
 uint64_t scanf(const char* fmt, void* ptr) {
     char scan_buff[SCANF_BUFF_MAX_SIZE] = {0};
 
-    uint32_t len = sys_read(STDIN, scan_buff, SCANF_BUFF_MAX_SIZE);
+    int len = sys_read(STDIN, scan_buff, SCANF_BUFF_MAX_SIZE);
     if (len > 0){
         scan_buff[len - 1] = '\0';
 
