@@ -21,4 +21,3 @@ core
 report.tasks
 PVS-Studio.log
 strace_out
-pvs.sh
