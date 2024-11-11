@@ -26,7 +26,7 @@ void check_shell(){
 
         if(shell_pcb != NULL && shell_pcb->state == READY && ticks - shell_pcb->last_reference > TICKS_TO_CHECK_SHELL){
             if (list_contains(scheduler->scheduling_process, shell_pcb, cmp) == 0) {
-                list_add(scheduler->scheduling_process, shell_pcb);
+                add_ready_process(shell_pcb);
             }
         }
     }
