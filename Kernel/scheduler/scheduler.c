@@ -4,6 +4,8 @@
 #include <interrupt_handlers/interrupts.h>
 #include <lib.h>
 
+#define TICKS_TO_CHECK_SHELL 110
+
 typedef struct Scheduler {
     ListCircularADT scheduling_process;
     PCB* current;
@@ -13,6 +15,21 @@ Scheduler* scheduler = NULL;
 
 int cmp(DataType d1, DataType d2){
     return d1 == d2 ? 0 : 1;
+}
+
+void check_shell(){
+    uint64_t ticks = ticks_elapsed();
+    int64_t shell_pid = find_process_by_name("shell");
+
+    if(shell_pid != -1){
+        PCB * shell_pcb = find_pcb_by_pid(shell_pid);
+
+        if(shell_pcb != NULL && shell_pcb->state == READY && ticks - shell_pcb->last_reference > TICKS_TO_CHECK_SHELL){
+            if (list_contains(scheduler->scheduling_process, shell_pcb, cmp) == 0) {
+                list_add(scheduler->scheduling_process, shell_pcb);
+            }
+        }
+    }
 }
 
 int8_t init_scheduler(){
@@ -44,6 +61,9 @@ uint64_t context_switch(uint64_t rsp){
                 scheduler->current->state = READY;
             }
         } 
+
+        check_shell();
+    
         PCB* temp = list_next(scheduler->scheduling_process);
 
         if(temp->valid != VALID_CHECK) {
@@ -56,7 +76,7 @@ uint64_t context_switch(uint64_t rsp){
         }
 
         scheduler->current = temp;
-
+        scheduler->current->last_reference = ticks_elapsed();
         scheduler->current->state = RUNNING;
         _sti();
         return scheduler->current->sp;

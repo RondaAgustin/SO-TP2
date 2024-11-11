@@ -27,6 +27,7 @@ typedef struct {
     uint64_t base;
     uint64_t limit;
     ListCircularADT processes_blocked_by_me;
+    uint64_t last_reference;
     char valid;
 } PCB;
 

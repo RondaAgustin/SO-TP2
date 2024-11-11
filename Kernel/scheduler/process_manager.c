@@ -108,6 +108,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     process_manager.process_table[i].priority = priority;
     process_manager.process_table[i].state = READY;
     process_manager.process_table[i].valid = VALID_CHECK;
+    process_manager.process_table[i].last_reference = 0;
     
     process_manager.process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
 

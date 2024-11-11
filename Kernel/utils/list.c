@@ -57,6 +57,20 @@ char list_add(ListCircularADT list, DataType data) {
     return 1;
 }
 
+uint8_t list_contains(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+    if (list == NULL || list->head == NULL) return 0;
+
+    Node *current = list->head;
+
+    do {
+        if (cmp(current->data, data) == 0) {
+            return 1;
+        }
+        current = current->next;
+    } while (current != list->head);
+    return 0;
+}
+
 // Elimina el primer elemento que coincida con data
 char list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
     if (list->head == NULL) {
