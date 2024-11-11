@@ -156,6 +156,7 @@ void create_philosopher(uint64_t id) {
 
     if (id >= MAX_PHILOSOPHERS) {
         printf("Max philosophers reached\n");
+        sys_sem_post(philo_qty_mutex);
         return;
     }
     
@@ -198,6 +199,7 @@ void remove_philosopher(uint64_t id) {
     sys_sem_wait(philo_qty_mutex);
 
     if (philo_qty == 0) {
+        sys_sem_post(philo_qty_mutex);
         printf("No philosophers to remove\n");
         return;
     }
