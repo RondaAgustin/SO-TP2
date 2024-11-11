@@ -30,8 +30,6 @@ uint64_t test_processes(uint64_t argc, char *argv[]) {
     return -1;
   }
 
-  sys_mm_free(argv[0]);
-
   p_rq p_rqs[max_processes];
 
   while (1) {

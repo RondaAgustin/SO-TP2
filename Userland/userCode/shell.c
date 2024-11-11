@@ -364,7 +364,7 @@ void get_pid() {
 }
 
 void test_scheduler_processes() {
-    char* quantity = sys_mm_malloc(5 * sizeof(char));
+    char quantity[10] = {0};
 
     printf("Process quantity: ");
     scanf("%s", (void*)quantity);
@@ -372,8 +372,14 @@ void test_scheduler_processes() {
     int64_t free_processes = sys_get_free_processes();
 
     if (strcmp(quantity, "") == 0 || free_processes < atoi(quantity)) {
-        puts("Not enough free processes, default set to 20 processes.\n");
-        strcpy(quantity, "20");
+        if (free_processes < 20) {
+            itoa(free_processes / 2, quantity, 10);
+            printf("Not enough free processes, default set to %s processes.\n", quantity);
+        } else {
+            puts("Not enough free processes, default set to 20 processes.\n");
+            strcpy(quantity, "20");
+        }
+        
     }
 
     char* argv[] = {quantity, NULL};
