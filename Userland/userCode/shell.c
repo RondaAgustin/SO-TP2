@@ -18,25 +18,25 @@ ModuleDescriptor modules[] = {
     {"beep", "beeps", beep},
     {"song", "plays a short tune while displaying graphics", song},
     {"calculator", "positive integer calculator", calculator},
-    {"eliminator", "eliminator game", eliminator},
+    // {"eliminator", "eliminator game", eliminator},
     {"jump", "jumps to address given by user in decimal (1407583 causes invalid opcode >:) )", jump},
     {"test_mm", "test memory manager", test_memory},
     {"test_processes", "test processes", test_scheduler_processes},
     {"test_prio", "test priority", test_priority_processes},
+    {"test_synchro", "test sync", test_synchro},
+    {"test_no_synchro", "test no sync", test_no_synchro},
     {"shell_pid", "get shell pid", get_pid},
+    {"loop", "imprime su pid en bucle", loop},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
     {"kill", "kill process with sepecific pid", kill_process},
     {"nice", "change process priority", modify_priority},
-    {"process1", "process that prints Process 1", create_process_1},
-    {"process2", "process that prints Process 2", create_process_2},
-    {"loop", "imprime su pid en bucle", loop},
+    // {"process1", "process that prints Process 1", create_process_1},
+    // {"process2", "process that prints Process 2", create_process_2},
     {"ps", "prints processes list and their details", ps},
-    {"test_synchro", "test sync", test_synchro},
-    {"test_no_synchro", "test no sync", test_no_synchro},
     {"mem", "display memory info", mem_info},
-    {"producer", "prints to stdout every 1.5s", producer},
-    {"consumer", "reads from stdin and prints", consumer},
+    // {"producer", "prints to stdout every 1.5s", producer},
+    // {"consumer", "reads from stdin and prints", consumer},
     {"cat", "prints data received by stdin", cat},
     {"wc", "prints number of lines, words and chars of input", wc},
     {"filter", "shows only vocals from input", filter},
@@ -362,7 +362,19 @@ void get_pid() {
 }
 
 void test_scheduler_processes() {
-    char* argv[] = {"55", NULL};
+    char* quantity = sys_mm_malloc(5 * sizeof(char));
+
+    printf("Process quantity: ");
+    scanf("%s", (void*)quantity);
+
+    int64_t free_processes = sys_get_free_processes();
+
+    if (strcmp(quantity, "") == 0 || free_processes < atoi(quantity)) {
+        puts("Not enough free processes, default set to 20 processes.\n");
+        strcpy(quantity, "20");
+    }
+
+    char* argv[] = {quantity, NULL};
     test_processes(1, argv);
 }
 

@@ -41,6 +41,7 @@ void list_add(ListCircularADT list, DataType data) {
     if (list->head == NULL) {
         list->head = new_node;
         new_node->next = new_node; 
+        list->current = list->head;
     } else {
         Node *current = list->head;
         while (current->next != list->head) 
@@ -49,7 +50,6 @@ void list_add(ListCircularADT list, DataType data) {
         current->next = new_node;
         new_node->next = list->head; 
     }
-    list->current = list->head;
     list->size++;
 }
 
@@ -62,8 +62,9 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
 
     do {
         if (cmp(current->data, data) == 0) {
-            if (current == list->current)
+            if (current == list->current) {
                 list->current = current->next;
+            }
             
             
             if (previous == NULL) { // El nodo a eliminar es el primero
@@ -71,10 +72,12 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
                 if (current->next == list->head) {
                     mm_free(current);
                     list->head = NULL;
+                    list->current = NULL;
                 } else {
                     Node *tail = list->head;
-                    while (tail->next != list->head) 
+                    while (tail->next != list->head) {
                         tail = tail->next;
+                    }
 
                     tail->next = current->next; // Ajusta la referencia del último nodo
                     list->head = current->next; // Actualiza la cabeza
@@ -85,7 +88,6 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
                 mm_free(current);
             }
             list->size--;
-            list->current = list->head;
             return;
         }
         previous = current;

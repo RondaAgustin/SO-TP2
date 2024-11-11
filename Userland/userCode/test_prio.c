@@ -20,36 +20,42 @@ void test_prio() {
 
     puts("CREATING PROCESSES...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         pids[i] = sys_create_process((uint64_t) process, 1, argv, 1, 0, NULL);
+    }
 
     bussy_wait(WAIT);
     puts("\nCHANGING PRIORITIES...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         sys_modify_priority(pids[i], prio[i]);
+    }
 
     bussy_wait(WAIT);
     puts("\nBLOCKING...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         sys_block_process(pids[i]);
+    }
 
     puts("CHANGING PRIORITIES WHILE BLOCKED...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         sys_modify_priority(pids[i], MEDIUM);
+    }
 
     puts("UNBLOCKING...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         sys_unblock_process(pids[i]);
+    }
 
     bussy_wait(WAIT);
     puts("\nKILLING...\n");
 
-    for (i = 0; i < TOTAL_PROCESSES; i++)
+    for (i = 0; i < TOTAL_PROCESSES; i++) {
         sys_kill_process(pids[i]);
+    }
 
     puts("FINISHED");
 }
