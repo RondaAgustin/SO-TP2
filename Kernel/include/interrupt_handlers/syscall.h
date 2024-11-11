@@ -6,7 +6,6 @@
 #include <types.h>
 #include <lib.h>
 
-#include <interrupt_handlers/syscall.h>
 #include <interrupt_handlers/interrupts.h>
 #include <drivers/pit_driver.h>
 #include <drivers/video_driver.h>

@@ -1,6 +1,12 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <memory_manager/bitmap/bitmap_memory_manager.h>
+#include <memory_manager/memory_manager.h>
+
+#define BLOCK_SIZE 1024
+#define BLOCK_COUNT MEM_SIZE / BLOCK_SIZE
+
+#define RESERVED 1
+#define FREE 0
 
 typedef struct MemoryZone {
     void * start;

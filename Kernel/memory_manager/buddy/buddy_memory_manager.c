@@ -1,6 +1,21 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <memory_manager/buddy/buddy_memory_manager.h>
+#include <memory_manager/memory_manager.h>
+
+#define MAX_LEVELS 32 
+
+typedef struct BlockHeader {
+    struct BlockHeader* next;
+    uint8_t level; 
+    int free;
+} BlockHeader;
+
+typedef struct BuddyManager{
+    void* memory_base;
+    uint32_t memory_size;    
+    BlockHeader* free_lists[MAX_LEVELS];  // Listas de bloques libres por nivel
+    uint32_t used_memory;       
+} BuddyManager;
 
 BuddyManager buddy_manager;
 

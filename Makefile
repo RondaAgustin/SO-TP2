@@ -2,11 +2,16 @@
 
 all: bootloader toolchain kernel userland image
 
+bitmap: bootloader toolchain kernel_bitmap userland image
+
 bootloader:
 	cd Bootloader; make all
 
 kernel:
-	cd Kernel; make all
+	cd Kernel; make all MEMORY_MANAGER=buddy_memory_manager
+
+kernel_bitmap:
+	cd Kernel; make all MEMORY_MANAGER=bitmap_memory_manager
 
 userland:
 	cd Userland; make all

@@ -12,13 +12,16 @@
     cd /root
     ```
 
-3. En la carpeta principal, se debe ejecutar:
+3. En la carpeta principal, para compilar el proyecto:
+   1. con buddy, se debe ejecutar:
 
-    ```sh
-    make all
-    ```
-
-    para compilar el proyecto.
+        ```sh
+        make all
+        ```
+    2. con bitmap, se debe ejecutar:
+        ```sh
+        make bitmap
+        ```
 
 4. Luego, donde se tenga instalado QEMU, se debe ejecutar:
     ```sh

@@ -1,8 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <stdint.h>
-#include <registers.h>
 #include <interrupt_handlers/syscall.h>
+
 
 uint64_t (*syscalls[])(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t) = {
     sys_read, sys_write, sys_put_text, 
