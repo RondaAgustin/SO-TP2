@@ -68,8 +68,10 @@ void sem_post(uint8_t semId) {
         sem->value++;
         if (list_size(sem->blockedProcesses) > 0) {
             pid_t pid = (pid_t)(uint64_t) list_get_first(sem->blockedProcesses);
-            list_remove(sem->blockedProcesses, (DataType)(uint64_t) pid, cmpProsId);
-            unblock_process(pid);
+            char result = list_remove(sem->blockedProcesses, (DataType)(uint64_t) pid, cmpProsId);
+            if(result) {
+                unblock_process(pid);
+            }
         }
         release(&sem->lock);
     }

@@ -10,7 +10,7 @@ typedef struct ListCircularCDT *ListCircularADT;
 
 ListCircularADT list_create();
 char list_add(ListCircularADT list, DataType data);
-void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
+char list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
 void list_remove_all(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType));
 uint64_t list_size(ListCircularADT list);
 void list_destroy(ListCircularADT list, void (*free_func)(void *));

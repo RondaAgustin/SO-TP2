@@ -56,16 +56,19 @@ char list_add(ListCircularADT list, DataType data) {
 }
 
 // Elimina el primer elemento que coincida con data
-void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
-    if (list->head == NULL) return; // Lista vacía
+char list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType, const DataType)) {
+    if (list->head == NULL) {
+        return 0;
+    }
 
     Node *current = list->head;
     Node *previous = NULL;
 
     do {
         if (cmp(current->data, data) == 0) {
-            if (current == list->current)
+            if (current == list->current) {
                 list->current = current->next;
+            }
             
             
             if (previous == NULL) { // El nodo a eliminar es el primero
@@ -87,11 +90,12 @@ void list_remove(ListCircularADT list, DataType data, int (*cmp)(const DataType,
                 free(current);
             }
             list->size--;
-            return;
+            return 1;
         }
         previous = current;
         current = current->next;
     } while (current != list->head);
+    return 0;
 }
 
 // Elimina todos los elementos que coincidan con data
