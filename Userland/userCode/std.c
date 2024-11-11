@@ -193,6 +193,21 @@ void printf(const char* fmt, ...) {
     puts(printf_buff);
 }
 
+void uint64_to_hex_string(uint64_t num, char *buffer, uint16_t buffer_size) {
+    if (buffer_size < 17) {  // 16 caracteres para 64 bits en hex + 1 para el terminador nulo
+        buffer[0] = '\0';
+        return;
+    }
+
+    const char hex_digits[] = "0123456789ABCDEF";
+
+    buffer[16] = '\0';  // Terminador nulo
+    for (int i = 15; i >= 0; --i) {
+        buffer[i] = hex_digits[num & 0xF];  // Obtiene el último dígito hexadecimal
+        num >>= 4;  // Desplaza el número 4 bits a la derecha
+    }
+}
+
 
 char getchar() {
     return sys_get_character_pressed();

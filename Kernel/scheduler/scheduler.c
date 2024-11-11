@@ -44,7 +44,19 @@ uint64_t context_switch(uint64_t rsp){
                 scheduler->current->state = READY;
             }
         } 
-        scheduler->current = list_next(scheduler->scheduling_process);
+        PCB* temp = list_next(scheduler->scheduling_process);
+
+        if(temp->valid != VALID_CHECK) {
+            return rsp;
+        }
+
+        while(temp->state != READY) {
+            list_remove(scheduler->scheduling_process, temp, cmp);
+            temp = list_next(scheduler->scheduling_process);
+        }
+
+        scheduler->current = temp;
+
         scheduler->current->state = RUNNING;
         _sti();
         return scheduler->current->sp;

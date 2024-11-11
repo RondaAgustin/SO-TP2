@@ -94,23 +94,19 @@ int read_from_keyboard(char* buffer, int buffer_size) {
     int i = 0;
     char c = 0;
     while (c != '\n' && i < buffer_size) {
-        if (keys_pending()) {
-            c = get_pressed_character();
-            if (c == '\b') {
-                char * backs = "\b\b\b\b";
-                if (--i < 0) {
-                    i = 0;
-                } else {
-                    write_to_video_text_buffer(backs, buffer[i] == '\t' ? 4 : 1, HEX_WHITE);
-                }
-            } else if (c == '\e') {
-                return -1;
+        c = get_pressed_character();
+        if (c == '\b') {
+            char * backs = "\b\b\b\b";
+            if (--i < 0) {
+                i = 0;
             } else {
-                buffer[i++] = c;
-                write_to_video_text_buffer(&c, 1, HEX_WHITE);
+                write_to_video_text_buffer(backs, buffer[i] == '\t' ? 4 : 1, HEX_WHITE);
             }
+        } else if (c == '\e') {
+            return -1;
         } else {
-            sem_wait(sem);
+            buffer[i++] = c;
+            write_to_video_text_buffer(&c, 1, HEX_WHITE);
         }
     }
     return i;

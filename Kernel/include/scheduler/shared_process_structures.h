@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define VALID_CHECK 79
+
 typedef enum State {
     READY,
     RUNNING,
@@ -25,6 +27,7 @@ typedef struct {
     uint64_t base;
     uint64_t limit;
     ListCircularADT processes_blocked_by_me;
+    char valid;
 } PCB;
 
 #endif

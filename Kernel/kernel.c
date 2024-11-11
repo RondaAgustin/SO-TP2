@@ -66,19 +66,23 @@ int main() {
 
   	mm_init((void *)0x1000000, MEM_SIZE);
 
-	if (init_fds() == -1)
+	if (init_fds() == -1) {
 		write_to_video_text_buffer("Error initializing file descriptors\n", 36, HEX_RED);
+	}
 
-	if (init_synchro() == -1)
+	if (init_synchro() == -1) {
 		write_to_video_text_buffer("Error initializing synchro\n", 28, HEX_RED);
+	}
 
-	if (init_keyboard_driver() == -1)
+	if (init_keyboard_driver() == -1) {
 		write_to_video_text_buffer("Error initializing keyboard driver\n", 35, HEX_RED);
+	}
 
-	if (init_scheduler() == -1)
+	if (init_scheduler() == -1) {
 		write_to_video_text_buffer("Error initializing processes\n", 30, HEX_RED);
-	else 
+	} else  {
 		init_processes();
+	}
 
 	char *init_argv[] = {"init", NULL};
 

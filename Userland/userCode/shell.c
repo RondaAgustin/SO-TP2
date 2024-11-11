@@ -266,18 +266,20 @@ void ps() {
         }
     }
 
+    char buffer[17];
     uint64_t process_count = sys_ps(processes_info);
 
     printf("EXISTING: %d | FREE: %d\n", sys_get_existing_processes(), sys_get_free_processes());
-
     for (uint64_t i = 0; i < process_count; i++) {
         printf("PID: %d | NAME: ", processes_info[i].pid);
         puts((char *) processes_info[i].process_name);
         printf(" | STATE: ");
         puts((char *) processes_info[i].state);
         printf(" | PRIORITY: %d", processes_info[i].priority);
-        printf(" | SP: %d", processes_info[i].sp);
-        printf(" | BP: %d", processes_info[i].bp);
+	    uint64_to_hex_string(processes_info[i].sp, buffer, 17);
+        printf(" | SP: 0x%s", buffer);
+        uint64_to_hex_string(processes_info[i].bp, buffer, 17);
+        printf(" | BP: 0x%s", buffer);
         puts("\n");
     }
 

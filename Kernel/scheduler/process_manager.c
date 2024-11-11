@@ -107,6 +107,7 @@ char create_process(uint64_t wrapper_entry_point, uint64_t entry_point, uint32_t
     process_manager.process_table[i].argc = argc;
     process_manager.process_table[i].priority = priority;
     process_manager.process_table[i].state = READY;
+    process_manager.process_table[i].valid = VALID_CHECK;
     
     process_manager.process_table[i].limit = (uint64_t) mm_malloc(STACK_SIZE);
 
@@ -190,7 +191,7 @@ void set_process_writefd(pid_t pid, char fd) {
     }
 }
 
-int8_t block_process(pid_t pid){
+int8_t block_process(pid_t pid) {
     if (process_manager.process_table == NULL) {
         return -1;
     }
@@ -206,12 +207,13 @@ int8_t block_process(pid_t pid){
     if (state == EXITED || state == BLOCKED) {
         return -1;
     }
-    
+
     process_to_block->state = BLOCKED;
     remove_ready_process(process_to_block);
 
-    if(state == RUNNING) 
+    if(state == RUNNING) {
         yield();
+    }
     
     return 0;
 }
@@ -449,8 +451,9 @@ static int8_t basic_kill_process(pid_t pid){
 
     unblock_waiting_processes(pid);
 
-    if (state == READY || state == RUNNING)
+    if (state == READY || state == RUNNING) {
         remove_ready_process(process_to_kill);
+    }
 
     mm_free((void *) process_to_kill->limit);
     list_destroy(process_to_kill->processes_blocked_by_me, NULL);

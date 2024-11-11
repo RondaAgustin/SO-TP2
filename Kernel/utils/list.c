@@ -46,8 +46,9 @@ char list_add(ListCircularADT list, DataType data) {
         list->current = list->head;
     } else {
         Node *current = list->head;
-        while (current->next != list->head) 
+        while (current->next != list->head && current != NULL && current->next != NULL) {
             current = current->next;
+        }
 
         current->next = new_node;
         new_node->next = list->head; 
