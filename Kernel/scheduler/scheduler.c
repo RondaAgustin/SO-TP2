@@ -66,7 +66,7 @@ uint64_t context_switch(uint64_t rsp){
     
         PCB* temp = list_next(scheduler->scheduling_process);
 
-        if(temp->valid != VALID_CHECK) {
+        if(temp == NULL || temp->valid != VALID_CHECK) {
             return rsp;
         }
 
