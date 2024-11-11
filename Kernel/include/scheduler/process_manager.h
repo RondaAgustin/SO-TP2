@@ -11,7 +11,7 @@
 #include <ipc/ipc.h>
 
 #define MAX_PROCESSES 64
-#define STACK_SIZE 4096*2
+#define STACK_SIZE 8192
 
 typedef struct {
     uint64_t rax;

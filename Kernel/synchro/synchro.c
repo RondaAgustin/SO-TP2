@@ -91,9 +91,11 @@ void sem_wait(uint8_t semId) {
                 return;
             }
             pid_t pid = get_pid();
-            list_add(sem->blockedProcesses, (DataType)(uint64_t) pid);
+            char result = list_add(sem->blockedProcesses, (DataType)(uint64_t) pid);
             release(&(sem->lock));
-            block_process(pid);
+            if(result) {
+                block_process(pid);
+            }
         }
     }
 }

@@ -33,9 +33,11 @@ static Node *create_node(DataType data) {
     return node;
 }
 
-void list_add(ListCircularADT list, DataType data) {
+char list_add(ListCircularADT list, DataType data) {
     Node *new_node = create_node(data);
-    if (new_node == NULL) return;
+    if (new_node == NULL) {
+        return 0;
+    }
 
     if (list->head == NULL) {
         list->head = new_node;
@@ -50,6 +52,7 @@ void list_add(ListCircularADT list, DataType data) {
         new_node->next = list->head; // Circular reference
     }
     list->size++;
+    return 1;
 }
 
 // Elimina el primer elemento que coincida con data
