@@ -253,6 +253,9 @@ void start_phylos() {
     char philo_qty_mutex_aux = sys_sem_open(1);
     char status_mutex_aux = sys_sem_open(1);
 
+    philo_qty = 0;
+    print_status_counter = 0;
+
     if (print_mutex_aux == -1 || philo_qty_mutex_aux == -1 || status_mutex_aux == -1) {
         printf("Error creating mutexs\n");
         return;
