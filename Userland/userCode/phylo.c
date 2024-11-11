@@ -51,14 +51,11 @@ void print_status() {
         p = &philosophers[i];
         
         switch (p->state) {
-            case THINKING:
-                printf(". ");
-                break;
             case EATING:
                 p->last_status_print = print_status_counter;
                 printf("E ");
                 break;
-            case HUNGRY:
+            default:
                 printf(". ");
                 break;
         }

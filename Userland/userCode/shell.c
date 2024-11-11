@@ -367,7 +367,7 @@ void test_scheduler_processes() {
     char quantity[10] = {0};
 
     printf("Process quantity: ");
-    scanf("%s", (void*)quantity);
+    scanf("%s", (char*)quantity);
 
     int64_t free_processes = sys_get_free_processes();
 
