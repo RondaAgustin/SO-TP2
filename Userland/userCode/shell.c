@@ -26,12 +26,12 @@ ModuleDescriptor modules[] = {
     {"test_synchro", "test sync", test_synchro},
     {"test_no_synchro", "test no sync", test_no_synchro},
     {"shell_pid", "get shell pid", get_pid},
-    {"loop", "imprime su pid en bucle", loop},
+    {"loop", "prints his pid in loop", loop},
+    {"silent_loop", "infinite loop", silent_loop},
     {"block", "block process with specific pid", block_process},
     {"unblock", "unblock process with specific pid", unblock_process},
     {"kill", "kill process with sepecific pid", kill_process},
     {"nice", "change process priority", modify_priority},
-    // {"process1", "process that prints Process 1", create_process_1},
     // {"process2", "process that prints Process 2", create_process_2},
     {"ps", "prints processes list and their details", ps},
     {"mem", "display memory info", mem_info},
@@ -41,7 +41,7 @@ ModuleDescriptor modules[] = {
     {"wc", "prints number of lines, words and chars of input", wc},
     {"filter", "shows only vocals from input", filter},
     {"filter_2", "shows only consonants from input", filter2},
-    {"phylo", "starts philosophers problem", phylo},
+    {"phylo", "starts philosophers problem, use a to add or r to remove philosophers", phylo},
 };
 
 static int current_font_size = 1;
@@ -109,7 +109,7 @@ void run_shell() {
                 priority = 1;
                 foreground = 0;
             } else {
-                priority = 20;
+                priority = 32;
                 foreground = 1;
             }
 
@@ -271,11 +271,11 @@ void ps() {
 
     printf("EXISTING: %d | FREE: %d\n", sys_get_existing_processes(), sys_get_free_processes());
     for (uint64_t i = 0; i < process_count; i++) {
-        printf("PID: %d | NAME: ", processes_info[i].pid);
-        puts((char *) processes_info[i].process_name);
-        printf(" | STATE: ");
-        puts((char *) processes_info[i].state);
-        printf(" | PRIORITY: %d", processes_info[i].priority);
+        printf("PID: %d | NAME: %s  | STATE: %s  | PRIORITY: %d", 
+            processes_info[i].pid, 
+            (char *) processes_info[i].process_name, 
+            (char *) processes_info[i].state, 
+            processes_info[i].priority);
 	    uint64_to_hex_string(processes_info[i].sp, buffer, 17);
         printf(" | SP: 0x%s", buffer);
         uint64_to_hex_string(processes_info[i].bp, buffer, 17);
@@ -326,8 +326,8 @@ void unblock_process() {
     
 }
 
-void create_process_1() {
-    char* argv[] = {"Process 1", NULL};
+void silent_loop() {
+    char* argv[] = {"silent loop", NULL};
     process(1, argv);
 }
 

@@ -46,7 +46,7 @@ void unblock_process();
 void kill_process();
 
 void get_pid();
-void create_process_1();
+void silent_loop();
 void create_process_2();
 void modify_priority();
 
